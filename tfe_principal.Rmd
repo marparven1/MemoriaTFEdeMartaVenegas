@@ -7,7 +7,7 @@ geometry: margin = 2.5cm
 bibliography: ["bib/library.bib", "bib/paquetes.bib"]
 # metodobib -> true: natbib (descomentar: citation_package: natbib) 
 #           -> false: pandoc (comentar: citation_package: natbib)
-metodobib: true
+metodobib: true 
 #natbib: plainnat, abbrvnat, unsrtnat
 biblio-style: "plainnat"
 #Método 2 (pandoc): descomente una línea de las 2 siguientes en caso de usarlo
@@ -23,8 +23,8 @@ output:
     fig_caption: yes
     template: latex/templateMemoriaTFE.tex
     includes:
-      before_body: portadas/latex_paginatitulo_modTFE.tex
-#      before_body: portadas/latex_paginatitulo_modTFGE.tex
+#     before_body:  portadas/latex_paginatitulo_modTFE.tex
+       before_body: portadas/latex_paginatitulo_modTFGE.tex
 #      before_body: portadas/latex_paginatitulo_modTFGM.tex
 #      before_body: portadas/latex_paginatitulo_modTFDGME.tex
 #      before_body: portadas/latex_paginatitulo_modTFMDS.tex
@@ -53,6 +53,7 @@ knitr::opts_chunk$set(fig.path = 'figurasR/',
                       cache=FALSE) # 
 knitr::write_bib(c("knitr","rmarkdown","dplyr","ggplot2","kableExtra"),
                  file="bib/paquetes.bib", width = 60)
+# escribe SOLO el fichero de bibliografía con el listado de paquetes que yo diga NO TOCAR ESE FICHERO 
 ```
 
 
