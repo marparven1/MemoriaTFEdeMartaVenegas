@@ -39,7 +39,7 @@ output:
 ---
 nocite: | 
   @Luque2017,@Luque2019,@RStudio,@R-base,
-  @R-knitr,@R-rmarkdown,@R-dplyr,@R-ggplot2,@Techopedia
+  @R-knitr,@R-rmarkdown,@R-dplyr,@R-ggplot2,@Techopedia,@MestaTFG
 ...
 
 
@@ -53,8 +53,27 @@ knitr::opts_chunk$set(fig.path = 'figurasR/',
                       cache=FALSE) # 
 knitr::write_bib(c("knitr","rmarkdown","dplyr","ggplot2","kableExtra"),
                  file="bib/paquetes.bib", width = 60)
+
+
 # escribe SOLO el fichero de bibliografía con el listado de paquetes que yo diga NO TOCAR ESE FICHERO 
+
+# @Manual{TFG_Andrea,
+#   title = {Técnicas estadísticas
+# en predicción de la demanda
+# en el sector comercio},
+#   author = {{Andrea Mesta Carmona}},
+#   organization = {Universidad de Sevilla},
+#   address = {Sevilla, Andalucía},
+#   year = {2021}
+# }
+
+
+
+
+
 ```
+
+
 
 
 <!-- Indentar el texto al inicio de cada nuevo párrafo -->
@@ -103,6 +122,17 @@ knitr::write_bib(c("knitr","rmarkdown","dplyr","ggplot2","kableExtra"),
 ```
 
 
+
+\clearpage
+\section*{Introduccion}
+\addcontentsline{toc}{section}{Introducción}
+
+
+
+```{r child = 'introduccion.Rmd'}
+```
+
+
 \cleardoublepage   
 \listoffigures
 \addcontentsline{toc}{section}{Índice de Figuras}
@@ -131,6 +161,11 @@ knitr::write_bib(c("knitr","rmarkdown","dplyr","ggplot2","kableExtra"),
 
 \renewcommand{\headrulewidth}{0.4pt}
 \renewcommand{\footrulewidth}{0.4pt}
+
+
+
+
+
 
 ```{r child = 'capitulo01.Rmd'}
 ```
@@ -209,6 +244,15 @@ install.packages(c("ggplot2","kableExtra","dplyr"))
 
 <!-- \nocite{*} -->
 \nocite{Luque2017,Luque2019,RStudio,R-base,
-R-knitr,R-rmarkdown,R-dplyr,R-ggplot2,Techopedia}
+R-knitr,R-rmarkdown,R-dplyr,R-ggplot2,
+Techopedia,
+MestaTFG,
+DefSectorRetail,
+ST_Apuntes, ST_Art
+}
+
+
+
+
 
 \fi 

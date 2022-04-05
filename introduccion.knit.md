@@ -31,13 +31,7 @@ output:
 
 
 
-```{r include=FALSE}
-knitr::opts_chunk$set(fig.path = 'figurasR/',
-                      echo = FALSE, warning = FALSE, message = FALSE,
-                      fig.pos="H",fig.align="center",out.width="95%",
-                      cache=FALSE)
 
-```
 
 
 <!-- \setcounter{chapter}{2} -->
@@ -70,23 +64,6 @@ knitr::opts_chunk$set(fig.path = 'figurasR/',
 \renewcommand{\footrulewidth}{0.4pt}
 
 
-# La ciencia de datos en el sector retail
+# Introducción
 
-
-
-Modelización estadística de ventas en el sector retail
-
-- Objetivo: predicción de ventas, es decir, predicción de la demanda de productos
-
-
-
-
-
-## Big Data en el sector retail (COMO TITULAR)
-
-Con R...
-
-
-
-
-
+Esta es la introducción de mi trabajo 

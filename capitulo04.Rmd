@@ -70,6 +70,69 @@ knitr::opts_chunk$set(fig.path = 'figurasR/',
 \renewcommand{\footrulewidth}{0.4pt}
 
 
-# Título del Capítulo
 
-## Primera sección
+
+
+
+# Data science process
+
+## Conocimiento del negocio (Knowledge of Bussiness)
+
+Problem definition (this is the introduction of my report)
+Definición de objetivos y metodología para cumplirlos
+Muy importante la definición del objetivo: VOLUMEN DE VENTAS
+
+
+## Adquisición de los datos (Collect the data)
+
+
+Explicación de los datos, fuente, explicación de las variables,...
+
+## Preparación de los datos (data preparation)
+
+Fase del data cleaning:
+
+- Eliminación de duplicados (filas y columnas)
+- Datos erróneos (ej: precios negativos)
+- Detección de valores faltantes (¿eliminación o imputación?)
+- Detección de outliers (decidir si mantener, quitar o tratar a parte)
+- Unificación de variables (unificación de unidades,...)
+- Creación de variables si fuera necesario
+
+Preparación de los datos
+
+- Reformateo
+- Categorización,...
+- Feature selection (muy importante)
+
+
+## Análisis exploratorio de los datos (EDA)
+
+- Distribución de las variables
+- Relación entre las variables 
+- ¿Es necesario reducir la dimensionalidad?
+
+
+
+## Modelado
+
+- Clasificación o regresión
+- Librería caret
+- Probar diferentes hiperparametrizaciones en los datos de entrenamiento
+- Aplicar el modelo con la mejor hiperparametrización a los datos de validación y decidir un modelo final
+- Evalucación del error con visualización (centrándome en los objetivos)
+
+### SVM
+### KNN
+### Árboles de regresión (XGBoost Model)
+
+## Evaluación y presentación de resultados (+análisis del error)
+
+
+- Predicciones con el mejor modelo
+- Final de la historia de una forma ordenada y resumida
+- Señalar posibles mejoras y recomendaciones para proyectos futuros
+
+
+
+

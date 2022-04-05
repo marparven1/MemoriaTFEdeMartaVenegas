@@ -70,6 +70,15 @@ knitr::opts_chunk$set(fig.path = 'figurasR/',
 \renewcommand{\footrulewidth}{0.4pt}
 
 
-# Título del Capítulo
 
-## Primera sección
+
+# Análisis de cesta de la compra (Market basket análisis)
+
+Este capítulo está por ver
+
+## Introducción
+## Definición
+## Desarrollo
+
+
+

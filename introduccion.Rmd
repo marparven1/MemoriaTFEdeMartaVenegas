@@ -1,0 +1,28 @@
+---
+output: pdf_document
+---
+
+
+Esta es la introducción de mi trabajo 
+
+
+
+
+- Definición
+
+
+El sector retail, o también conocido como comercio minorista, es un sector económico que se encarga de proveer de bienes y servicios al consumidor final, ya que integra al grueso de comerciantes de un determinado lugar.
+
+Este sector aglutina a comerciantes y empresas encargadas de la comercialización, ofreciendo de una gran variedad de productos y servicios a los consumidores.
+
+
+
+
+
+(Una tienda, un supermercado, una librería, son claros ejemplos de lo que es el sector retail.)
+
+
+- Objetivos
+
+- Estimación de la demanda
+- Asociación entre los dos productos
