@@ -39,7 +39,7 @@ output:
 ---
 nocite: | 
   @Luque2017,@Luque2019,@RStudio,@R-base,
-  @R-knitr,@R-rmarkdown,@R-dplyr,@R-ggplot2,@Techopedia,@MestaTFG
+  @R-knitr,@R-rmarkdown,@R-dplyr,@R-ggplot2
 ...
 
 
@@ -243,12 +243,8 @@ install.packages(c("ggplot2","kableExtra","dplyr"))
 <!-- Si "metodobib: false", modificar el "nocite:" del inicio de este fichero  -->
 
 <!-- \nocite{*} -->
-\nocite{Luque2017,Luque2019,RStudio,R-base,
-R-knitr,R-rmarkdown,R-dplyr,R-ggplot2,
-Techopedia,
-MestaTFG,
-DefSectorRetail,
-ST_Apuntes, ST_Art
+\nocite{Luque2017,Luque2019,RStudio,R-base,R-knitr,R-rmarkdown,R-dplyr,R-ggplot2,MestaTFG,DefSectorRetail,ST_Apuntes
+# , ST_Art,ST_LibroUbiqum
 }
 
 
