@@ -11,8 +11,8 @@ metodobib: true
 #natbib: plainnat, abbrvnat, unsrtnat
 biblio-style: "plainnat"
 #Método 2 (pandoc): descomente una línea de las 2 siguientes en caso de usarlo
-csl: methods-in-ecology-and-evolution.csl      # no numera mejor en las citas
-#csl: acm-sig-proceedings-long-author-list.csl  # numera peor en las citas
+# csl: methods-in-ecology-and-evolution.csl      # no numera mejor en las citas
+csl: acm-sig-proceedings-long-author-list.csl  # numera peor en las citas
 link-citations: yes
 output: 
   pdf_document:
@@ -53,22 +53,6 @@ knitr::opts_chunk$set(fig.path = 'figurasR/',
                       cache=FALSE) # 
 knitr::write_bib(c("knitr","rmarkdown","dplyr","ggplot2","kableExtra"),
                  file="bib/paquetes.bib", width = 60)
-
-
-# escribe SOLO el fichero de bibliografía con el listado de paquetes que yo diga NO TOCAR ESE FICHERO 
-
-# @Manual{TFG_Andrea,
-#   title = {Técnicas estadísticas
-# en predicción de la demanda
-# en el sector comercio},
-#   author = {{Andrea Mesta Carmona}},
-#   organization = {Universidad de Sevilla},
-#   address = {Sevilla, Andalucía},
-#   year = {2021}
-# }
-
-
-
 
 
 ```
@@ -243,11 +227,14 @@ install.packages(c("ggplot2","kableExtra","dplyr"))
 <!-- Si "metodobib: false", modificar el "nocite:" del inicio de este fichero  -->
 
 <!-- \nocite{*} -->
-\nocite{Luque2017,Luque2019,RStudio,R-base,R-knitr,R-rmarkdown,R-dplyr,R-ggplot2,MestaTFG,DefSectorRetail,ST_Apuntes
-# , ST_Art,ST_LibroUbiqum
-}
-
-
+\nocite{Luque2017,Luque2019,RStudio,R-base,
+R-knitr,R-rmarkdown,R-dplyr,R-ggplot2,
+MestaTFG,CampoTFG,
+DefSectorRetail,
+ST_Apuntes, ST_Art,
+IntroFeatureSelection, EDA,
+SVM_CampoTFG, SVM_SVR}
+<!--SVM_SVR-->
 
 
 

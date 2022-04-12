@@ -29,8 +29,6 @@ output:
       #after_body: latex/latex_antes_enddoc.tex
 ---
 
-
-
 ```{r include=FALSE}
 knitr::opts_chunk$set(fig.path = 'figurasR/',
                       echo = FALSE, warning = FALSE, message = FALSE,
@@ -39,20 +37,25 @@ knitr::opts_chunk$set(fig.path = 'figurasR/',
 
 ```
 
-
 <!-- \setcounter{chapter}{2} -->
+
 <!-- \setcounter{chapter}{2} escribir 2 para capítulo 3  -->
+
 <!-- \pagenumbering{arabic} -->
 
+```{=tex}
 \ifdefined\ifprincipal
 \else
 \setlength{\parindent}{1em}
 \pagestyle{fancy}
 \setcounter{tocdepth}{4}
 \tableofcontents
+```
 <!-- \nocite{*} -->
+
 \fi
 
+```{=tex}
 \ifdefined\ifdoblecara
 \fancyhead{}{}
 \fancyhead[LE,RO]{\scriptsize\rightmark}
@@ -68,71 +71,115 @@ knitr::opts_chunk$set(fig.path = 'figurasR/',
 \fi
 \renewcommand{\headrulewidth}{0.4pt}
 \renewcommand{\footrulewidth}{0.4pt}
+```
+# Proceso de ciencia de datos (Data science process)
 
+## Introducción
 
+La ciencia de datos es la combinación de múltiples campos, como la estadística, la inteligencia artificial (IA), el análisis de datos,... con el objetivo de extraer información de valor de esos datos. La ciencia de datos, abarca las siguientes etapas: recolección de los datos, limpieza, análisis exploratorio, construcción y validación de modelos y predicciones.
 
+Una parte importante de la ciencia de datos es el Aprendizaje Automático o Machine Learning (ML). Se trata de un subcampo dentro de la ciencia de datos, concretamente, una subcategoría de la inteligencia artificial. Está basada en algoritmos, y consiste en que éstos descubran de manera autónoma patrones recurrentes del conjunto de datos. Los algoritmos de ML al detectar patrones en los datos, aprenden y mejoran el rendimiento en la ejecución de una tarea o al hacer predicciones. Una vez entrenado y validado el modelo, el algoritmo podrá encontrar patrones en nuevos datos (predicciones)
 
+Para la correcta explicación de las técnicas que se van a describir, es necesario la definición del aprendizaje estadístico supervisado. \*\*
 
+El aprendizaje estadístico supervisado es una de las principales herramientas del aprendizaje automático y consiste en una serie de técnicas para deducir una función a partir de una serie de datos de entrenamiento. El objetivo es crear o estimar una función capaz de predecir el valor deseado después de haber visto una serie de ejemplos. Para ello, tiene que generalizar a partir de los datos presentados anteriormente a las nuevas situaciones no vistas previamente. La salida de la función puede ser un valor numérico (como en problemas de regresión) o una etiqueta de clase (como en los de clasificación)
 
-# Data science process
+## Etapas del proceso de ciencia de datos
 
-## Conocimiento del negocio (Knowledge of Bussiness)
+### Conocimiento del negocio (Knowledge of Bussiness)
 
-Problem definition (this is the introduction of my report)
-Definición de objetivos y metodología para cumplirlos
-Muy importante la definición del objetivo: VOLUMEN DE VENTAS
+En esta primera etapa, es fundamental la definición del problema que nos ocupa, la definición de unos objetivos claros y la metodología para cumplirlos.
 
+Esto implica la comprensión de los requisitos del proyecto desde el punto de vista de negocio, utilizando las perspectivas de negocio para determinar a que problemas podemos dar respuesta mediante el uso de la minería de datos.
 
-## Adquisición de los datos (Collect the data)
-
+### Adquisición de los datos (Collect the data)
 
 Explicación de los datos, fuente, explicación de las variables,...
 
-## Preparación de los datos (data preparation)
+Consiste en explicar como se ha llevado a cabo la adquisición de los datos, la identificación de las distintas fuentes y la explicación de los mismos.
 
-Fase del data cleaning:
+### Preparación de los datos (data preparation)
 
-- Eliminación de duplicados (filas y columnas)
-- Datos erróneos (ej: precios negativos)
-- Detección de valores faltantes (¿eliminación o imputación?)
-- Detección de outliers (decidir si mantener, quitar o tratar a parte)
-- Unificación de variables (unificación de unidades,...)
-- Creación de variables si fuera necesario
+Raramente encontraremos los datos preparados para su análisis, ya que normalmente es necesario la limpieza y la transformación de los mismos. Para ello, es necesario llevar a cabo un paso previo llamado pre-procesamiento de los datos.
+
+Fases del data cleaning:
+
+-   Eliminación de duplicados (filas y columnas)
+-   Datos erróneos (ej: precios negativos)
+-   Detección de valores faltantes: decidir si eliminar esos registros o imputarlos
+-   Detección de outliers (decidir si mantener, quitar o tratar a parte)
+-   Unificación de variables (unificación de unidades,...)
+-   Creación de variables a partir de otras ya existentes si fuera necesario
 
 Preparación de los datos
 
-- Reformateo
-- Categorización,...
-- Feature selection (muy importante)
+-   Reformateo de variables, por ejemplo, formatos horarios.
+-   Categorización,...
+-   Selección de variables (Feature selection): elegir las mejores variables que alimenten nuestros algoritmos dictarán la máxima calidad que podemos conseguir, ya que no todas las variables explican el problema que queremos modelar. Podemos resumir esto con la siguiente frase: "Garbage in, garbage out", es decir, si entra basura saldrá basura. Refiriendonos con basura a ruido en los datos o información pobre.
 
+### Análisis exploratorio de datos (EDA)
 
-## Análisis exploratorio de los datos (EDA)
+El análisis exploratorio se utiliza para ver lo que nos pueden ofrecer los datos antes de la etapa del modelado y se lleva a cabo para resumir las principales características del conjunto de datos a través de diferentes tareas:
 
-- Distribución de las variables
-- Relación entre las variables 
-- ¿Es necesario reducir la dimensionalidad?
+-   Estudio descriptivo de los datos: La estadística descriptiva es la parte de la estadística dedicada a la ordenación y tratamiento de la información por medio de gráficas y tablas, además de la obtención de parámetros útiles para explicar la información
 
+-   Visualizaciones de los datos:
 
+    -   Análisis univariante: Empleado para observar diferentes características de interés, tratar de identificar patrones en los datos o ver la distribución de las variables . Algunos ejemplos serían los gráficos de caja y bigote o histogramas
+    -   Análisis multivariante: Donde tratamos de ver la asociación o relación que pueden tener las distintas variables de interés. Encontramos los gráficos de barras o gráficos de dispersión entre los ejemplos de representaciones multivariantes.
 
-## Modelado
+-   Relación entre las variables
 
-- Clasificación o regresión
-- Librería caret
-- Probar diferentes hiperparametrizaciones en los datos de entrenamiento
-- Aplicar el modelo con la mejor hiperparametrización a los datos de validación y decidir un modelo final
-- Evalucación del error con visualización (centrándome en los objetivos)
+Este tipo de análisis permite obtener medidas descriptivas de un conjunto de datos para poder extraer conclusiones referentes a una muestra o población.
 
-### SVM
-### KNN
-### Árboles de regresión (XGBoost Model)
+### Modelado
 
-## Evaluación y presentación de resultados (+análisis del error)
+En la etapa de modelado aplicaremos algoritmos de aprendizaje automático. Para llevar a cabo esta fase y con el objetivo de obtener mayor robustez en los modelos, aplicaremos técnicas de validación cruzada.
 
+La validación cruzada es una técnica de remuestreo de datos utilizada para evaluar la capacidad de generalización de los modelos de predicción proporcionando una estimación del rendimiento del modelo final en datos nuevos y evitar el sobreajuste. El sobreajuste aparece cuando un modelo que se adapta perfectamente a los datos de entrenamiento obteniendo unas métricas muy buenas pero que luego es incapaz de generalizar con datos nuevos.
 
-- Predicciones con el mejor modelo
-- Final de la historia de una forma ordenada y resumida
-- Señalar posibles mejoras y recomendaciones para proyectos futuros
+------------------------------------------------------------------------
 
+El primer paso consiste en la división de los datos en el conjunto de datos de entrenamiento, validación y testeo. Para ello, generamos un conjunto de entrenamiento y otro de testeo a partir del conjunto de datos inicial. A continuación, volvemos a dividir los datos de entrenamiento en datos de entrenamiento y validación, obteniendo así tres conjuntos de datos independientes: entrenamiento, validación y testeo.
 
+El conjunto de datos de entrenamiento es aquel que utilizamos para probar diferentes hiperparametrizaciones de cada modelo para ver cual es la más óptima. La hiperparametrización variará en función de los parámetros aplicables a cada algoritmo utilizado.
 
+Una vez hayamos entrenado los modelos, pasamos a la fase de validación, donde aplicaremos a los datos de validación los diferentes algoritmos con la configuración de parámetros que mejor haya funcionado en el conjunto de datos de entrenamiento.
 
+El modelo con el que obtengamos las mejores métricas será el que posteriormente apliquemos a los datos de testeo.
+
+A continuación vamos a exponer tres algoritmos de aprendizaje automático que posteriormente aplicaremos a nuestros datos
+
+#### Máquinas de vector soporte (Support Vector Machines SVMs)
+
+Las máquinas de vector soporte son un conjunto de algoritmos de aprendizaje estadístico supervisado pertenecientes a la familia de los clasificadores lineales.
+
+Suponiendo que tenemos ejemplos de sólo dos categorías y sin pérdida de generalidad, una SVM construye un hiperplano en un espacio de dimensionalidad muy alta. Este hiperplano separa de forma óptima los puntos de una clase de la otra. La característica fundamental de estos algoritmos es el concepto de "separación óptima", ya que se busca el hiperplano que tenga la máxima distancia con los puntos que estén más cerca de él mismo al tiempo que clasifica correctamente tantos puntos de entrenamiento como sea posible. Los algoritmos SVM representan el hiperplano óptimo con vectores de soporte.
+
+En nuestro caso al ser la variable volumen de ventas una variable numérica, vamos a centrarnos en la variante SVM para regresión, tambien conocida como SVR (support vector regressor). El caso del problema de regresión es una generalización del problema de clasificación, en la que el modelo devuelve un valor continuo, es decir, un modelo de regresión estima una función multivariante de valor continuo.
+
+Dado un conjunto de ejemplos de entrenamiento $S = \big\{(x_1,y_1), \dots,(x_n,y_n)\big\}$, donde $x_i \in \mathbb R^d \text{ e }\ y_i \in \mathbb R$, en el que se asume que todos los valores $y_i$ de todos los ejemplos de $S$ pueden ser ajustados mediante un hiperplano, nuestro objetivo será encontrar los parámetros $w = (w_1,\dots,w_d)$ que permitan definir el hiperplano de regresión \[y=f(x) = (w_1x_1+\dots+w_dx_d) + b = \langle w,x \rangle+b \text{ , } b \in \mathbb R\]
+
+La generalización de SVM a SVR se logra introduciendo una región insensible a $\epsilon$ alrededor de la función. Esta región se conoce como tubo épsilon. Este tubo reformula el problema de optimización para encontrar el tubo que mejor se aproxime a la función al tiempo que equilibra el error de predicción, es decir, se formula un problema de optimización definiendo una función de pérdida a minimizar insensible a $\epsilon$ y encontrando el tubo más plano que contiene a la mayoría de instancias de entrenamiento.
+
+Se dice **rudio, perturbación aleatoria o tubo épsilon** y se representa por $\epsilon \sim N(0,\sigma^2)$, al error en la medición del valor $y$, por tanto, $y=f(x) + \epsilon$
+
+El valor de $\epsilon$ determina el ancho del tubo, y un valor más pequeño indica menor tolerancia al error, cuando más pequeño sea el valor de $\epsilon$, el límite del tubo se desplaza hacia dentro, habiendo más puntos de datos alrededor del límite, lo que indica más vectores de soporte.
+
+Se define la **función de pérdida lineal** $\epsilon-$ insensible, y se representa como $L_{\epsilon}$ a una función lineal en el que la función de pérdida toma valor nulo y viene definida de la siguiente forma: \[L_{\epsilon} = 
+\begin{cases} 
+0 & \text{ si} |y-f(x)| \leq \epsilon, \\ 
+|y-f(x)| - \epsilon & \text{ en caso contrario }
+\end{cases}\]
+
+![Vectores de Soporte de Regresión](graficos/svr.jpg "SVR lineal unidimensional")
+
+#### KNN
+
+#### Árboles de regresión (XGBoost Model)
+
+#### Evaluación y presentación de resultados (+análisis del error)
+
+-   Predicciones con el mejor modelo
+-   Final de la historia de una forma ordenada y resumida
+-   Señalar posibles mejoras y recomendaciones para proyectos futuros
