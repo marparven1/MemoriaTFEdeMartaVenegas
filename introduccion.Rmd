@@ -11,18 +11,31 @@ Esta es la introducción de mi trabajo
 - Definición
 
 
-El sector retail, o también conocido como comercio minorista, es un sector económico que se encarga de proveer de bienes y servicios al consumidor final, ya que integra al grueso de comerciantes de un determinado lugar.
+El concepto de retail es una orientación de la dirección del negocio que sostiene que las tareas clave de un minorista: 
 
-Este sector aglutina a comerciantes y empresas encargadas de la comercialización, ofreciendo de una gran variedad de productos y servicios a los consumidores.
+- Determinar las necesidades y deseos de su mercado objetivo
+- Dirigir la empresa hacia la satisfacción de esas necesidades y deseos de forma más eficiente que sus competidores (Vigaray, 2005).
 
+El comercio detallista o minorista es el último eslabón de la distribución comercial, siendo el intermediario que se dedica a la venta de productos, bienes o servicios a los consumidores o usuarios finales (Burruezo, 1999).
 
-
-
-
-(Una tienda, un supermercado, una librería, son claros ejemplos de lo que es el sector retail.)
+Este sector aglutina a comerciantes y empresas encargadas de la comercialización, ofreciendo de una gran variedad de productos y servicios a los consumidores. (Una tienda, un supermercado, una librería, son claros ejemplos de lo que es el sector retail.)
 
 
 - Objetivos
 
+Objetivo general
+
+-  Los objetivos principales del trabajo consistirán en analizar y entender como varía la demanda de productos en función del tiempo así como la aplicación de diversos algoritmos de aprendizaje automático para modelarla
+
+
+
+
+
+Objetivos específicos:
+
 - Estimación de la demanda
 - Asociación entre los dos productos
+
+
+
+

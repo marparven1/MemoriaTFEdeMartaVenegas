@@ -54,7 +54,7 @@ knitr::opts_chunk$set(fig.path = 'figurasR/',
 knitr::write_bib(c("knitr","rmarkdown","dplyr","ggplot2","kableExtra"),
                  file="bib/paquetes.bib", width = 60)
 
-
+# library(bookdown)
 ```
 
 
@@ -227,13 +227,17 @@ install.packages(c("ggplot2","kableExtra","dplyr"))
 <!-- Si "metodobib: false", modificar el "nocite:" del inicio de este fichero  -->
 
 <!-- \nocite{*} -->
-\nocite{Luque2017,Luque2019,RStudio,R-base,
-R-knitr,R-rmarkdown,R-dplyr,R-ggplot2,
+\nocite{
+Luque2017,Luque2019,RStudio,R-base,
+R-knitr,<!--R-rmarkdown,-->R-dplyr,R-ggplot2,
 MestaTFG,CampoTFG,
 DefSectorRetail,
 ST_Apuntes, ST_Art,
+PEREZ-MARTINEZ2021_CV,
 IntroFeatureSelection, EDA,
-SVM_CampoTFG, SVM_SVR}
+SVM_CampoTFG, SVM_SVR,
+KNN_R_TFG
+}
 <!--SVM_SVR-->
 
 

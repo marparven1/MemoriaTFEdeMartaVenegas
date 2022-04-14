@@ -72,6 +72,7 @@ knitr::opts_chunk$set(fig.path = 'figurasR/',
 \renewcommand{\headrulewidth}{0.4pt}
 \renewcommand{\footrulewidth}{0.4pt}
 ```
+
 # Proceso de ciencia de datos (Data science process)
 
 ## Introducción
@@ -134,19 +135,29 @@ Este tipo de análisis permite obtener medidas descriptivas de un conjunto de da
 
 ### Modelado
 
-En la etapa de modelado aplicaremos algoritmos de aprendizaje automático. Para llevar a cabo esta fase y con el objetivo de obtener mayor robustez en los modelos, aplicaremos técnicas de validación cruzada.
+En la etapa de modelado aplicaremos algoritmos de aprendizaje automático. 
 
-La validación cruzada es una técnica de remuestreo de datos utilizada para evaluar la capacidad de generalización de los modelos de predicción proporcionando una estimación del rendimiento del modelo final en datos nuevos y evitar el sobreajuste. El sobreajuste aparece cuando un modelo que se adapta perfectamente a los datos de entrenamiento obteniendo unas métricas muy buenas pero que luego es incapaz de generalizar con datos nuevos.
+Con el objetivo de eliminar el sobreajuste de los datos
 
-------------------------------------------------------------------------
+  
+ Para llevar a cabo esta fase y con el objetivo de obtener mayor robustez en los modelos, aplicaremos la técnica conocida como *hold out* 
 
-El primer paso consiste en la división de los datos en el conjunto de datos de entrenamiento, validación y testeo. Para ello, generamos un conjunto de entrenamiento y otro de testeo a partir del conjunto de datos inicial. A continuación, volvemos a dividir los datos de entrenamiento en datos de entrenamiento y validación, obteniendo así tres conjuntos de datos independientes: entrenamiento, validación y testeo.
+El *hold out* es una técnica en la que dividimos los datos en dos partes mutuamente excluyentes (no superpuestas), utilizando una de ellas para el entrenamiento de los modelos y la otra para el testeo.
 
-El conjunto de datos de entrenamiento es aquel que utilizamos para probar diferentes hiperparametrizaciones de cada modelo para ver cual es la más óptima. La hiperparametrización variará en función de los parámetros aplicables a cada algoritmo utilizado.
+La traducción literal para hold-out es *retención* y esta técnica recibe este nombre porque reservamos una parte de los datos para probar el modelo en datos nuevos.
 
-Una vez hayamos entrenado los modelos, pasamos a la fase de validación, donde aplicaremos a los datos de validación los diferentes algoritmos con la configuración de parámetros que mejor haya funcionado en el conjunto de datos de entrenamiento.
+Esta técnica se emplea para evitar el sobreajuste. Este aparece cuando un modelo que se adapta perfectamente a los datos de entrenamiento obteniendo unas métricas muy buenas pero que luego es incapaz de generalizar con datos nuevos, y por tanto, existe una sobrevaloración de la capacidad predictiva de los modelos obtenidos.
 
-El modelo con el que obtengamos las mejores métricas será el que posteriormente apliquemos a los datos de testeo.
+
+Por tanto, dividimos los datos en el conjunto de datos de entrenamiento, validación y testeo. Para ello, generamos un conjunto de entrenamiento y otro de testeo a partir del conjunto de datos muestral. A continuación, volvemos a dividir los datos de entrenamiento en datos de entrenamiento y validación, obteniendo así tres conjuntos de datos: entrenamiento, validación y testeo. 
+
+![División de datos muestrales para entrenamiento, validación y testeo](graficos/DivisionEnt_Val_Test.png "División de datos muestrales")
+
+El conjunto de *datos de entrenamiento* es aquel que utilizamos para probar diferentes hiperparametrizaciones de cada modelo para ver cual es la más óptima. La hiperparametrización variará en función de los parámetros aplicables a cada algoritmo utilizado.
+
+Una vez hayamos entrenado los modelos, pasamos a la fase de validación, donde aplicaremos a los *datos de validación* los diferentes algoritmos con la configuración de parámetros que mejor haya funcionado en el conjunto de datos de entrenamiento.
+
+El modelo con el que obtengamos las mejores métricas será el que posteriormente apliquemos a los *datos de testeo*, ofreciéndonos el error real cometido con el modelo seleccionado. Es decir, este último conjunto de datos se utiliza para estiamr el error de generalización del modelo, ya que nuestro objetivo es obtener un error de generalización pequeño evitando el sobreajuste.
 
 A continuación vamos a exponer tres algoritmos de aprendizaje automático que posteriormente aplicaremos a nuestros datos
 
@@ -157,6 +168,8 @@ Las máquinas de vector soporte son un conjunto de algoritmos de aprendizaje est
 Suponiendo que tenemos ejemplos de sólo dos categorías y sin pérdida de generalidad, una SVM construye un hiperplano en un espacio de dimensionalidad muy alta. Este hiperplano separa de forma óptima los puntos de una clase de la otra. La característica fundamental de estos algoritmos es el concepto de "separación óptima", ya que se busca el hiperplano que tenga la máxima distancia con los puntos que estén más cerca de él mismo al tiempo que clasifica correctamente tantos puntos de entrenamiento como sea posible. Los algoritmos SVM representan el hiperplano óptimo con vectores de soporte.
 
 En nuestro caso al ser la variable volumen de ventas una variable numérica, vamos a centrarnos en la variante SVM para regresión, tambien conocida como SVR (support vector regressor). El caso del problema de regresión es una generalización del problema de clasificación, en la que el modelo devuelve un valor continuo, es decir, un modelo de regresión estima una función multivariante de valor continuo.
+
+##### Descripción del algoritmo
 
 Dado un conjunto de ejemplos de entrenamiento $S = \big\{(x_1,y_1), \dots,(x_n,y_n)\big\}$, donde $x_i \in \mathbb R^d \text{ e }\ y_i \in \mathbb R$, en el que se asume que todos los valores $y_i$ de todos los ejemplos de $S$ pueden ser ajustados mediante un hiperplano, nuestro objetivo será encontrar los parámetros $w = (w_1,\dots,w_d)$ que permitan definir el hiperplano de regresión \[y=f(x) = (w_1x_1+\dots+w_dx_d) + b = \langle w,x \rangle+b \text{ , } b \in \mathbb R\]
 
@@ -172,9 +185,60 @@ Se define la **función de pérdida lineal** $\epsilon-$ insensible, y se repres
 |y-f(x)| - \epsilon & \text{ en caso contrario }
 \end{cases}\]
 
-![Vectores de Soporte de Regresión](graficos/svr.jpg "SVR lineal unidimensional")
+```{r SVR_lu, echo=FALSE,  fig.align='center', fig.pos='H',fig.cap='Vectores de Soporte de Regresión.'}
+knitr::include_graphics("graficos/svr.jpg")
+```
 
-#### KNN
+
+#### K-Nearest Neighbor Regression (KNN)
+
+El algoritmo de K-vecinos más cercanos, más conocido como KNN, fué desarrollado en el año 1951 por los matemáticos Evelyn Fix y Andrew Hodges.
+
+El algoritmo KNN es un método de aprendizaje supervisado que está basado en criterios de vecindad, por lo que es necesario establecer cierta medida de distancia entre los diferentes elementos de la representación. La ventaja de la aplicación de técnicas basadas en la vecindad es la siguiente: el valor de salida que se otorgará a una nueva instancia se calculará en función de los valores de los puntos más cercanos a ella. Se trata de un método local, que asume que la salida de un nuevo dato depende exclusivamente de los k vecinos de entrenamiento más próximos.
+
+
+
+##### Descripción del algoritmo
+
+Este algoritmo puede ser utilizado para modelos de clasificación y de regresión, ocupándonos en este trabajo la segunda opción. En el caso de la clasificación, En se determinará la clase a la que pertenecerá la nueva instancia en función de la clase mayoritaria de los vecinos más cercanos del conjunto de entrenamiento; y en regresión, el modelo debe determinar el valor del nuevo dato como el valor medio de los k ejemplos de entrenamiento más cercanos, siguiendo la siguiente ecuación del valor de la nueva instancia de entrada:
+
+\[
+Valor(Inst_{\text{entrada}}) = \dfrac{1}{K} \sum_{i=1}^k Valor(P_i)
+\]
+
+Como ya habíamos avanzado antes, para determinar cómo de cercanos se encuentran unas instancias de otras, es necesario definir una medida de similitud o distancia para todos los datos del conjunto muestral. Definiremos esta medida de similitud a través de una función, como puede ser la distancia Manhattan, la distancia Minkow o las más utilizada la distancia Euclídea, que es la que se va a utilizar, y viene dada por:
+
+\[
+d(p,1) = \sqrt{ \sum_{i=1}^n (p_i-q_i)^2}
+\]
+
+
+Una vez definida esta medida, procedemos a la descripción del algoritmo:
+
+- Se almacena el conjunto de datos de entrenamiento compuesto por un vector de entrada y otro de salida
+- Se establece el valor del parámetro k
+- Se presenta una nueva instancia j teniendo en cuenta únicamente el vector de entrada de esta nueva instancia
+
+  - Se calcula la distancia euclídea de la nueva instancia con todos lso datos del conjunto de entrenamiento
+  - Se calcula la salida del este nuevo dato como la media de las salidas de los k datos más cercanos a él
+
+- Se repite el paso anterior para todas las instancias del conjunto de datos
+
+```{r knn_esq, echo=FALSE,  fig.align='center', fig.pos='H',fig.cap='Esquema conceptual del algoritmo KNN de regresión.'}
+
+knitr::include_graphics("graficos/knn_regression.png")
+```
+
+
+
+En la figura  [4.3](#knn_esq) podemos ver un esquema conceptual del algoritmo, donde el valor de salida que el modelo le dará al nuevo punto marcado con una *x* será la media de los valores de los puntos vecinos. Habiéndose seleccionado a modo de ejemplo el valor de k=3 y k=5.
+
+
+
+##### Elección del parámetro k
+
+Es necesario seleccionar el valor que se le va a dar al parámetro k, es decir, el número de vecinos con los que se realizará la media para obtener el valor de salida de la nueva instancia.
+Si este valor es muy grande, la idea de vecinos que están lejos podrían influir con la nueva instancia sin tener relación, pero si este valor es demasiado pequeño, el algoritmo será muy sensible a valores extremos. 
 
 #### Árboles de regresión (XGBoost Model)
 

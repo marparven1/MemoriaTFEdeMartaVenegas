@@ -72,9 +72,11 @@ knitr::opts_chunk$set(fig.path = 'figurasR/',
 \renewcommand{\headrulewidth}{0.4pt}
 \renewcommand{\footrulewidth}{0.4pt}
 ```
-# Modelos estadísticos
 
-A continuación se exponen los modelos estadísticos que estudiaremos de cara a predecir las ventas de los productos.
+
+# Modelos estadísticos clásicos 
+
+A continuación se exponen los modelos estadísticos clásicos de cara a predecir las ventas de los productos.
 
 ## Análisis de series temporales
 
@@ -169,4 +171,10 @@ Fases de la metodología Box-Jenkis:
 
 4.  Predicción: una vez identificado y validado el mejor modelo, se realizan las predicciones con éste.
 
-## Modelo 2 (decidir)
+## Modelo de regresión lineal
+
+
+
+
+
+
