@@ -81,7 +81,7 @@ La ciencia de datos es la combinación de múltiples campos, como la estadístic
 
 Una parte importante de la ciencia de datos es el Aprendizaje Automático o Machine Learning (ML). Se trata de un subcampo dentro de la ciencia de datos, concretamente, una subcategoría de la inteligencia artificial. Está basada en algoritmos, y consiste en que éstos descubran de manera autónoma patrones recurrentes del conjunto de datos. Los algoritmos de ML al detectar patrones en los datos, aprenden y mejoran el rendimiento en la ejecución de una tarea o al hacer predicciones. Una vez entrenado y validado el modelo, el algoritmo podrá encontrar patrones en nuevos datos (predicciones)
 
-Para la correcta explicación de las técnicas que se van a describir, es necesario la definición del aprendizaje estadístico supervisado. \*\*
+Para la correcta explicación de las técnicas que se van a describir, es necesario la definición del aprendizaje estadístico supervisado. 
 
 El aprendizaje estadístico supervisado es una de las principales herramientas del aprendizaje automático y consiste en una serie de técnicas para deducir una función a partir de una serie de datos de entrenamiento. El objetivo es crear o estimar una función capaz de predecir el valor deseado después de haber visto una serie de ejemplos. Para ello, tiene que generalizar a partir de los datos presentados anteriormente a las nuevas situaciones no vistas previamente. La salida de la función puede ser un valor numérico (como en problemas de regresión) o una etiqueta de clase (como en los de clasificación)
 
@@ -164,7 +164,7 @@ A continuación vamos a exponer tres algoritmos de aprendizaje automático que p
 #### Máquinas de vector soporte (Support Vector Machines SVMs)
 
 Las máquinas de vector soporte son un conjunto de algoritmos de aprendizaje estadístico supervisado pertenecientes a la familia de los clasificadores lineales.
-Este algoritmo, más conocido como SVM fué desarrollado en los laboratorios AT&T Bell por Vapnik y otros autores a partir del año 1992.
+Este algoritmo, más conocido como SVM fué desarrollado en los laboratorios AT&T Bell por Vapnik y otros autores a mediados del 1960, inicialmente para problemas de clasificación binaria, basados en la idea de separar los datos mediante hiperplanos. Actualmente existen extensiones dentro de esta metodología pra clasificación con más de dos categorías, para regresión y también para la detección de datos atípicos. La idea fundamental es la utiliación de vectores que hacen de soporte con el fin de maximizaar la separación entre los datos y el hiperplano.
 
 
 Suponiendo que tenemos ejemplos de sólo dos categorías y sin pérdida de generalidad, una SVM construye un hiperplano en un espacio de dimensionalidad muy alta. Este hiperplano separa de forma óptima los puntos de una clase de la otra. La característica fundamental de estos algoritmos es el concepto de "separación óptima", ya que se busca el hiperplano que tenga la máxima distancia con los puntos que estén más cerca de él mismo al tiempo que clasifica correctamente tantos puntos de entrenamiento como sea posible. Los algoritmos SVM representan el hiperplano óptimo con vectores de soporte.
@@ -275,18 +275,64 @@ El análisis de árboles de clasificación y regresión, generalmente consiste e
 
 ![Árbol de decisión. Partes](graficos/ArbDecision.png "Árbol de decisión")
 
-En la figura anterior, podemos ver la representación de un árbol de decisión desde el nodo raíz, las ramas, que son los segmentos del árbol que conectan los nodos, los nodos internos, puntos a lo largo del árbol donde se va dividiendo el espacio predictor y los hojas (nodos terminales)
+En la figura anterior, podemos ver la representación de un árbol de decisión desde el nodo raíz. Entre sus componentes encontramos: *las ramas*, que son los segmentos del árbol que conectan los nodos; *los nodos internos*, puntos a lo largo del árbol donde se va dividiendo el espacio predictor y *los hojas* (nodos terminales).
 
 
-* **Poda del árbol**: El árbol máximo está generalmente sobreajustado y por tanto, se procede a la poda de éste cortando ramas hasta encontrar el tamaño "adecuado" del árbol. Una forma de resolver el problema es generar una serie de árboles anidados (árboles de secuencia anidada) de tamaños decrecientes, seleccionando para cada tamaño el mejor de todos. Posteriormente, se comparan para determinar el óptimo, mediante el criterio de coste-complejidad. Para cada árbol *T*, se defina la función de costo-complejidad, y se representa como $R_{\alpha}(T)$, de la siguiente forma: $R_{\alpha}(T) = R(T) + \alpha |~T|$, donde:
+* **Poda del árbol**: El árbol máximo está generalmente sobreajustado y por tanto, un árbol más pequeño con menos divisiones podría conducir a una menor varianza. Por este motivo, procede a la poda de éste cortando ramas hasta encontrar el tamaño "adecuado" del árbol. 
+
+Una forma de resolver el problema es generar una serie de árboles anidados (árboles de secuencia anidada) de tamaños decrecientes, seleccionando para cada tamaño el mejor de todos. Posteriormente, se comparan para determinar el óptimo mediante el criterio de coste-complejidad. 
+
+Para cada árbol *T*, se define la función de costo-complejidad, y se representa como $R_{\alpha}(T)$, como: $R_{\alpha}(T) = R(T) + \alpha | \widetilde{T}|$, 
+
+donde
 
 - R(T) indica el promedio de la suma de cuadrados entre los nodos
-- |T| indica la complejidad del árbol, que se define como el número total de nodos terminales
+- $| \widetilde{T}|$ indica la complejidad del árbol, que se define como el número total de nodos terminales
 - $\alpha$ es el parámetro de complejidad, valores altos de este parámetro indican árboles pequeños
 
-* **Selección del árbol óptimo mediante validación cruzada**: El objetivo es seleccionar uno de los árboles de todos los árboles podados como el árbol óptimo, que será el árbol solución. El método de selección consistirá en asociar una medida de error a cada árbol y elegir el que tenga asociado un menor error. En general, la estimación del error se hace por validación cruzada.
 
-Este tipo de técnicas es aplicable tanto a problemas de regresión como de clasificación, sin embargo, nosotros nos centraremos en las de regresión, especialmente en el modelo *Extreme Gradient Boosting Algorithm*, tambien conocido como XGBoost.
+
+* **Selección del árbol óptimo mediante validación cruzada**: El objetivo es seleccionar uno de los árboles de todos los árboles podados como el árbol óptimo, que será el árbol solución. El método de selección consistirá en asociar una medida de error a cada árbol y elegir el que tenga asociado un menor error. 
+
+El parámetro de complejidad definido, es el que controla la compensación entre la complejidad (tamaño) del árbol y el ajuste a los datos de entrenamiento. Cuando $\alpha=0$, el subarbol *T* es el árbol máximo. Sin embargo, a medida que aumenta $\alpha$, las ramas del árbol se podan de forma anidada, siendo sencillo conseguir una secuencia completa de subárboles en función del valor del parámetro de complejidad. Podemos seleccionar un valor de $\alpha$ a través de un conjunto de validación cruzada.
+
+
+Para la descripción del algoritmo *Extreme Gradient Boosting*, también conocido como XGBoost, es necesario la definición de varios conceptos, los *bosques aleatorios* y el método de aprendizaje estadístico *Boosting*
+
+Los bosques aleatorios (*Random Forest*), como una extensión de los árboles de clasificación. El modelo Random Fores, es una técnica utilizada tanto para clasificación como para regresión que se basa en un conjunto de árboles de decisión. Este método selecciona submuestras del conjunto de datos inicial, asegurando así el uso de todas las variables y datos para construir el modelo, haciéndolo además idóneo para trabajar con grandes conjuntos de datos.
+
+El método *boosting* tiene como propósito la reducción del sesgo. Se trata de un proceso iterativo que en lugar de ajustar un árbol de decisión, aplica la técnicas repetidas veces de forma secuencial, y por tanto, el algoritmo va aprendiendo lentamente. Este método no se aplica sobre los datos, sino sobre los resíduos. 
+
+Dado un árbol que ha sido previamente ajustado, se aplica un nuevo árbol para los resíduos del modelo, permitiendo así el reajuste del modelo. Este nuevo árbol de decisión construido con los resíduos se añade dentro de la función ajustada con el fin de mejorar el algoritmo en cada iteracción y no de forma global.
+
+Para aplicar esta técnica, es necesario fijar una serie de parámetros:
+
+- Tamaño del árbol **d**, es decir, el número de nodos terminales
+- El número de árboles **B**. Nota: un valor muy alto podría llevar a sobreajuste
+- El parámetro de regularización $\lambda$, que puede ser interpretado como una proporción de aprendizaje, es decir, la velocidad a la que aprende el algoritmo. Se trata de un parámetro acotado entre 0 y 1, siendo habitual elegir $\lambda = 0.01$ o $\lambda = 0.001$.
+
+Este tipo de técnicas es aplicable tanto a problemas de regresión como de clasificación, sin embargo, nosotros nos centraremos en las de regresión, especialmente en el modelo *Extreme Gradient Boosting Algorithm*, tambien conocido como XGBoost. 
+
+Este algoritmo se encuentra dentro del marco de algoritmos de aprendizaje supervisado, y fué propuesto en el año 2016 por Chen y Guestrin y presenta las siguientes características:
+
+- Consiste en la agregación de árboles de manera secuencial con el objetivo de aprender el resultado de los árboles previos y corregir el error producido por éstos, hasta que no se pueda reducir más el error (gradiente descendente)
+
+- Para evitar el sobreajuste, realia un procesamiento en paralelo, la poda de árboles, el control de los valores perdidos y la optimización que penaliza la complejidad de los modelos.
+
+![Algoritmo XGBoost](graficos/Algoritmo_XGBoost.jpg "Algoritmo XGBoost")
+
+##### Descripción del algoritmo
+
+EL funcionamiento del algoritmo se puede resumir en cuatro pasos:
+
+Dada una miestra inicial de aprendizaje $\{(x_i,y_i): i=1,\dots,n\}$.
+
+- En primer lugar, se obtiene un árbol inicial con *d* divisiones, $T_o$ para predecir la variable respuesta $Y$, asociando el resultado a un valor residual $r_i$
+- Se obtiene un nuevo árbol *R* que se ajusta al error del paso anterior
+- Los resultados de los árboles $T_o$ y *R* se combinan para obtener un árbol $T_1$, donde el error cuadrático medio será menor que el del árbol inicial
+- Se continúa el proceso de forma iterativa hasta que el error es minimizado lo máximo posible
+
+
 
 #### Evaluación y presentación de resultados (+análisis del error)
 

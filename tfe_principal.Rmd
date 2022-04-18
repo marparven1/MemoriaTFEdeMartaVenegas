@@ -254,20 +254,10 @@ install.packages(c("ggplot2","kableExtra","dplyr"))
 <!-- Si "metodobib: false", modificar el "nocite:" del inicio de este fichero  -->
 
 <!-- \nocite{*} -->
-\nocite{Luque2017,Luque2019,RStudio,R-base,
-R-knitr,<!--R-rmarkdown,-->R-dplyr,R-ggplot2,
-MestaTFG,CampoTFG,
-DefSectorRetail,
-MLG_AlcaideTFG,MLG_UC3M,
-ST_Apuntes, ST_Art,
-PEREZ-MARTINEZ2021_CV,
-IntroFeatureSelection, EDA,
-SVM_CampoTFG, SVM_SVR,ECII_AP,
-KNN_R_TFG
-<!--Arb_TFG-->
-}
-<!--SVM_SVR-->
+\nocite{Luque2017,Luque2019,RStudio,R-base,R-knitr,R-rmarkdown,R-dplyr,R-ggplot2,MestaTFG,CampoTFG,DefSectorRetail,MLG_AlcaideTFG,MLG_UC3M,ST_Apuntes, ST_Art,PEREZ-MARTINEZ2021_CV,IntroFeatureSelection, EDA,SVM_CampoTFG, SVM_SVR, ECII_AP, KNN_R_TFG,XGBoost_TFG,XGBoost_Casal,XGBoost_CasalII,XGBoostAlgorithm}
 
+<!--Arb_TFG-->
+<!--SVM_SVR-->
 
 
 \fi 

@@ -242,7 +242,7 @@ La distribución binomial negativa estudia la probabilidad de observar un númer
 
 Se dice que la variable aleatoria de conteo (número de ventas) $Y_i$, con $i=1,\dots,n$ sigue una distribución Binomial Negativa de parámetros *r* y *p*, y se representa como \(Y_i \sim BN(r,p)\) si su función de probabilidad viene dada por:
 \[
-P[Y_i=y_i] =  {y_i+r-1 \choose   r-1} p^r(1-p)^{y_i}
+P[Y_i=y_i] =  \genfrac{(}{)}{}{}{y_i+r-1}{r-1} p^r(1-p)^{y_i}
 \]
 donde 
 
@@ -254,7 +254,7 @@ donde
 Y en este caso, la forma canónica o componente aleatoria para esta distribución es la siguiente:
 
 \[
-f(y;\mu) = exp \Bigg\{y \cdot ln(1-p) + r ln(p) + ln{y_i+r-1 \choose   r-1} \Bigg\}
+f(y;\mu) = exp \Bigg\{y \cdot ln(1-p) + r ln(p) + ln \genfrac{(}{)}{}{}{y_i+r-1}{r-1} \Bigg\}
 \]
 
 donde 
