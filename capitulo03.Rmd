@@ -76,7 +76,201 @@ knitr::opts_chunk$set(fig.path = 'figurasR/',
 
 # Modelos estadísticos clásicos 
 
-A continuación se exponen los modelos estadísticos clásicos de cara a predecir las ventas de los productos.
+A continuación se exponen los modelos estadísticos clásicos de cara a predecir la demanda de los productos. Esta varaible depende de varios factores, como el período del año, el precio del producto, el precio de los productos competidores o los gustos de cada consumidor, entre otros. Se trata de una variable cuantitativa discreta, ya que el número de productos que se venden será un valor entero no negativo $y=0,1,\dots$.
+
+
+## Modelo de Regresión Lineal General
+
+El objetivo es encontrar un modelo estadístico que describa la situación real de ventas de productos a través de un Modelo Lineal General (MLG), donde una variable de interés (variable objetivo) pueda ser descrita por un conjunto de variables explicativas (variables independientes). 
+
+Para ello, debemos estimar los parámetros que caracterizan al modelo, es decir, medir el efecto de cada variable explicativa sobre la variable objetivo, y con este fin, es necesario definir una serie de hipótesis del modelo de regresión lineal general:
+
+- Independencia lineal entre las variables explicativas: Esto significa que cada variable explicativa contiene información adicional sobre la variable objetivo, ya que si hubiera información repetida, habría variables explicativas dependientes linealmente de otras.
+
+- Los MLG suponen que existe una función g, llamada función link, que relaciona la media de la variable respuesta, $\mu$ con el resto de variables explicativas de la siguiente forma: 
+\[E[Y]= \mu = g^{-1}(\eta) = g^{-1}(X^t\beta)\]
+
+Siendo:
+
+- Y la variable objetivo
+- E(Y) es el valor esperado de la variable Y
+- $\eta = \beta_0 + \beta_1X_1+ \dots + \beta_pX_p= X^t\beta$ es el predictor lineal, se trata de una combinación lineal de parámetros desconocidos
+
+  - $X_1,\dots,X_p$ son las variables explicativas 
+  - $\beta = (\beta_o,\beta_1,\dots,\beta_p)$ representan el efecto de cada variable independiente sobre la variable objetivo
+  - g es la función link, monótona y diferenciable
+
+### Componentes del Modelo Lineal Generalizado
+
+En este tipo de modelización estadística podemos diferenciar tres componentes: la componenete aleatoria, la sistemática y la función link o enlace. Será la combinación de estas tres componentes la que defina por completo un Modelo Lineal Generalizado.
+
+#### Componente aleatoria
+
+Esta componente es la que identifica la variable respuesta y su distribución de probabilidad.
+
+Sea $Y$ la variable aleatoria objetivo o variable respuesta objeto de estudio y sean las *n* variables aleatorias independientes e idénticamente distribuidas $Y_1,\dots,Y_n$ la muestra aleatoria procedente de Y. Siendo *Y* la componente aleatoria cuya distribución pertenece a la familia exponencial de distribuciones.
+
+En los MLG se supone que la variable respuesta $Y$ se distribuye de tal forma que su función de probabilidad, en el caso de estar modelizando una variable discreta o función de densidad para el caso continuo viene dada por la sigiente expresión general, conocida como forma canónica: 
+\[
+f(y;\theta, \phi) = a(y,\phi)\cdot e^{\Bigg(\dfrac{y \theta - k(\theta)}{\phi}\Bigg)}
+\]
+
+Donde
+
+- $\theta$ es el parámetro canónico
+- $k(\theta)$ es la función cumulante
+- $\phi > 0$ se trata del parámetro de dispersión
+- $a(y,\phi)$ es una constante normalizadora
+- El soporte no depende de $\theta$ ni de $\phi$
+
+Además, la media de $y$ es función del parámetro canónico $\theta$, por tanto, se tiene que:
+
+\[
+E(Y) = \mu = \dfrac{\partial}{\partial \theta} k(\theta), \\
+Var(Y)= \sigma^2 =\phi  \dfrac{\partial^2}{\partial \theta^2} k(\theta) =\phi \dfrac{\partial}{\partial \theta} \Bigg( \dfrac{\partial}{\partial \theta} k(\theta)  \Bigg) = \phi\dfrac{\partial }{\partial \theta}\mu > 0 .
+\]
+Es decir, $\mu$ es una función estrictamente creciente de $\theta$, por lo que estos dos parámetros mantienen una relación biyectiva.
+
+A \[
+V(\mu) = \frac{\partial \mu}{\partial \theta}
+\]
+se le denomina función varianza, por lo que se tiene que: 
+
+\[
+V(Y) = \phi Var(\mu)
+\]
+
+#### Componente sistemática
+
+Se trata de la coomponente que especifica las variables predictoras utilizadas en la función predictora lineal en forma de efectos fijos de un modelo lineal y recoge la variabilidad de la respuesta *Y* expresada a través de *p* variables explicatibas $X_1,\dots,X_p$, que denotamos por *X*, y de los correspondientes parámetros desconocidos $\beta=(\beta_0,\beta_1,\dots,\beta_p)'$. 
+
+Esta componente, tambien conocida como predictor lineal, viene representada por $\eta$ y es una combinación lineal de las variables explicativas, que viene dada por: \(\eta =\beta_0 + \beta_1X_1+ \dots + \beta_pX_p= X^t\beta = X^t\beta\)
+
+#### Función link o función enlace
+
+
+La *función link*: se trata de una función del valor esperado de la variable respuesta $E[Y]$, como una combinación lineal de las variables predictoras. Sin embargo, en muchos casos reales esta relación no es adecuada, por lo que es necesario la introducción de una función con el objetivo de relacionar el valor esperado con las variables explicativas. Por ello, introducimos la función link o función enlace, $g(\cdot)$ que relaciona $\mu$ con el predictor lineal de la siguiente forma:
+
+\[
+g(\mu)=\beta_0 + \beta_1x_1+ \dots + \beta_px_p
+\]
+
+En problemas reales, pueden existir varias funciones link, por lo que se elegirá aquella que facilite la interpretación del modelo óptimo obtenido. En particular, para cada elemento de la familia exponencial existe una función enlace denominada función canónica, que permite relacionar el parámetro canónico con el predictor lineal.
+\[
+\theta_i = \theta(\mu_i) = \eta_i =  X^t_i\beta \quad g(\mu_i)=\theta(\mu_i)
+\]
+
+
+### Estimación de parámetros
+
+Trás la construcción de los modelos, se estiman los parámetros desconocidos del predictor lineal, $\beta=(\beta_o,\beta_1,\dots,\beta_p)$ por $\hat\beta=(\hat\beta_o,\hat\beta_1,\dots,\hat\beta_p)$ y el valor del parámetro de dispersión $\phi$ por $\hat\phi$. Posteriormente, se valora la precisión de las estimaciones con el objetivo de seleccionar un modelo óptimo.
+
+Generalmente, la estimación de los parámetros se lleva a cabo por el método de la *Máxima Verosimilitud* o el método de *Mínimos Cuadrados Ordinarios*. Una vez desarrollados los modelos, se realizará una comparación de los mismos con el objetivo de seleccionar el mejor. En el caso del modelado con fines predictivos, se selecionará el modelo que explique el mayor porcentaje de variabilidad de la respuesta. 
+
+Para ello, emplearemos el **Criterio de información de Akaike (AIC)**, medida relatica de un modelo estadístico.
+
+Dado un conjunto de modelos candidatos para los datos, el modelo preferido es aquel que tiene mínimo valor del AIC, que trata de proporcionar una compensación entre la bondad de ajuste del modelo y la complejidad del mismo. Es decir, el criterio penaliza al número de parámetros.
+
+En el caso general, el AIC viene dado por la siguiente expresión:
+
+\[
+AIC = 2k - 2ln(\hat L)
+\]
+
+Siendo:
+
+- k el número de parámetros del modelo
+- $\hat L$ es el máximo valor de la función de verosimilitud para el modelo estimado
+
+Otro criterio en el que nos basaremos es en el criterio de bondad de ajuste, destacando el cálculo del **coeficiente de determinación** $R^2$, que es una medida del grado de fiabilidad o bondad de ajuste del modelo ajustado a un conjunto de datos. Se trata de una medida acotada por definición, siendo sus límites \(0 \leq R^2 \leq 1\).
+Un coeficiente de determinación igual a 1 indica un ajuste lineal perfecto, y por tanto, la variación total de la variable $Y$ es explicada por el modelo de regresión. Por el contrario, el valor 0 indica que el modelo no explica nada de la variación total de la variable Y.
+
+Para la bondad de ajuste, otra medida interesante es el RMSE, raíz del error cuadrático medio. Representa la raíz cuadrada de la distancia promedio entre el valor real y el pronosticado e indica el ajuste absoluto del modelo a los datos, es decir, cómo de cerca están los puntos observados de los valores predichos del modelo. Valores más bajos de RMSE indican un mejor ajuste. 
+
+
+
+En muchos casos la variable respuesta es de tipo conteo, como lo es la variable que queremos modelizar, demanda de productos. Se denominan variables de recuento o variables de tipo conteo, a aquellas que determinan el número de sucesos que ocurren en una misma unidad de observación en un intervalo espacial o temporal definido. Esta variable $Y$, puede tomar infinitos números de valores y su probabilidad va en descenso a medida que sea mayor el valor de la variable. 
+
+
+
+Para este caso, los modelos que tienen especial interés y que podemos formalizar a través de modelización lineal son el modelo de *Poisson* y el modelo de *Binomial negativa*. Estos modelos permiten analizar el comportamiento de variables de conteo frente a los valores del conjunto de variables explicativas.
+
+
+
+
+### Modelo de Regresión Poisson
+
+
+Se trata del modelo más simple y es el modelo de referencia para variables respuesta de tipo conteo. Este modelo asume que la variable respuesta Y sigue una distribución de Poisson, por lo que en el caso de la modelización de ventas, se define como el número de ventas que ocurren en un intervalo de tiempo, cuya ocurrencia es aleatoria. Esta distribución se caracteriza por que la media y varianza coinciden: 
+\[
+E(Y)=Var(Y) =\mu 
+\]
+
+Se tiene que la distribución de probabilidad de Poisson, y en nuestro caso, la probabilidad de observar $y$ ventas es: \[P(Y=y)= \dfrac{\mu^y e^{-\mu}}{y!}, \quad y=0,1,\dots;\mu>0\]
+
+Y por tanto, la forma canónica o componente aleatoria para esta distribución es la siguiente:
+
+\[
+f(y;\mu) = e^{-\mu}\cdot \frac{\mu^y}{y!} = \frac{1}{y!}e^{ylog(\mu)-\mu}, \quad y \in \{0,1,\dots\}
+\]
+
+Es decir, el modelo de Posión se obtiene tomando como función enlace el parámetro canónico.
+
+donde:
+
+- $\theta= log(\mu)$ es el parámetro canónico
+- $k(\theta)= \mu=e^\theta$ es la función cumulante
+- $\phi=1$ el parámetro de dispersión
+- $a(y,\phi)= 1/y!$ la constante normalizadora
+
+En este caso se tiene que: \(g(\mu_i)=X^t_i\beta\) y una elección usual de la función link *g* el parámetro canónico, \(g(x)=log(x)\), lo que equivale a:
+
+\[\mu_i=exp(\beta_o)\cdot\exp(x_{i1}\beta_1)\dots exp(\beta_px_{ip})= exp(\beta_o+\beta_1x_{i1}+\dots + \beta_px_{ip}) \quad \text{ó} \quad log(\mu_i) = \eta_i = X_i\beta\],
+
+así si $x_i$ se incrementa en una unidad, entonces $\mu_i$ se multiplica por $exp(\beta_i)$. Por tanto, si $\beta_i>0$, $\mu_i$ crece cuando $x_i$ aumenta y si $\beta_i<0$, $\mu_i$ decrece cuando $x_i$ aumenta.
+
+
+Este modelo se ha desarrollado suponiendo que la media y la varianza de los datos coinciden (equidispersión). Sin embargo, suele ocurrir lo que se conoce como sobredispersión, es decir, que la varianza es mayor que la media. Lo habitual es que esta situación se de debido a la existencia de heterogeneidad entre las observaciones. Cuando esto ocurra, recurriremos al modelo binomial negativo.
+
+### Modelo de Regresión de Binomial Negativa
+
+
+Este modelo es empleado para variables de tipo conteo cuándo existe sobredispersión, es decir, la media condicional es menor que la varianza condicional (no coinciden). Existen diferentes modelos binomiales negativos en función de la variable que se trate de modelar, pero en este trabajo nos centraremos en el caso de datos de tipo conteo.
+
+La distribución binomial negativa estudia la probabilidad de observar un número determinado de fracasos *y* (no se producen ventas) , antes del r-ésimo éxito (se venden r unidades) en una serie de experimentos Bernoulli independientes, siendo r un número positivo. Se tiene que esta distribución pertenece a la familia exponencial si el parámetro de dispersión $\phi$ es una constante.
+
+
+Se dice que la variable aleatoria de conteo (número de ventas) $Y_i$, con $i=1,\dots,n$ sigue una distribución Binomial Negativa de parámetros *r* y *p*, y se representa como \(Y_i \sim BN(r,p)\) si su función de probabilidad viene dada por:
+\[
+P[Y_i=y_i] =  {y_i+r-1 \choose   r-1} p^r(1-p)^{y_i}
+\]
+donde 
+
+- $0<p<1$
+- $r>0$
+- $y_i = 0,1,2,\dots$
+
+
+Y en este caso, la forma canónica o componente aleatoria para esta distribución es la siguiente:
+
+\[
+f(y;\mu) = exp \Bigg\{y \cdot ln(1-p) + r ln(p) + ln{y_i+r-1 \choose   r-1} \Bigg\}
+\]
+
+donde 
+
+- $0<p<1$
+- $r=0,1,2,\dots$
+- $y_i = 0,1,2,\dots$
+- $\theta= log(1-p)$ es el parámetro canónico
+- $k(\theta)= -rln(p)=-r ln(1-e^\theta)$ es la función cumulante
+
+
+En este caso la función link es de tipo logarítmico y viene dada por:
+\[
+g(\mu_i)= \theta(\mu_i) = ln \Big( \dfrac{\alpha \mu_i}{1+ \alpha\mu_i}   \Big) = X_i^t\beta = \eta_i 
+\]
+
 
 ## Análisis de series temporales
 
@@ -171,7 +365,9 @@ Fases de la metodología Box-Jenkis:
 
 4.  Predicción: una vez identificado y validado el mejor modelo, se realizan las predicciones con éste.
 
-## Modelo de regresión lineal
+
+
+
 
 
 

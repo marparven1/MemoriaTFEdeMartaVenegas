@@ -1,5 +1,8 @@
 ---
 documentclass: book
+header-includes: #allows you to add in your own Latex packages
+- \usepackage{float} #use the 'float' package
+- \floatplacement{figure}{H} #make every figure with caption = h
 principal: true
 forprint: true  # true: imprime a dos caras, false: libro digital
 fontsize: 12pt # 10pt,11pt
@@ -107,14 +110,7 @@ knitr::write_bib(c("knitr","rmarkdown","dplyr","ggplot2","kableExtra"),
 
 
 
-\clearpage
-\section*{Introduccion}
-\addcontentsline{toc}{section}{Introducción}
 
-
-
-```{r child = 'introduccion.Rmd'}
-```
 
 
 \cleardoublepage   
@@ -148,6 +144,14 @@ knitr::write_bib(c("knitr","rmarkdown","dplyr","ggplot2","kableExtra"),
 
 
 
+\clearpage
+\section*{Introduccion}
+\addcontentsline{toc}{chapter}{Introducción}
+
+
+
+```{r child = 'introduccion.Rmd'}
+```
 
 
 
@@ -169,9 +173,32 @@ knitr::write_bib(c("knitr","rmarkdown","dplyr","ggplot2","kableExtra"),
 ```{r child = 'capitulo04.Rmd'}
 ```
 
+\FloatBarrier
+
+```{r child = 'capitulo05.Rmd'}
+```
+
+
+
+
+\FloatBarrier
+
+
+
+
+
+\clearpage
+\section*{Conclusiones}
+\addcontentsline{toc}{chapter}{Conclusiones}
+
+
+
+```{r child = 'conclusiones.Rmd'}
+```
+
 
 <!-- 
-Descomentarlo para incluir el capítulo 5 el cual contiene utilidades de ejemplo
+Descomentarlo para incluir el capítulo ejemplos el cual contiene utilidades de ejemplo
 para copiar y pegar.
 Atención: necesitará la instalación de algunos paquetes R 
 que puede no tener instalados. Son:
@@ -181,7 +208,7 @@ install.packages(c("ggplot2","kableExtra","dplyr"))
 
 <!-- \FloatBarrier -->
 
-<!-- ```{r child = 'capitulo05.Rmd'} -->
+<!-- ```{r child = 'ejemplos.Rmd'} -->
 <!-- ``` -->
 
 
@@ -227,16 +254,17 @@ install.packages(c("ggplot2","kableExtra","dplyr"))
 <!-- Si "metodobib: false", modificar el "nocite:" del inicio de este fichero  -->
 
 <!-- \nocite{*} -->
-\nocite{
-Luque2017,Luque2019,RStudio,R-base,
+\nocite{Luque2017,Luque2019,RStudio,R-base,
 R-knitr,<!--R-rmarkdown,-->R-dplyr,R-ggplot2,
 MestaTFG,CampoTFG,
 DefSectorRetail,
+MLG_AlcaideTFG,MLG_UC3M,
 ST_Apuntes, ST_Art,
 PEREZ-MARTINEZ2021_CV,
 IntroFeatureSelection, EDA,
-SVM_CampoTFG, SVM_SVR,
+SVM_CampoTFG, SVM_SVR,ECII_AP,
 KNN_R_TFG
+<!--Arb_TFG-->
 }
 <!--SVM_SVR-->
 

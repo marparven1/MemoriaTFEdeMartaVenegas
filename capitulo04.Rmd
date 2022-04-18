@@ -140,7 +140,7 @@ En la etapa de modelado aplicaremos algoritmos de aprendizaje automático.
 Con el objetivo de eliminar el sobreajuste de los datos
 
   
- Para llevar a cabo esta fase y con el objetivo de obtener mayor robustez en los modelos, aplicaremos la técnica conocida como *hold out* 
+ Para llevar a cabo esta fase y con el objetivo de obtener mayor robustez en los modelos, aplicaremos la técnica conocida como *hold out*.
 
 El *hold out* es una técnica en la que dividimos los datos en dos partes mutuamente excluyentes (no superpuestas), utilizando una de ellas para el entrenamiento de los modelos y la otra para el testeo.
 
@@ -164,6 +164,8 @@ A continuación vamos a exponer tres algoritmos de aprendizaje automático que p
 #### Máquinas de vector soporte (Support Vector Machines SVMs)
 
 Las máquinas de vector soporte son un conjunto de algoritmos de aprendizaje estadístico supervisado pertenecientes a la familia de los clasificadores lineales.
+Este algoritmo, más conocido como SVM fué desarrollado en los laboratorios AT&T Bell por Vapnik y otros autores a partir del año 1992.
+
 
 Suponiendo que tenemos ejemplos de sólo dos categorías y sin pérdida de generalidad, una SVM construye un hiperplano en un espacio de dimensionalidad muy alta. Este hiperplano separa de forma óptima los puntos de una clase de la otra. La característica fundamental de estos algoritmos es el concepto de "separación óptima", ya que se busca el hiperplano que tenga la máxima distancia con los puntos que estén más cerca de él mismo al tiempo que clasifica correctamente tantos puntos de entrenamiento como sea posible. Los algoritmos SVM representan el hiperplano óptimo con vectores de soporte.
 
@@ -184,6 +186,23 @@ Se define la **función de pérdida lineal** $\epsilon-$ insensible, y se repres
 0 & \text{ si} |y-f(x)| \leq \epsilon, \\ 
 |y-f(x)| - \epsilon & \text{ en caso contrario }
 \end{cases}\]
+
+Por tanto, el problema fué planteado por Vapnik como el siguiente probema de optimización:
+
+\[
+Min_{w,b} \frac{1}{2} ||w||^2 + C \sum_{i=1}^n (\xi_i + \xi_i^*)
+\]
+
+\[s.a = 
+\begin{cases}
+y_i - w \cdot x_i -b & \leq \epsilon, +\xi_i  \\ 
+w \cdot x_i + b - y_i & \leq \epsilon + \xi_i^*
+\\
+\xi_i , \xi_i^* & \geq 0 \forall i
+\end{cases}\]
+
+Cuando el error es menor que $\epsilon$, las variables de holgura valen 0. Para resolverlo, podemos recurrir al problema dural y al uso de funciones base para trabajar en espacios de mayor dimensión.
+
 
 ```{r SVR_lu, echo=FALSE,  fig.align='center', fig.pos='H',fig.cap='Vectores de Soporte de Regresión.'}
 knitr::include_graphics("graficos/svr.jpg")
@@ -240,7 +259,34 @@ En la figura  [4.3](#knn_esq) podemos ver un esquema conceptual del algoritmo, d
 Es necesario seleccionar el valor que se le va a dar al parámetro k, es decir, el número de vecinos con los que se realizará la media para obtener el valor de salida de la nueva instancia.
 Si este valor es muy grande, la idea de vecinos que están lejos podrían influir con la nueva instancia sin tener relación, pero si este valor es demasiado pequeño, el algoritmo será muy sensible a valores extremos. 
 
-#### Árboles de regresión (XGBoost Model)
+#### Árboles de decisión (XGBoost Model)
+
+
+Los árboles de regresión conducen a dividir o segmentar el espacio predictor en regiones más simples de tal forma que la predicción de una instancia se hará a través de la media (o moda) de la región a la que pertenece.
+
+En el caso de los árboles de decisión, el conjunto de reglas empleadas para la segmencación del espacio de predicción se puede resumir en un árbol.
+
+El análisis de árboles de clasificación y regresión, generalmente consiste en tres fases:
+
+* **Construcción del árbol máximo**: este árbol se cosntruye empleando un procedimiento de partición binaria, comenzando en la raíz del árbol. Este primer árbol describe el conjunto de entrenamiento y contiene gran cantidad de niveles (sobreajuste) y nodos, pudiendo ser demasiado complejo. Cada grupo es categorizado por la media (regresión) o la distribución (clasificación) de la variable respuesta, el tamaño del nodo y los valores de las variables explicativas que lo definen.
+
+
+
+
+![Árbol de decisión. Partes](graficos/ArbDecision.png "Árbol de decisión")
+
+En la figura anterior, podemos ver la representación de un árbol de decisión desde el nodo raíz, las ramas, que son los segmentos del árbol que conectan los nodos, los nodos internos, puntos a lo largo del árbol donde se va dividiendo el espacio predictor y los hojas (nodos terminales)
+
+
+* **Poda del árbol**: El árbol máximo está generalmente sobreajustado y por tanto, se procede a la poda de éste cortando ramas hasta encontrar el tamaño "adecuado" del árbol. Una forma de resolver el problema es generar una serie de árboles anidados (árboles de secuencia anidada) de tamaños decrecientes, seleccionando para cada tamaño el mejor de todos. Posteriormente, se comparan para determinar el óptimo, mediante el criterio de coste-complejidad. Para cada árbol *T*, se defina la función de costo-complejidad, y se representa como $R_{\alpha}(T)$, de la siguiente forma: $R_{\alpha}(T) = R(T) + \alpha |~T|$, donde:
+
+- R(T) indica el promedio de la suma de cuadrados entre los nodos
+- |T| indica la complejidad del árbol, que se define como el número total de nodos terminales
+- $\alpha$ es el parámetro de complejidad, valores altos de este parámetro indican árboles pequeños
+
+* **Selección del árbol óptimo mediante validación cruzada**: El objetivo es seleccionar uno de los árboles de todos los árboles podados como el árbol óptimo, que será el árbol solución. El método de selección consistirá en asociar una medida de error a cada árbol y elegir el que tenga asociado un menor error. En general, la estimación del error se hace por validación cruzada.
+
+Este tipo de técnicas es aplicable tanto a problemas de regresión como de clasificación, sin embargo, nosotros nos centraremos en las de regresión, especialmente en el modelo *Extreme Gradient Boosting Algorithm*, tambien conocido como XGBoost.
 
 #### Evaluación y presentación de resultados (+análisis del error)
 

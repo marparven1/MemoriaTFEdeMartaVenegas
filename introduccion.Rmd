@@ -3,15 +3,19 @@ output: pdf_document
 ---
 
 
-Esta es la introducción de mi trabajo 
+Esta es la introducción de mi trabajo y se irá modificando conforme avance.
+
+FALTA UNA BREVE INTRODUCCIÓN Y PUESTA EN SITUACIÓN ** 
 
 
 
 
-- Definición
+
+<!-- Definición de sector retail -->
 
 
-El concepto de retail es una orientación de la dirección del negocio que sostiene que las tareas clave de un minorista: 
+
+El concepto de retail es una orientación de la dirección del negocio que sostiene que las tareas clave de un minorista:
 
 - Determinar las necesidades y deseos de su mercado objetivo
 - Dirigir la empresa hacia la satisfacción de esas necesidades y deseos de forma más eficiente que sus competidores (Vigaray, 2005).
@@ -21,21 +25,20 @@ El comercio detallista o minorista es el último eslabón de la distribución co
 Este sector aglutina a comerciantes y empresas encargadas de la comercialización, ofreciendo de una gran variedad de productos y servicios a los consumidores. (Una tienda, un supermercado, una librería, son claros ejemplos de lo que es el sector retail.)
 
 
-- Objetivos
+<!-- Objetivos -->
 
 Objetivo general
 
--  Los objetivos principales del trabajo consistirán en analizar y entender como varía la demanda de productos en función del tiempo así como la aplicación de diversos algoritmos de aprendizaje automático para modelarla
+Los objetivos principales del trabajo consistirán en analizar y entender como varía la demanda de productos en función del tiempo así como la aplicación de diversos algoritmos de aprendizaje automático para modelarla.
+
+Para ello, se expondrán de manera teórica una serie de técnicas para la modelización de la variable número de ventas para posteriormente aplicarlas a un caso real de ventas de productos lácteos, con el propósito final de poder predecir las ventas de cara al futuro.
+
+Dentro de las técnicas estudiadas, podemos distinguir dos tipos: las técnicas puramente estadísticas y técnicas de aprendizaje automático (machine learning).
+
+
+Para ello, se ha estructurado el trabajo en diferentes secciones. En primer lugar, una primera sección introductoria sobre el proceso de la ciencia de datos en el sector retail, a continuación, una segunda sección para la explicación de lo que se conoce como análisis de cesta de la compra. Las secciones tres y cuatro explican las técnicas clásicas de modelado estadístico y el proceso de ciencia de datos completo con las correspondoentes técnicas de aprendizaje automático, respectivamente. Una quinta sección donde se aplicarán todas las técnicas estudiadas a un caso práctico con datos reales mediante Rstudio, un entorno de desarrollo integrado para el lenguaje de programación R. Por último, en la sección sexta se exponen las conclusiones extraidas y se analizan los objetivos iniciales.
 
 
 
 
-
-Objetivos específicos:
-
-- Estimación de la demanda
-- Asociación entre los dos productos
-
-
-
-
+Frecuentemente la investigación estadísticas se ve enfrentada a manipular gran- des cantidades de datos complejos que incluyen un gran número de variables, de los cuales es necesario obtener información, encontrar patrones y definir tendencias.

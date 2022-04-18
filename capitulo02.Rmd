@@ -74,7 +74,7 @@ knitr::opts_chunk$set(fig.path = 'figurasR/',
 
 # Análisis de cesta de la compra (Market basket análisis)
 
-Este capítulo está por ver
+Este capítulo está por ver, ya que es necesario confirmar que vayamos a disponer de varios tickets.
 
 ## Introducción
 ## Definición
