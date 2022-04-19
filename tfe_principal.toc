@@ -6,7 +6,8 @@
 \contentsline {section}{\IeC {\'I}ndice de Tablas}{\es@scroman {ix}}{chapter*.6}% 
 \contentsline {chapter}{Introducci\IeC {\'o}n}{1}{section*.7}% 
 \contentsline {chapter}{\numberline {1}La ciencia de datos en el sector retail}{3}{chapter.1}% 
-\contentsline {section}{\numberline {1.1}La Miner\IeC {\'\i }a de Datos y el Sector Retail}{4}{section.1.1}% 
+\contentsline {section}{\numberline {1.1}Modelizaci\IeC {\'o}n estad\IeC {\'\i }stica de ventas en el sector retail}{3}{section.1.1}% 
+\contentsline {section}{\numberline {1.2}La Miner\IeC {\'\i }a de Datos y el Sector Retail}{4}{section.1.2}% 
 \contentsline {chapter}{\numberline {2}An\IeC {\'a}lisis de cesta de la compra (Market basket an\IeC {\'a}lisis)}{7}{chapter.2}% 
 \contentsline {section}{\numberline {2.1}Introducci\IeC {\'o}n}{7}{section.2.1}% 
 \contentsline {section}{\numberline {2.2}Definici\IeC {\'o}n}{7}{section.2.2}% 
