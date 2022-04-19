@@ -1,0 +1,1122 @@
+\documentclass[12pt,a4paper,]{book}
+\def\ifdoblecara{} %% set to true
+\def\ifprincipal{} %% set to true
+\let\ifprincipal\undefined %% set to false
+\def\ifcitapandoc{} %% set to true
+\let\ifcitapandoc\undefined %% set to false
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+%\usepackage{fixltx2e} % provides \textsubscript %PLLC
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin = 2.5cm]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdfauthor={Nombre Completo Autor},
+              pdfborder={0 0 0},
+              breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{natbib}
+\bibliographystyle{plainnat}
+\usepackage[usenames,dvipsnames]{xcolor}  %new PLLC
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{5}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+
+  \title{}
+    \author{Nombre Completo Autor}
+      \date{27/10/2017}
+
+
+%%%%%%% inicio: latex_preambulo.tex PLLC
+
+%% UTILIZA CODIFICACIÓN UTF-8
+%% MODIFICARLO CONVENIENTEMENTE PARA USARLO CON OTRAS CODIFICACIONES
+
+
+%\usepackage[spanish,es-nodecimaldot,es-noshorthands]{babel}
+\usepackage[spanish,es-nodecimaldot,es-noshorthands,es-tabla]{babel}
+% Ver: es-tabla (en: https://osl.ugr.es/CTAN/macros/latex/contrib/babel-contrib/spanish/spanish.pdf)
+% es-tabla (en: https://tex.stackexchange.com/questions/80443/change-the-word-table-in-table-captions)
+\usepackage{float}
+\usepackage{placeins}
+\usepackage{fancyhdr}
+% Solucion: ! LaTeX Error: Command \counterwithout already defined.
+% https://tex.stackexchange.com/questions/425600/latex-error-command-counterwithout-already-defined
+\let\counterwithout\relax
+\let\counterwithin\relax
+\usepackage{chngcntr}
+%\usepackage{microtype}  %antes en template PLLC
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc} % Usa codificación 8-bit que tiene 256 glyphs
+
+%\usepackage[dvipsnames]{xcolor}
+%\usepackage[usenames,dvipsnames]{xcolor}  %new
+\usepackage{pdfpages}
+%\usepackage{natbib}
+
+
+
+
+% Para portada: latex_paginatitulo_mod_ST02.tex (inicio)
+\usepackage{tikz}
+\usepackage{epigraph}
+\input{portadas/latex_paginatitulo_mod_ST02_add.sty}
+% Para portada: latex_paginatitulo_mod_ST02.tex (fin)
+
+% Para portada: latex_paginatitulo_mod_OV01.tex (inicio)
+\usepackage{cpimod}
+% Para portada: latex_paginatitulo_mod_OV01.tex (fin)
+
+% Para portada: latex_paginatitulo_mod_OV03.tex (inicio)
+\usepackage{KTHEEtitlepage}
+% Para portada: latex_paginatitulo_mod_OV03.tex (fin)
+
+\renewcommand{\contentsname}{Índice}
+\renewcommand{\listfigurename}{Índice de figuras}
+\renewcommand{\listtablename}{Índice de tablas}
+\newcommand{\bcols}{}
+\newcommand{\ecols}{}
+\newcommand{\bcol}[1]{\begin{minipage}{#1\linewidth}}
+\newcommand{\ecol}{\end{minipage}}
+\newcommand{\balertblock}[1]{\begin{alertblock}{#1}}
+\newcommand{\ealertblock}{\end{alertblock}}
+\newcommand{\bitemize}{\begin{itemize}}
+\newcommand{\eitemize}{\end{itemize}}
+\newcommand{\benumerate}{\begin{enumerate}}
+\newcommand{\eenumerate}{\end{enumerate}}
+\newcommand{\saltopagina}{\newpage}
+\newcommand{\bcenter}{\begin{center}}
+\newcommand{\ecenter}{\end{center}}
+\newcommand{\beproof}{\begin{proof}} %new
+\newcommand{\eeproof}{\end{proof}} %new
+%De: https://texblog.org/2007/11/07/headerfooter-in-latex-with-fancyhdr/
+% \fancyhead
+% E: Even page
+% O: Odd page
+% L: Left field
+% C: Center field
+% R: Right field
+% H: Header
+% F: Footer
+%\fancyhead[CO,CE]{Resultados}
+
+%OPCION 1
+% \fancyhead[LE,RO]{\slshape \rightmark}
+% \fancyhead[LO,RE]{\slshape \leftmark}
+% \fancyfoot[C]{\thepage}
+% \renewcommand{\headrulewidth}{0.4pt}
+% \renewcommand{\footrulewidth}{0pt}
+
+%OPCION 2
+% \fancyhead[LE,RO]{\slshape \rightmark}
+% \fancyfoot[LO,RE]{\slshape \leftmark}
+% \fancyfoot[LE,RO]{\thepage}
+% \renewcommand{\headrulewidth}{0.4pt}
+% \renewcommand{\footrulewidth}{0.4pt}
+%%%%%%%%%%
+\usepackage{calc,amsfonts}
+% Elimina la cabecera de páginas impares vacías al finalizar los capítulos
+\usepackage{emptypage}
+\makeatletter
+
+%\definecolor{ocre}{RGB}{25,25,243} % Define el color azul (naranja) usado para resaltar algunas salidas
+\definecolor{ocre}{RGB}{0,0,0} % Define el color a negro (aparece en los teoremas
+
+%\usepackage{calc} 
+
+\usepackage{lipsum}
+
+%\usepackage{tikz} % Requerido para dibujar formas personalizadas
+
+%\usepackage{amsmath,amsthm,amssymb,amsfonts}
+\usepackage{amsthm}
+
+
+% Boxed/framed environments
+\newtheoremstyle{ocrenumbox}% % Theorem style name
+{0pt}% Space above
+{0pt}% Space below
+{\normalfont}% % Body font
+{}% Indent amount
+{\small\bf\sffamily\color{ocre}}% % Theorem head font
+{\;}% Punctuation after theorem head
+{0.25em}% Space after theorem head
+{\small\sffamily\color{ocre}\thmname{#1}\nobreakspace\thmnumber{\@ifnotempty{#1}{}\@upn{#2}}% Theorem text (e.g. Theorem 2.1)
+\thmnote{\nobreakspace\the\thm@notefont\sffamily\bfseries\color{black}---\nobreakspace#3.}} % Optional theorem note
+\renewcommand{\qedsymbol}{$\blacksquare$}% Optional qed square
+
+\newtheoremstyle{blacknumex}% Theorem style name
+{5pt}% Space above
+{5pt}% Space below
+{\normalfont}% Body font
+{} % Indent amount
+{\small\bf\sffamily}% Theorem head font
+{\;}% Punctuation after theorem head
+{0.25em}% Space after theorem head
+{\small\sffamily{\tiny\ensuremath{\blacksquare}}\nobreakspace\thmname{#1}\nobreakspace\thmnumber{\@ifnotempty{#1}{}\@upn{#2}}% Theorem text (e.g. Theorem 2.1)
+\thmnote{\nobreakspace\the\thm@notefont\sffamily\bfseries---\nobreakspace#3.}}% Optional theorem note
+
+\newtheoremstyle{blacknumbox} % Theorem style name
+{0pt}% Space above
+{0pt}% Space below
+{\normalfont}% Body font
+{}% Indent amount
+{\small\bf\sffamily}% Theorem head font
+{\;}% Punctuation after theorem head
+{0.25em}% Space after theorem head
+{\small\sffamily\thmname{#1}\nobreakspace\thmnumber{\@ifnotempty{#1}{}\@upn{#2}}% Theorem text (e.g. Theorem 2.1)
+\thmnote{\nobreakspace\the\thm@notefont\sffamily\bfseries---\nobreakspace#3.}}% Optional theorem note
+
+% Non-boxed/non-framed environments
+\newtheoremstyle{ocrenum}% % Theorem style name
+{5pt}% Space above
+{5pt}% Space below
+{\normalfont}% % Body font
+{}% Indent amount
+{\small\bf\sffamily\color{ocre}}% % Theorem head font
+{\;}% Punctuation after theorem head
+{0.25em}% Space after theorem head
+{\small\sffamily\color{ocre}\thmname{#1}\nobreakspace\thmnumber{\@ifnotempty{#1}{}\@upn{#2}}% Theorem text (e.g. Theorem 2.1)
+\thmnote{\nobreakspace\the\thm@notefont\sffamily\bfseries\color{black}---\nobreakspace#3.}} % Optional theorem note
+\renewcommand{\qedsymbol}{$\blacksquare$}% Optional qed square
+\makeatother
+
+
+
+% Define el estilo texto theorem para cada tipo definido anteriormente
+\newcounter{dummy} 
+\numberwithin{dummy}{section}
+\theoremstyle{ocrenumbox}
+\newtheorem{theoremeT}[dummy]{Teorema}  % (Pedro: Theorem)
+\newtheorem{problem}{Problema}[chapter]  % (Pedro: Problem)
+\newtheorem{exerciseT}{Ejercicio}[chapter] % (Pedro: Exercise)
+\theoremstyle{blacknumex}
+\newtheorem{exampleT}{Ejemplo}[chapter] % (Pedro: Example)
+\theoremstyle{blacknumbox}
+\newtheorem{vocabulary}{Vocabulario}[chapter]  % (Pedro: Vocabulary)
+\newtheorem{definitionT}{Definición}[section]  % (Pedro: Definition)
+\newtheorem{corollaryT}[dummy]{Corolario}  % (Pedro: Corollary)
+\theoremstyle{ocrenum}
+\newtheorem{proposition}[dummy]{Proposición} % (Pedro: Proposition)
+
+
+\usepackage[framemethod=default]{mdframed}
+
+
+
+\newcommand{\intoo}[2]{\mathopen{]}#1\,;#2\mathclose{[}}
+\newcommand{\ud}{\mathop{\mathrm{{}d}}\mathopen{}}
+\newcommand{\intff}[2]{\mathopen{[}#1\,;#2\mathclose{]}}
+\newtheorem{notation}{Notation}[chapter]
+
+
+\mdfdefinestyle{exampledefault}{%
+rightline=true,innerleftmargin=10,innerrightmargin=10,
+frametitlerule=true,frametitlerulecolor=green,
+frametitlebackgroundcolor=yellow,
+frametitlerulewidth=2pt}
+
+
+% Theorem box
+\newmdenv[skipabove=7pt,
+skipbelow=7pt,
+backgroundcolor=black!5,
+linecolor=ocre,
+innerleftmargin=5pt,
+innerrightmargin=5pt,
+innertopmargin=10pt,%5pt
+leftmargin=0cm,
+rightmargin=0cm,
+innerbottommargin=5pt]{tBox}
+
+% Exercise box	  
+\newmdenv[skipabove=7pt,
+skipbelow=7pt,
+rightline=false,
+leftline=true,
+topline=false,
+bottomline=false,
+backgroundcolor=ocre!10,
+linecolor=ocre,
+innerleftmargin=5pt,
+innerrightmargin=5pt,
+innertopmargin=10pt,%5pt
+innerbottommargin=5pt,
+leftmargin=0cm,
+rightmargin=0cm,
+linewidth=4pt]{eBox}	
+
+% Definition box
+\newmdenv[skipabove=7pt,
+skipbelow=7pt,
+rightline=false,
+leftline=true,
+topline=false,
+bottomline=false,
+linecolor=ocre,
+innerleftmargin=5pt,
+innerrightmargin=5pt,
+innertopmargin=10pt,%0pt
+leftmargin=0cm,
+rightmargin=0cm,
+linewidth=4pt,
+innerbottommargin=0pt]{dBox}	
+
+% Corollary box
+\newmdenv[skipabove=7pt,
+skipbelow=7pt,
+rightline=false,
+leftline=true,
+topline=false,
+bottomline=false,
+linecolor=gray,
+backgroundcolor=black!5,
+innerleftmargin=5pt,
+innerrightmargin=5pt,
+innertopmargin=10pt,%5pt
+leftmargin=0cm,
+rightmargin=0cm,
+linewidth=4pt,
+innerbottommargin=5pt]{cBox}
+
+% Crea un entorno para cada tipo de theorem y le asigna un estilo 
+% con ayuda de las cajas coloreadas anteriores
+\newenvironment{theorem}{\begin{tBox}\begin{theoremeT}}{\end{theoremeT}\end{tBox}}
+\newenvironment{exercise}{\begin{eBox}\begin{exerciseT}}{\hfill{\color{ocre}\tiny\ensuremath{\blacksquare}}\end{exerciseT}\end{eBox}}				  
+\newenvironment{definition}{\begin{dBox}\begin{definitionT}}{\end{definitionT}\end{dBox}}	
+\newenvironment{example}{\begin{exampleT}}{\hfill{\tiny\ensuremath{\blacksquare}}\end{exampleT}}		
+\newenvironment{corollary}{\begin{cBox}\begin{corollaryT}}{\end{corollaryT}\end{cBox}}	
+
+%	ENVIRONMENT remark
+\newenvironment{remark}{\par\vspace{10pt}\small 
+% Espacio blanco vertical sobre la nota y tamaño de fuente menor
+\begin{list}{}{
+\leftmargin=35pt % Indentación sobre la izquierda
+\rightmargin=25pt}\item\ignorespaces % Indentación sobre la derecha
+\makebox[-2.5pt]{\begin{tikzpicture}[overlay]
+\node[draw=ocre!60,line width=1pt,circle,fill=ocre!25,font=\sffamily\bfseries,inner sep=2pt,outer sep=0pt] at (-15pt,0pt){\textcolor{ocre}{N}}; \end{tikzpicture}} % R naranja en un círculo (Pedro)
+\advance\baselineskip -1pt}{\end{list}\vskip5pt} 
+% Espaciado de línea más estrecho y espacio en blanco después del comentario
+
+
+\newenvironment{solutionExe}{\par\vspace{10pt}\small 
+\begin{list}{}{
+\leftmargin=35pt 
+\rightmargin=25pt}\item\ignorespaces 
+\makebox[-2.5pt]{\begin{tikzpicture}[overlay]
+\node[draw=ocre!60,line width=1pt,circle,fill=ocre!25,font=\sffamily\bfseries,inner sep=2pt,outer sep=0pt] at (-15pt,0pt){\textcolor{ocre}{S}}; \end{tikzpicture}} 
+\advance\baselineskip -1pt}{\end{list}\vskip5pt} 
+
+\newenvironment{solutionExa}{\par\vspace{10pt}\small 
+\begin{list}{}{
+\leftmargin=35pt 
+\rightmargin=25pt}\item\ignorespaces 
+\makebox[-2.5pt]{\begin{tikzpicture}[overlay]
+\node[draw=ocre!60,line width=1pt,circle,fill=ocre!55,font=\sffamily\bfseries,inner sep=2pt,outer sep=0pt] at (-15pt,0pt){\textcolor{ocre}{S}}; \end{tikzpicture}} 
+\advance\baselineskip -1pt}{\end{list}\vskip5pt} 
+
+\usepackage{tcolorbox}
+
+\usetikzlibrary{trees}
+
+\theoremstyle{ocrenum}
+\newtheorem{solutionT}[dummy]{Solución}  % (Pedro: Corollary)
+\newenvironment{solution}{\begin{cBox}\begin{solutionT}}{\end{solutionT}\end{cBox}}	
+
+
+\newcommand{\tcolorboxsolucion}[2]{%
+\begin{tcolorbox}[colback=green!5!white,colframe=green!75!black,title=#1] 
+ #2
+ %\tcblower  % pone una línea discontinua
+\end{tcolorbox}
+}% final definición comando
+
+\newtcbox{\mybox}[1][green]{on line,
+arc=0pt,outer arc=0pt,colback=#1!10!white,colframe=#1!50!black, boxsep=0pt,left=1pt,right=1pt,top=2pt,bottom=2pt, boxrule=0pt,bottomrule=1pt,toprule=1pt}
+
+
+
+\mdfdefinestyle{exampledefault}{%
+rightline=true,innerleftmargin=10,innerrightmargin=10,
+frametitlerule=true,frametitlerulecolor=green,
+frametitlebackgroundcolor=yellow,
+frametitlerulewidth=2pt}
+
+
+
+
+
+\newcommand{\betheorem}{\begin{theorem}}
+\newcommand{\eetheorem}{\end{theorem}}
+\newcommand{\bedefinition}{\begin{definition}}
+\newcommand{\eedefinition}{\end{definition}}
+
+\newcommand{\beremark}{\begin{remark}}
+\newcommand{\eeremark}{\end{remark}}
+\newcommand{\beexercise}{\begin{exercise}}
+\newcommand{\eeexercise}{\end{exercise}}
+\newcommand{\beexample}{\begin{example}}
+\newcommand{\eeexample}{\end{example}}
+\newcommand{\becorollary}{\begin{corollary}}
+\newcommand{\eecorollary}{\end{corollary}}
+
+
+\newcommand{\besolutionExe}{\begin{solutionExe}}
+\newcommand{\eesolutionExe}{\end{solutionExe}}
+\newcommand{\besolutionExa}{\begin{solutionExa}}
+\newcommand{\eesolutionExa}{\end{solutionExa}}
+
+
+%%%%%%%%
+
+
+% Caja Salida Markdown
+\newmdenv[skipabove=7pt,
+skipbelow=7pt,
+rightline=false,
+leftline=true,
+topline=false,
+bottomline=false,
+backgroundcolor=GreenYellow!10,
+linecolor=GreenYellow!80,
+innerleftmargin=5pt,
+innerrightmargin=5pt,
+innertopmargin=10pt,%5pt
+innerbottommargin=5pt,
+leftmargin=0cm,
+rightmargin=0cm,
+linewidth=4pt]{mBox}	
+
+%% RMarkdown
+\newenvironment{markdownsal}{\begin{mBox}}{\end{mBox}}	
+
+\newcommand{\bmarkdownsal}{\begin{markdownsal}}
+\newcommand{\emarkdownsal}{\end{markdownsal}}
+
+
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{subfig} %new
+%\usepackage{booktabs,dcolumn,rotating,thumbpdf,longtable}
+\usepackage{dcolumn,rotating}  %new
+\usepackage[graphicx]{realboxes} %new de: https://stackoverflow.com/questions/51633434/prevent-pagebreak-in-kableextra-landscape-table
+
+%define el interlineado vertical
+%\renewcommand{\baselinestretch}{1.5}
+
+%define etiqueta para las Tablas o Cuadros
+%\renewcommand\spanishtablename{Tabla}
+
+%%\bibliographystyle{plain} %new no necesario
+
+
+%%%%%%%%%%%% PARA USO CON biblatex
+% \DefineBibliographyStrings{english}{%
+%   backrefpage = {ver pag.\adddot},%
+%   backrefpages = {ver pags.\adddot}%
+% }
+
+% \DefineBibliographyStrings{spanish}{%
+%   backrefpage = {ver pag.\adddot},%
+%   backrefpages = {ver pags.\adddot}%
+% }
+% 
+% \DeclareFieldFormat{pagerefformat}{\mkbibparens{{\color{red}\mkbibemph{#1}}}}
+% \renewbibmacro*{pageref}{%
+%   \iflistundef{pageref}
+%     {}
+%     {\printtext[pagerefformat]{%
+%        \ifnumgreater{\value{pageref}}{1}
+%          {\bibstring{backrefpages}\ppspace}
+%          {\bibstring{backrefpage}\ppspace}%
+%        \printlist[pageref][-\value{listtotal}]{pageref}}}}
+% 
+%%% de kableExtra
+\usepackage{booktabs}
+\usepackage{longtable}
+%\usepackage{array}
+%\usepackage{multirow}
+%\usepackage{wrapfig}
+%\usepackage{float}
+%\usepackage{colortbl}
+%\usepackage{pdflscape}
+%\usepackage{tabu}
+%\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+%\usepackage{xcolor}
+
+%%%%%%% fin: latex_preambulo.tex PLLC
+
+
+\begin{document}
+
+
+\raggedbottom
+
+\ifdefined\ifprincipal
+\else
+\setlength{\parindent}{1em}
+\pagestyle{fancy}
+\setcounter{tocdepth}{4}
+\tableofcontents
+
+\fi
+
+\ifdefined\ifdoblecara
+\fancyhead{}{}
+\fancyhead[LE,RO]{\scriptsize\rightmark}
+\fancyfoot[LO,RE]{\scriptsize\slshape \leftmark}
+\fancyfoot[C]{}
+\fancyfoot[LE,RO]{\footnotesize\thepage}
+\else
+\fancyhead{}{}
+\fancyhead[RO]{\scriptsize\rightmark}
+\fancyfoot[LO]{\scriptsize\slshape \leftmark}
+\fancyfoot[C]{}
+\fancyfoot[RO]{\footnotesize\thepage}
+\fi
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\hypertarget{modelos-estaduxedsticos-cluxe1sicos}{%
+\chapter{Modelos estadísticos
+clásicos}\label{modelos-estaduxedsticos-cluxe1sicos}}
+
+A continuación se exponen los modelos estadísticos clásicos de cara a
+predecir la demanda de los productos. Esta varaible depende de varios
+factores, como el período del año, el precio del producto, el precio de
+los productos competidores o los gustos de cada consumidor, entre otros.
+Se trata de una variable cuantitativa discreta, ya que el número de
+productos que se venden será un valor entero no negativo
+\(y=0,1,\dots\).
+
+\hypertarget{modelo-de-regresiuxf3n-lineal-general}{%
+\section{Modelo de Regresión Lineal
+General}\label{modelo-de-regresiuxf3n-lineal-general}}
+
+El objetivo es encontrar un modelo estadístico que describa la situación
+real de ventas de productos a través de un Modelo Lineal General (MLG),
+donde una variable de interés (variable objetivo) pueda ser descrita por
+un conjunto de variables explicativas (variables independientes).
+
+Para ello, debemos estimar los parámetros que caracterizan al modelo, es
+decir, medir el efecto de cada variable explicativa sobre la variable
+objetivo, y con este fin, es necesario definir una serie de hipótesis
+del modelo de regresión lineal general:
+
+\begin{itemize}
+\item
+  Independencia lineal entre las variables explicativas: Esto significa
+  que cada variable explicativa contiene información adicional sobre la
+  variable objetivo, ya que si hubiera información repetida, habría
+  variables explicativas dependientes linealmente de otras.
+\item
+  Los MLG suponen que existe una función g, llamada función link, que
+  relaciona la media de la variable respuesta, \(\mu\) con el resto de
+  variables explicativas de la siguiente forma:
+  \[E[Y]= \mu = g^{-1}(\eta) = g^{-1}(X^t\beta)\]
+\end{itemize}
+
+Siendo:
+
+\begin{itemize}
+\item
+  Y la variable objetivo
+\item
+  E(Y) es el valor esperado de la variable Y
+\item
+  \(\eta = \beta_0 + \beta_1X_1+ \dots + \beta_pX_p= X^t\beta\) es el
+  predictor lineal, se trata de una combinación lineal de parámetros
+  desconocidos
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \(X_1,\dots,X_p\) son las variables explicativas
+  \item
+    \(\beta = (\beta_o,\beta_1,\dots,\beta_p)\) representan el efecto de
+    cada variable independiente sobre la variable objetivo
+  \item
+    g es la función link, monótona y diferenciable
+  \end{itemize}
+\end{itemize}
+
+\hypertarget{componentes-del-modelo-lineal-generalizado}{%
+\subsection{Componentes del Modelo Lineal
+Generalizado}\label{componentes-del-modelo-lineal-generalizado}}
+
+En este tipo de modelización estadística podemos diferenciar tres
+componentes: la componenete aleatoria, la sistemática y la función link
+o enlace. Será la combinación de estas tres componentes la que defina
+por completo un Modelo Lineal Generalizado.
+
+\hypertarget{componente-aleatoria}{%
+\subsubsection{Componente aleatoria}\label{componente-aleatoria}}
+
+Esta componente es la que identifica la variable respuesta y su
+distribución de probabilidad.
+
+Sea \(Y\) la variable aleatoria objetivo o variable respuesta objeto de
+estudio y sean las \emph{n} variables aleatorias independientes e
+idénticamente distribuidas \(Y_1,\dots,Y_n\) la muestra aleatoria
+procedente de Y. Siendo \emph{Y} la componente aleatoria cuya
+distribución pertenece a la familia exponencial de distribuciones.
+
+En los MLG se supone que la variable respuesta \(Y\) se distribuye de
+tal forma que su función de probabilidad, en el caso de estar
+modelizando una variable discreta o función de densidad para el caso
+continuo viene dada por la sigiente expresión general, conocida como
+forma canónica: \[
+f(y;\theta, \phi) = a(y,\phi)\cdot e^{\Bigg(\dfrac{y \theta - k(\theta)}{\phi}\Bigg)}
+\]
+
+Donde
+
+\begin{itemize}
+\tightlist
+\item
+  \(\theta\) es el parámetro canónico
+\item
+  \(k(\theta)\) es la función cumulante
+\item
+  \(\phi > 0\) se trata del parámetro de dispersión
+\item
+  \(a(y,\phi)\) es una constante normalizadora
+\item
+  El soporte no depende de \(\theta\) ni de \(\phi\)
+\end{itemize}
+
+Además, la media de \(y\) es función del parámetro canónico \(\theta\),
+por tanto, se tiene que:
+
+\[
+E(Y) = \mu = \dfrac{\partial}{\partial \theta} k(\theta), \\
+Var(Y)= \sigma^2 =\phi  \dfrac{\partial^2}{\partial \theta^2} k(\theta) =\phi \dfrac{\partial}{\partial \theta} \Bigg( \dfrac{\partial}{\partial \theta} k(\theta)  \Bigg) = \phi\dfrac{\partial }{\partial \theta}\mu > 0 .
+\] Es decir, \(\mu\) es una función estrictamente creciente de
+\(\theta\), por lo que estos dos parámetros mantienen una relación
+biyectiva.
+
+A \[
+V(\mu) = \frac{\partial \mu}{\partial \theta}
+\] se le denomina función varianza, por lo que se tiene que:
+
+\[
+V(Y) = \phi Var(\mu)
+\]
+
+\hypertarget{componente-sistemuxe1tica}{%
+\subsubsection{Componente sistemática}\label{componente-sistemuxe1tica}}
+
+Se trata de la coomponente que especifica las variables predictoras
+utilizadas en la función predictora lineal en forma de efectos fijos de
+un modelo lineal y recoge la variabilidad de la respuesta \emph{Y}
+expresada a través de \emph{p} variables explicatibas \(X_1,\dots,X_p\),
+que denotamos por \emph{X}, y de los correspondientes parámetros
+desconocidos \(\beta=(\beta_0,\beta_1,\dots,\beta_p)'\).
+
+Esta componente, tambien conocida como predictor lineal, viene
+representada por \(\eta\) y es una combinación lineal de las variables
+explicativas, que viene dada por:
+\(\eta =\beta_0 + \beta_1X_1+ \dots + \beta_pX_p= X^t\beta = X^t\beta\)
+
+\hypertarget{funciuxf3n-link-o-funciuxf3n-enlace}{%
+\subsubsection{Función link o función
+enlace}\label{funciuxf3n-link-o-funciuxf3n-enlace}}
+
+La \emph{función link}: se trata de una función del valor esperado de la
+variable respuesta \(E[Y]\), como una combinación lineal de las
+variables predictoras. Sin embargo, en muchos casos reales esta relación
+no es adecuada, por lo que es necesario la introducción de una función
+con el objetivo de relacionar el valor esperado con las variables
+explicativas. Por ello, introducimos la función link o función enlace,
+\(g(\cdot)\) que relaciona \(\mu\) con el predictor lineal de la
+siguiente forma:
+
+\[
+g(\mu)=\beta_0 + \beta_1x_1+ \dots + \beta_px_p
+\]
+
+En problemas reales, pueden existir varias funciones link, por lo que se
+elegirá aquella que facilite la interpretación del modelo óptimo
+obtenido. En particular, para cada elemento de la familia exponencial
+existe una función enlace denominada función canónica, que permite
+relacionar el parámetro canónico con el predictor lineal. \[
+\theta_i = \theta(\mu_i) = \eta_i =  X^t_i\beta \quad g(\mu_i)=\theta(\mu_i)
+\]
+
+\hypertarget{estimaciuxf3n-de-paruxe1metros}{%
+\subsection{Estimación de
+parámetros}\label{estimaciuxf3n-de-paruxe1metros}}
+
+Trás la construcción de los modelos, se estiman los parámetros
+desconocidos del predictor lineal,
+\(\beta=(\beta_o,\beta_1,\dots,\beta_p)\) por
+\(\hat\beta=(\hat\beta_o,\hat\beta_1,\dots,\hat\beta_p)\) y el valor del
+parámetro de dispersión \(\phi\) por \(\hat\phi\). Posteriormente, se
+valora la precisión de las estimaciones con el objetivo de seleccionar
+un modelo óptimo.
+
+Generalmente, la estimación de los parámetros se lleva a cabo por el
+método de la \emph{Máxima Verosimilitud} o el método de \emph{Mínimos
+Cuadrados Ordinarios}. Una vez desarrollados los modelos, se realizará
+una comparación de los mismos con el objetivo de seleccionar el mejor.
+En el caso del modelado con fines predictivos, se selecionará el modelo
+que explique el mayor porcentaje de variabilidad de la respuesta.
+
+Para ello, emplearemos el \textbf{Criterio de información de Akaike
+(AIC)}, medida relatica de un modelo estadístico.
+
+Dado un conjunto de modelos candidatos para los datos, el modelo
+preferido es aquel que tiene mínimo valor del AIC, que trata de
+proporcionar una compensación entre la bondad de ajuste del modelo y la
+complejidad del mismo. Es decir, el criterio penaliza al número de
+parámetros.
+
+En el caso general, el AIC viene dado por la siguiente expresión:
+
+\[
+AIC = 2k - 2ln(\hat L)
+\]
+
+Siendo:
+
+\begin{itemize}
+\tightlist
+\item
+  k el número de parámetros del modelo
+\item
+  \(\hat L\) es el máximo valor de la función de verosimilitud para el
+  modelo estimado
+\end{itemize}
+
+Otro criterio en el que nos basaremos es en el criterio de bondad de
+ajuste, destacando el cálculo del \textbf{coeficiente de determinación}
+\(R^2\), que es una medida del grado de fiabilidad o bondad de ajuste
+del modelo ajustado a un conjunto de datos. Se trata de una medida
+acotada por definición, siendo sus límites \(0 \leq R^2 \leq 1\). Un
+coeficiente de determinación igual a 1 indica un ajuste lineal perfecto,
+y por tanto, la variación total de la variable \(Y\) es explicada por el
+modelo de regresión. Por el contrario, el valor 0 indica que el modelo
+no explica nada de la variación total de la variable Y.
+
+Para la bondad de ajuste, otra medida interesante es el RMSE, raíz del
+error cuadrático medio. Representa la raíz cuadrada de la distancia
+promedio entre el valor real y el pronosticado e indica el ajuste
+absoluto del modelo a los datos, es decir, cómo de cerca están los
+puntos observados de los valores predichos del modelo. Valores más bajos
+de RMSE indican un mejor ajuste.
+
+En muchos casos la variable respuesta es de tipo conteo, como lo es la
+variable que queremos modelizar, demanda de productos. Se denominan
+variables de recuento o variables de tipo conteo, a aquellas que
+determinan el número de sucesos que ocurren en una misma unidad de
+observación en un intervalo espacial o temporal definido. Esta variable
+\(Y\), puede tomar infinitos números de valores y su probabilidad va en
+descenso a medida que sea mayor el valor de la variable.
+
+Para este caso, los modelos que tienen especial interés y que podemos
+formalizar a través de modelización lineal son el modelo de
+\emph{Poisson} y el modelo de \emph{Binomial negativa}. Estos modelos
+permiten analizar el comportamiento de variables de conteo frente a los
+valores del conjunto de variables explicativas.
+
+\hypertarget{modelo-de-regresiuxf3n-poisson}{%
+\subsection{Modelo de Regresión
+Poisson}\label{modelo-de-regresiuxf3n-poisson}}
+
+Se trata del modelo más simple y es el modelo de referencia para
+variables respuesta de tipo conteo. Este modelo asume que la variable
+respuesta Y sigue una distribución de Poisson, por lo que en el caso de
+la modelización de ventas, se define como el número de ventas que
+ocurren en un intervalo de tiempo, cuya ocurrencia es aleatoria. Esta
+distribución se caracteriza por que la media y varianza coinciden: \[
+E(Y)=Var(Y) =\mu 
+\]
+
+Se tiene que la distribución de probabilidad de Poisson, y en nuestro
+caso, la probabilidad de observar \(y\) ventas es:
+\[P(Y=y)= \dfrac{\mu^y e^{-\mu}}{y!}, \quad y=0,1,\dots;\mu>0\]
+
+Y por tanto, la forma canónica o componente aleatoria para esta
+distribución es la siguiente:
+
+\[
+f(y;\mu) = e^{-\mu}\cdot \frac{\mu^y}{y!} = \frac{1}{y!}e^{ylog(\mu)-\mu}, \quad y \in \{0,1,\dots\}
+\]
+
+Es decir, el modelo de Posión se obtiene tomando como función enlace el
+parámetro canónico.
+
+donde:
+
+\begin{itemize}
+\tightlist
+\item
+  \(\theta= log(\mu)\) es el parámetro canónico
+\item
+  \(k(\theta)= \mu=e^\theta\) es la función cumulante
+\item
+  \(\phi=1\) el parámetro de dispersión
+\item
+  \(a(y,\phi)= 1/y!\) la constante normalizadora
+\end{itemize}
+
+En este caso se tiene que: \(g(\mu_i)=X^t_i\beta\) y una elección usual
+de la función link \emph{g} el parámetro canónico, \(g(x)=log(x)\), lo
+que equivale a:
+
+\[\mu_i=exp(\beta_o)\cdot\exp(x_{i1}\beta_1)\dots exp(\beta_px_{ip})= exp(\beta_o+\beta_1x_{i1}+\dots + \beta_px_{ip}) \quad \text{ó} \quad log(\mu_i) = \eta_i = X_i\beta\],
+
+así si \(x_i\) se incrementa en una unidad, entonces \(\mu_i\) se
+multiplica por \(exp(\beta_i)\). Por tanto, si \(\beta_i>0\), \(\mu_i\)
+crece cuando \(x_i\) aumenta y si \(\beta_i<0\), \(\mu_i\) decrece
+cuando \(x_i\) aumenta.
+
+Este modelo se ha desarrollado suponiendo que la media y la varianza de
+los datos coinciden (equidispersión). Sin embargo, suele ocurrir lo que
+se conoce como sobredispersión, es decir, que la varianza es mayor que
+la media. Lo habitual es que esta situación se de debido a la existencia
+de heterogeneidad entre las observaciones. Cuando esto ocurra,
+recurriremos al modelo binomial negativo.
+
+\hypertarget{modelo-de-regresiuxf3n-de-binomial-negativa}{%
+\subsection{Modelo de Regresión de Binomial
+Negativa}\label{modelo-de-regresiuxf3n-de-binomial-negativa}}
+
+Este modelo es empleado para variables de tipo conteo cuándo existe
+sobredispersión, es decir, la media condicional es menor que la varianza
+condicional (no coinciden). Existen diferentes modelos binomiales
+negativos en función de la variable que se trate de modelar, pero en
+este trabajo nos centraremos en el caso de datos de tipo conteo.
+
+La distribución binomial negativa estudia la probabilidad de observar un
+número determinado de fracasos \emph{y} (no se producen ventas) , antes
+del r-ésimo éxito (se venden r unidades) en una serie de experimentos
+Bernoulli independientes, siendo r un número positivo. Se tiene que esta
+distribución pertenece a la familia exponencial si el parámetro de
+dispersión \(\phi\) es una constante.
+
+Se dice que la variable aleatoria de conteo (número de ventas) \(Y_i\),
+con \(i=1,\dots,n\) sigue una distribución Binomial Negativa de
+parámetros \emph{r} y \emph{p}, y se representa como
+\(Y_i \sim BN(r,p)\) si su función de probabilidad viene dada por: \[
+P[Y_i=y_i] =  \genfrac{(}{)}{}{}{y_i+r-1}{r-1} p^r(1-p)^{y_i}
+\] donde
+
+\begin{itemize}
+\tightlist
+\item
+  \(0<p<1\)
+\item
+  \(r>0\)
+\item
+  \(y_i = 0,1,2,\dots\)
+\end{itemize}
+
+Y en este caso, la forma canónica o componente aleatoria para esta
+distribución es la siguiente:
+
+\[
+f(y;\mu) = exp \Bigg\{y \cdot ln(1-p) + r ln(p) + ln(\genfrac{(}{)}{}{}{y_i+r-1}{r-1}) \Bigg\}
+\]
+
+donde
+
+\begin{itemize}
+\tightlist
+\item
+  \(0<p<1\)
+\item
+  \(r=0,1,2,\dots\)
+\item
+  \(y_i = 0,1,2,\dots\)
+\item
+  \(\theta= log(1-p)\) es el parámetro canónico
+\item
+  \(k(\theta)= -rln(p)=-r ln(1-e^\theta)\) es la función cumulante
+\end{itemize}
+
+En este caso la función link es de tipo logarítmico y viene dada por: \[
+g(\mu_i)= \theta(\mu_i) = ln \Big( \dfrac{\alpha \mu_i}{1+ \alpha\mu_i}   \Big) = X_i^t\beta = \eta_i 
+\]
+
+\hypertarget{anuxe1lisis-de-series-temporales}{%
+\section{Análisis de series
+temporales}\label{anuxe1lisis-de-series-temporales}}
+
+Aplicaremos este modelo de predicción para tratar de identificar los
+patrones de la demanda anterior a lo largo del tiempo y luego proyectar
+(predecir) los patrones en el futuro.
+
+Se define una serie temporal como una sucesión de datos ordenados en el
+tiempo que corresponden a una misma variable. Los datos son suelen ser
+tomados en intervalos regulares de tiempo.
+
+Nuestro objetivo dentro del análisis de series temporales será
+identificar el proceso estocástico que ha sido capaz de generar la serie
+de estudio.
+
+(No se si añadirlo) Se dice proceso estocástico a una colección o
+familia de variables aleatorias \(\{X_t, \text{ con } t \in T \}\) que
+siguen la misma ley de distribución y están relacionadas entre sí,
+pudiendo por este motivo, describir la información de estas variables en
+términos de medias, variaciones y covarianzas.
+
+A continuación encontramos las cuatro etapas en un análisis descriptivo
+de series temporales para elegir un modelo que se adecue a nuestros
+datos:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Representación gráfica de la serie}. Para tener así una
+  primera aproximación del comportamiento de la serie y la existencia de
+  posibles tendencias.
+\item
+  \textbf{Modelización}: Se trata de encontrar el modelo que mejor se
+  ajuste a los datos.
+\item
+  \textbf{Validación de los modelos}: Es necesario saber si el modelo
+  ajustado es adecuado o no, por lo que es muy importante el estudio de
+  los residuos.
+\item
+  \textbf{Predicciones}: Una vez construido y validado un modelo,
+  realizaremos estimaciones del futuro con nuevas observaciones.
+\end{itemize}
+
+En un enfoque clásico de series temporales, asumiremos que el
+comportamiento de la variable con respecto al tiempo se compone de
+cuatro componentes:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \textbf{Tendencia}: Se trata del movimiento suave y regular de la
+  serie a largo plazo. La tendencia existe cuando hay un aumento o
+  disminución a largo plazo de los datos. Puede ser lineal (ajuste
+  mediante una recta) o no lineal (aproximación mediante una curva, como
+  por ejemplo logarítmica o exponencial)
+\item
+  \textbf{Ciclo}: Componente de tipo oscilante caracterizada por
+  movimientos recurrentes en torno a la tendencia de la serie y que se
+  repiten cada año pero sin una frecuencia fija.
+\item
+  \textbf{Componente estacional}: Se trata de movimientos regulares
+  dentro de la serie con una periodicidad menor a un año, es decir,
+  aquello que ocurre generalmente y con la misma intensidad año tras año
+  en los mismos períodos, por ejemplo, en la misma época del año o día
+  de la semana. Vamos a denotar por L al número de estaciones.
+\item
+  \textbf{Componente irregular}: Se trata de las variaciones de la serie
+  sin un comportamiento sistemático y que no son explicadas por las
+  otras tres componentes
+\end{enumerate}
+
+Existen diferentes modelos de combinación de las componentes. Para
+describir los modelos necesitamos primero una nomenclatura básica.
+Denotando por \(X_t\) al valor de la variable en el instante \emph{t},
+se tiene: \[ X_t = f(T_t,E_t,I_t)\] donde:
+
+\begin{itemize}
+\tightlist
+\item
+  \(T_t\): Valor de la tendencia en el instante \emph{t}
+\item
+  \(E_t\): Valor de la componente estacional en el instante \emph{t}
+\item
+  \(I_t\): Valor de la componente irregular en el instante \emph{t}
+  (ruido).
+\end{itemize}
+
+Por tanto, los modelos que puede adoptar la función \emph{f} son los
+siguientes:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Modelo multiplicativo}: La composición de la serie se realiza
+  mediante el producto de sus componentes.
+  \[X_t = T_x \times E_t \times I_t\]
+\item
+  \textbf{Modelo aditivo}: Las componentes se agregan para formar la
+  serie temporal. \[X_t = T_x + E_t + I_t\]
+\item
+  \textbf{Modelo mixto}: La composición de la serie de la parte
+  irregular viene de forma aditiva y la parte regular de forma
+  multiplicativa. \[Xt=Tx \times Et + It\]
+\end{itemize}
+
+\url{http://www5.uva.es/estadmed/datos/series/series2.htm}
+
+Tras haber detectado el modelo mas adecuado, podremos conocer el
+comportamiento de la serie a largo plazo.
+
+El siguiente paso realizar una estimación de la tendencia, \(T_t\),
+habiendo eliminado previamente la componente estacional para impedir que
+estas oscilaciones perturben la identificación de la tendencia.
+
+Para estimar \(T_t\), debemos hacer una hipótesis sobre su forma:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Tendencia determinista}: Se supone que la tendencia es una
+  función determinística del tiempo:
+  \[T_t = a + bt \quad a,b\in \mathbb R\]
+\end{itemize}
+
+Siendo a y b constantes, que se estimarán mediante un modelo de
+regresión lineal.
+
+Sin embargo, el método que aplicaremos será el que exponemos a
+continuación:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Tendencia evolutiva (método de medias móviles)}: Este método
+  consiste en definir la tendencia como una serie suavizada.
+  Sunpondremos que la tendencia de la serie es una función que
+  evoluciona lentamente y que podremos aproximar función simple del
+  tiempo, suponiendo así una recta.
+\end{itemize}
+
+Una vez identificada la tendencia, procedemos a hacer un análisis de la
+estacionalidad de la serie, con el objetivo de:
+
+\begin{itemize}
+\item
+  \textbf{Desestacionalizar la serie}, es decir, eliminar las
+  oscilaciones periodicas que se repiten a lo largo de los años,
+  haciendo así que los datos de distintas estaciones sean comparables.
+  La serie desestacionalizada la conseguimos diferenciando la serie.
+\item
+  \textbf{Realizar predicciones}, ya que si nuestros datos están
+  afectados por una componente estacional, necesitaremos una estimación
+  de esta de cara a realizar una predicción
+\end{itemize}
+
+Para desestacionalizar la serie, emplearemos los índices de variación
+estacional asociados a cada estación, ya que se suponen constantes año a
+año. Con esta técnica, se evidencian las diferencias en cada período,
+por ejemplo, podemos ver la diferencia del volumen de ventas en función
+de la época del año (mes, día de la semana, estación,\ldots) Estos
+índices reflejan la cantidad fija o proporción en la que se modifica la
+tendencia en cada estación.
+
+Una vez calculados estos índices, se desestacionaliza la serie,
+eliminando así el efecto de cada estación.
+
+Por último, procedemos a realizar las predicciones. Para ello,
+necesitamos que se cumpla la condición de estacionariedad, es decir, la
+media y la varianza permanecen constantes en el tiempo (no tiene raíces
+unitarias). En el caso de no imponer esta condición de estacionariedad,
+predeciríamos carasterísticas que no serán las mismas en el futuro que
+en el pasado.
+
+Se tiene que todo proceso lineal es estacionario, por tanto, obtendremos
+trabajaremos con series estacionarias, y de lo contrario, podremos
+aplicar los mismos métodos a series no estacionarias realizando las
+transformaciones pertinentes para conseguir la estacionariedad.
+
+En nuestro caso, aplicaremos la metodología Box-Jenkis como método
+predictivo.
+
+\hypertarget{metodologuxeda-box-jenkis}{%
+\subsection{Metodología Box-Jenkis}\label{metodologuxeda-box-jenkis}}
+
+Esta metodología tiene en cuenta la dependencia existente entre los
+datos, es decir, cada observación en el instante \(t\) será modelada a
+partir de los valores pasados. Los modelos se conocen con el nombre de
+ARIMA (modelos integrados autorregresivos de medias móviles), que deriva
+de las siguientes componentes: AR (Autorregresivo) , I ( integrado),
+MA(Medias móviles)
+
+El siguiente paso es identificar el modelo más adecuado a través del
+estudio de la función de autocorrelación (FAC) y la función de
+autocorrelación parcial (FAP).
+
+Nota: el método recomienda como mínimo 50 observaciones en la serie
+temporal.
+
+Fases de la metodología Box-Jenkis:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  Identificar el la estructura ARIMA que sigue la serie a través del
+  estudio de la función de autocorrelación simple (FAS) y la función de
+  autocorrelación parcial (FAP). Determinar el modelo arima consiste en
+  identidicar los órdenes p y q de su estructura autoregresiva y de
+  medias móviles
+\item
+  Estiamción de parámetros: Una vez tenemos identificado el modelo,
+  estimamos los parámetros AR y MA del modelo por el método de máxima
+  verosimilitud, obteniendo el error estándar y los resíduos del modelo
+
+  Nota: Es muy importante comprobar que las estimaciones son
+  significativamente no nulas.
+\item
+  Diagnosis del modelo: Comprobamos que los resíduos sigan un proceso de
+  ruido blanco mediante el Test de Ljung-Box.
+
+  Si hemos identificado varios modelos y todos ellos pasan la diagnosis,
+  nos quedaremos con uno de ellos según el criterio del menor AIC
+\item
+  Predicción: una vez identificado y validado el mejor modelo, se
+  realizan las predicciones con éste.
+\end{enumerate}
+
+\bibliography{bib/library.bib,bib/paquetes.bib}
+
+
+\addcontentsline{toc}{chapter}{Bibliografía}
+
+
+\end{document}
