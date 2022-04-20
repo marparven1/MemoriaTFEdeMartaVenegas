@@ -4,4 +4,4 @@ output: pdf_document
 
 Resumen...
 
-Aquí comienza mi resumeeenenneneneneneneennenemn
+Aquí comienza mi resumen, que lo haré al final del estudio
