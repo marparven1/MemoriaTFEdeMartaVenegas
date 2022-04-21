@@ -20,11 +20,11 @@ Este sector aglutina a comerciantes y empresas encargadas de la comercializació
 A continuación podemos destacar los siguientes objetivos de este estudio:
 
 -   Analizar y entender como varía la demanda de productos en función del tiempo y de otros factores
--   Descubrir asociaciones entre productos aplicando un análisis de cesta de la compra (*Nota para mi: falta ver si puedo hacerlo*)
+-   Descubrir asociaciones y patrones entre productos aplicando un análisis de cesta de la compra 
 -   Investigar y revisar diversos algoritmos de aprendizaje automático y aprendizaje estadístico para modelar las ventas de los diferentes productos
 -   Utilizar Rstudio, un entorno de desarrollo integrado para el lenguaje de programación R como soporte al estudio estadístico de los datos
 
-Para ello, se expondrán de manera teórica una serie de técnicas para la modelización de la variable *volumen de ventas* para posteriormente aplicarlas a un caso real de ventas de productos lácteos, con el propósito final de construir un modelo que ayude a predecir la demanda futura, con una *precisión* mínima del 70%. (*Nota para mi: no se si esto será posible, puede que modifique esto último de la precisión mínima*)
+Para ello, se llevará a cabo una revisión teórica de técnicas para la modelización de la variable *volumen de ventas* para posteriormente aplicarlas a un caso práctico real de ventas de productos lácteos, con el propósito final de construir un modelo que ayude a predecir la demanda futura, con una *precisión* mínima del 70%. (*Nota para mi: no se si esto será posible, puede que modifique esto último de la precisión mínima*)
 
 <!-- Aprendizaje estadístico vs. aprendizaje automático -->
 
@@ -41,6 +41,6 @@ Siguiendo esta línea, en el año 2001, Leo Breiman publica *Modelos Estadístic
 
 <!-- Estructura del trabajo -->
 
-Para tratar de cumplir los objetivos, se ha estructurado el trabajo en diferentes secciones. En primer lugar, una primera sección introductoria sobre el proceso de la ciencia de datos en el sector retail, a continuación, una segunda sección para la explicación de lo que se conoce como análisis de cesta de la compra, que tiene como objetivo conocer las asociaciones entre productos (*Nota para mi: falta ver si puedo llevar a cabo esta sección*). Las secciones tres y cuatro explican, respectivamente, las técnicas clásicas de modelado estadístico y el proceso de ciencia de datos completo con las correspondoentes técnicas de aprendizaje automático. Una quinta sección donde se aplicarán todas las técnicas estudiadas a un caso práctico con datos reales. Por último, en la sección sexta se exponen las conclusiones extraidas y se analizan los objetivos iniciales.
+Para tratar de cumplir los objetivos, se ha estructurado el trabajo en diferentes capítulos. Los primeros cuatro capítulos consisten en la revisión teórica de todas las técnicas que posteriormente aplicaremos a un caso práctico. En primer lugar, un primer capítulo introductorio sobre el proceso de la ciencia de datos en el sector retail, a continuación, un segundo capítulo para la explicación de lo que se conoce como análisis de cesta de la compra, que tiene como objetivo conocer las asociaciones entre diversos productos. Los capítulos tres y cuatro explican respectivamente, las técnicas clásicas de modelado estadístico y el proceso de ciencia de datos completo con las correspondientes técnicas de aprendizaje automático. Un quinto capítulo donde se aplicarán todas las técnicas estudiadas a un caso práctico con datos reales. Por último, el capítulo sexto se exponen las conclusiones extraídas y se analizan los objetivos iniciales.
 
 Frecuentemente la investigación estadísticas se ve enfrentada a manipular grandes cantidades de datos complejos que incluyen un gran número de variables, de los cuales es necesario obtener información, encontrar patrones y definir tendencias. (*Nota para mi: creo que este párrafo aquí sobra*)

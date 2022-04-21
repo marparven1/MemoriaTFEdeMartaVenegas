@@ -8,9 +8,9 @@
 \contentsline {section}{\numberline {1.1}Modelizaci\IeC {\'o}n estad\IeC {\'\i }stica de ventas en el sector retail}{5}{section.1.1}% 
 \contentsline {section}{\numberline {1.2}La Miner\IeC {\'\i }a de Datos y el Sector Retail}{6}{section.1.2}% 
 \contentsline {chapter}{\numberline {2}An\IeC {\'a}lisis de cesta de la compra (Market basket an\IeC {\'a}lisis)}{9}{chapter.2}% 
-\contentsline {section}{\numberline {2.1}Introducci\IeC {\'o}n}{9}{section.2.1}% 
-\contentsline {section}{\numberline {2.2}Definici\IeC {\'o}n}{9}{section.2.2}% 
-\contentsline {section}{\numberline {2.3}Desarrollo}{9}{section.2.3}% 
+\contentsline {section}{\numberline {2.1}Introducci\IeC {\'o}n}{10}{section.2.1}% 
+\contentsline {section}{\numberline {2.2}Definici\IeC {\'o}n}{10}{section.2.2}% 
+\contentsline {section}{\numberline {2.3}Desarrollo}{10}{section.2.3}% 
 \contentsline {chapter}{\numberline {3}Modelos estad\IeC {\'\i }sticos cl\IeC {\'a}sicos}{11}{chapter.3}% 
 \contentsline {section}{\numberline {3.1}Modelo de Regresi\IeC {\'o}n Lineal General}{11}{section.3.1}% 
 \contentsline {subsection}{\numberline {3.1.1}Componentes del Modelo Lineal Generalizado}{12}{subsection.3.1.1}% 
@@ -40,4 +40,4 @@
 \contentsline {subsubsection}{\numberline {4.2.5.4}Evaluaci\IeC {\'o}n y presentaci\IeC {\'o}n de resultados (+an\IeC {\'a}lisis del error)}{30}{subsubsection.4.2.5.4}% 
 \contentsline {chapter}{\numberline {5}Caso pr\IeC {\'a}ctico con datos reales}{31}{chapter.5}% 
 \contentsline {chapter}{Conclusiones}{32}{section*.13}% 
-\contentsline {chapter}{Bibliograf\IeC {\'\i }a}{34}{chapter*.14}% 
+\contentsline {chapter}{Bibliograf\IeC {\'\i }a}{33}{section*.13}% 

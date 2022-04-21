@@ -76,8 +76,25 @@ knitr::opts_chunk$set(fig.path = 'figurasR/',
 
 
 
+En este capítulo revisaremos el método de análisis de cesta de la compra con el fin de identificar patrones o asociaciones entre diversos grupos de productos. Además de la validación de distintas asociaciones que se pueden considerar obvias debido a una reiterada compra conjunta, esta metodología pretende encontrar relaciones entre productos cuya asociación no es tan evidente.
+La principal fuente de información para llevar a cabo este tipo de análisis serán datos que recogen las transacciones de los clientes en cada compra.
 
-Este capítulo está por ver, ya que es necesario confirmar que vayamos a disponer de varios tickets.
+El concepto de reglas de asociación fué conocido en el año 1993 tras la publicación de un artículo de Agrawal, R; Imielinski, T.; Swami, A. *Mining association rules between sets of items in large databases*. En este artículo se introducen las reglas de asociación para descubrir relaciones entre las transacciones de productos registrados por los sistemas de punto de venta de los supermercados.
+
+A continuación vamos a definir una serie de conceptos para entender mejor este método. Una *asociación* es una concurrencia de dos o más cosas. Por ejemplo, los perritos calientes pueden estar asociados con los refrescos, los pepinillos o el ketchup. Se dice que existe una asociación *positiva* si la presencia de algunos productos implica la presencia de otros dentro de la misma transacción. También existe la asociación *negativa*, la cual consiste en que la presencia de algunos productos haga muy improbable la presencia de otros elementos en la misma transacción.
+
+Se conoce como *reglas de asociación* a la agrupación de productos en función de la afinidad existente entre ellos. la utilidad de estas reglas se encuentra en la identificación de oportunidades y el diseño de diversos grupos de productos que puedan ser atractivos para los consumidores. Estas reglas tienen como finalidad el descubrimiento de las relaciones implícitas en los datos.
+
+Cuando aplicamos un análisis de cesta de la compra a unos datos, habitualmente podemos obtener tres posibles resultados generados a partir de las reglas de asociación:
+
+- **Resultados factibles**: Contienen información útil y de calidad, ya que los patrones identificados son factibles. Estas reglas nos podrían ayudar en la toma decisiones como por ejemplo, saber a que productos se aplicar una promoción con el objetivo de impulsar las ventas de los mismos y de sus productos relacionados.
+
+- **Resultados triviales**: Estos con conocidos por aquellos que están familiarizados con el negocio en cuestión. Este tipo de reglas nos muestra productos en los que no se plantea la compra de un producto sin otro, por ejemplo, la compra de pintura requiere la necesidad de comprar también pinceles.
+
+- **Resultados imposibles**: Estos resultados implican la obtención de reglas incongruentes, ya que nos proporciona un información que no facilita el entender el comportamiento del consumidor, sino que se trata de casos puntuales en un momento determinado.
+
+
+
 
 
 
