@@ -1,0 +1,143 @@
+---
+author: "Nombre Completo Autor"
+date: "27/10/2017"
+documentclass: book
+forprint: true  # true: imprime a dos caras, false: libro digital
+fontsize: 12pt # 10pt,11pt
+geometry: margin = 2.5cm 
+bibliography: ["bib/library.bib", "bib/paquetes.bib"]
+# metodobib -> true: natbib (descomentar: citation_package: natbib) 
+#           -> false: pandoc (comentar: citation_package: natbib)
+metodobib: true
+#natbib: plainnat, abbrvnat, unsrtnat
+biblio-style: "plainnat"
+#Método 2 (pandoc): descomente una línea de las 2 siguientes en caso de usarlo
+csl: methods-in-ecology-and-evolution.csl      # no numera mejor en las citas
+#csl: acm-sig-proceedings-long-author-list.csl  # numera peor en las citas
+link-citations: yes
+output: 
+  pdf_document:
+    keep_tex: no
+    number_sections: yes
+    citation_package: natbib  # comentado usa: pandoc-citeproc
+    #toc: yes
+    fig_caption: yes
+    template: latex/templateMemoriaTFE.tex
+    includes:
+      #before_body: portadas/latex_paginatitulo_modTFE.tex
+      #in_header: latex/latex_preambulo.tex
+      #after_body: latex/latex_antes_enddoc.tex
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r , librerias, message=FALSE , echo= FALSE}
+library(tidyverse)
+library(dplyr)
+library(kableExtra)
+
+# Formato basket
+library(arules)
+library(arulesViz)
+
+```
+
+
+
+
+## Análisis de cesta de la compra para productos lácteos
+
+
+### Introducción
+
+El objetivo principal es aplicar un análisis de cesta de la compra para un conjunto de datos con una muestra de 7801 tickets que incluyen 4631 artículos distintos.
+
+Aplicaremos esta técnica para descubrir los patrones de compra de los clientes y tratar así de identificar las relaciones existentes entre productos a la hora de comprar.
+
+Para llevar a cabo este estudio, haremos uso de la librería *arules*, que se trata de un entorno creado para la identificación de reglas de asociación y conjuntos de items frecuentes.
+
+### Lectura y descripción de los datos
+
+
+
+
+```{r}
+load("Datos/muestraTickets.RData")
+```
+Los datos corresponden a **poner** y se encuentran en formato dataFrame. Contienen información correspondiente a transacciones de **¿?**.
+
+Cada fila de nuestro conjunto de datos corresponde a una línea de un ticket y por tanto, se corresponde con un determinado producto. Por este motivo, para una única transacción encontraremos tantas filas como productos diferentes se hayan comprado, ya que tambien encontramos registrada la cantidad de producto.
+
+En el conjunto de datos encontramos las siguientes variables:
+
+- **Idticket**: Variable numérica que identifica unívocamente a cada ticket
+- **linea**: Variable numérica con la línea correspondiente del ticket
+- **item**: Item concreto
+- **cantidad**: Se trata de la cantidad de unidades que se ha comprado de un determinado ítem en para una transacción concreta
+
+
+```{r}
+transacciones <- as.data.frame(muestra)
+transacciones %>% head()
+```
+
+Para aplicar un análisis de cesta de la compra necesitamos que nuestros datos estén en formato *cesta* (formato basket). Antes de transformar los datos, vamos a hacer el preprocesado pertinente para tener todas las variables con un formato adecuado.
+
+```{r}
+transacciones$Idticket <- as.factor(transacciones$Idticket) 
+# transacciones$linea<- as.factor(transacciones$linea)
+transacciones$item <- as.factor(transacciones$item)
+# transacciones$cantidad<- as.factor(transacciones$cantidad)
+```
+
+```{r}
+transacciones %>% glimpse()
+```
+
+Existen un total de   `r transacciones$item %>% unique() %>% length()`  que corresponden a `r transacciones$Idticket %>% unique() %>% length()` transacciones.
+
+
+
+```{r}
+transacciones %>% 
+  group_by(Idticket) %>% 
+  summarise(NumItems = length(item)) %>% head(10)
+```
+
+
+
+```{r}
+transacciones %>% filter(cantidad == 1)  %>% summarise ( mean(cantidad) )
+```
+
+
+
+```{r}
+TransBasket <- as(transacciones,"transactions")
+TransBasket
+summary(TransBasket)
+```
+
+
+```{r}
+if (!require("RColorBrewer")) {
+  # install color package of R
+install.packages("RColorBrewer")
+#include library RColorBrewer
+library(RColorBrewer)
+}
+itemFrequencyPlot(TransBasket,topN=20,type="absolute",col=brewer.pal(8,'Pastel2'), main="Absolute Item Frequency Plot")
+```
+No lo leo bien, voy a tener que guardar como csv y leer.
+
+
+### Aplicación del algoritmo a priori
+
+### Conclusiones
+
+
+
+
