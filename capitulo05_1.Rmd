@@ -31,7 +31,7 @@ output:
 
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE , warning = FALSE)
 ```
 
 ```{r , librerias, message=FALSE , echo= FALSE}
@@ -55,7 +55,7 @@ library(ggplot2) # Visualización
 
 ### Introducción
 
-El objetivo principal es aplicar un análisis de cesta de la compra para un conjunto de datos con una muestra de 7801 tickets que incluyen 4631 artículos distintos.
+El objetivo principal de este apartado es aplicar un análisis de cesta de la compra para un conjunto de datos con una muestra de 7801 tickets que incluyen 4631 artículos distintos.
 
 Aplicaremos esta técnica para descubrir los patrones de compra de los clientes y tratar así de identificar las relaciones existentes entre productos a la hora de comprar.
 
@@ -65,128 +65,119 @@ Para llevar a cabo este estudio, haremos uso de la librería *arules*, que se tr
 
 
 
-
-```{r}
+```{r , carga de datos}
 load("Datos/muestraTickets.RData")
 ```
 
-Los datos corresponden a **poner** y se encuentran en formato dataFrame. Contienen información correspondiente a transacciones de **¿?**.
 
-Cada fila de nuestro conjunto de datos corresponde a una línea de un ticket y por tanto, una fila se corresponde con un determinado producto. Por este motivo, para una única transacción encontraremos tantas filas como productos diferentes se hayan comprado, ya que tambien encontramos registrada la cantidad de producto.
 
-En el conjunto de datos encontramos las siguientes variables:
+
+Los datos corresponden a una muestra de una base de datos anonimizadas empleadas en el proyecto *Advanced Promotional Engine*, dirigido por el tutor del TFG y se encuentran en formato dataFrame. Contienen información correspondiente a transacciones de una muestra de tickets de una cadena de supermercados.
+
+Cada fila de nuestro conjunto de datos corresponde a una línea de un ticket y por tanto, una fila se corresponde con la venta de un determinado producto. Por este motivo, para una única transacción encontraremos tantas filas como productos diferentes se hayan comprado, y también encontramos registrada la cantidad de unidades comprada de cada producto.
+
+En este conjunto de datos inicial encontramos las siguientes variables:
 
 - **Idticket**: Variable numérica que identifica unívocamente a cada ticket
-- **linea**: Variable numérica con la línea correspondiente del ticket
-- **item**: Item concreto
-- **cantidad**: Se trata de la cantidad de unidades que se ha comprado de un determinado ítem en una transacción concreta
+- **Linea**: Variable numérica con la línea correspondiente del ticket
+- **Item**: Item concreto
+- **Cantidad**: Se trata de la cantidad de unidades que se ha comprado de un determinado ítem en una transacción concreta
+
+A continuación mostramos brevemente algunas de las filas de nuestros datos:
+
+
+
+```{r}
+# transacciones %>% glimpse()
+```
 
 
 ```{r}
 transacciones <- as.data.frame(muestra)
-transacciones %>% head()
+transacciones %>% head(3) %>% 
+  kable(booktabs=TRUE) %>% 
+  kable_styling(latex_options = "striped")
+```
+
+
+
+```{r}
+# transacciones %>% group_by(Idticket	) %>% summarise(sum(linea))
 ```
 
 
 
 
+Sin embargo, para aplicar un análisis de cesta de la compra necesitamos que nuestros datos estén en *formato cesta* (formato basket). Para obtener este formado, es necesario que cada línea del nuevo conjunto de datos corresponda a una única transacción, es decir, que en cada fila estén contenidos todos los productos que se refieren a sola compra.
 
-
-
-Para aplicar un análisis de cesta de la compra necesitamos que nuestros datos estén en formato *cesta* (formato basket). Antes de transformar los datos, vamos a hacer el preprocesado pertinente para tener todas las variables con un formato adecuado. 
-
-Es necesario que cada línea de nuestro dataset corresponda a una única transacción, es decir, que en cada fila estén contenidos todos los productos que se refieren a sola transacción.
-
-Por ello, únicamente necesitamos una columna en la que tengamos recogidos todos los items perteneceientes a una transacción, ya que tendremos tantas filas como transacciones, es decir, tantas filas como tickets.
+Por ello, únicamente necesitamos una columna en la que tengamos recogidos todos los items perteneceientes a cada transacción, por lo que tendremos así tantas filas como transacciones, es decir, tantas filas como tickets generados.
 
 Existen un total de   `r transacciones$item %>% unique() %>% length()` productos y `r transacciones$Idticket %>% unique() %>% length()` transacciones.
 
-
-
-```{r}
-#transacciones$Idticket <- as.factor(transacciones$Idticket) 
-## transacciones$linea<- as.factor(transacciones$linea)
-#transacciones$item <- as.factor(transacciones$item)
-## transacciones$cantidad<- as.factor(transacciones$cantidad)
-```
-
-```{r}
-transacciones %>% glimpse()
-```
-
+Procedemos a transformar el conjunto de datos inicial en uno nuevo para poder aplicarle funciones de la librería *arules*.
 
 A continuación vamos a ver las seis últimas filas de nuestro nuevo conjunto de datos.
 
-```{r}
+```{r transFormatoBasket , echo= TRUE}
 TicketsAgrupados<-transacciones %>% group_by(Idticket) %>% select(item,linea)
 
+# Con el siguiente comando, conseguimos agrupar en una misma colimna todos los items que corresponden a una misma transacción
 DatosBasket <- ddply(TicketsAgrupados, c("Idticket"), 
                              function(TicketsAgrupados)
                                paste(TicketsAgrupados$item, collapse = ","))
 
-DatosBasket1 <- DatosBasket %>% rename("Transaccion" = V1)
-DatosBasket1 %>% tail() %>% kable(booktabs=TRUE) %>% kable_styling(latex_options = "striped")
-```
+
+# DatosBasket1 <- DatosBasket %>% rename("Transaccion" = V1) # Me daba error al compilar
+DatosBasket1 <- DatosBasket
+names(DatosBasket1) <- c("Idticket","Items")
 
 
-```{r}
-a<-transacciones %>% group_by(Idticket)
-lista = list()
-
-for (i in seq_len(nrow(transacciones))) {
-  lista[[i]] =c(rep(a[i,3] %>% unlist(use.names = FALSE),a[i,4]))
-}
-
-lista %>% head()
-```
-
-
-```{r}
-df = data.frame()
-
-for (i in seq_len(length(lista))) {
-  df[i,1] = paste(lista[[i]], collapse=",")
-}
-```
-
-
-```{r}
-df$Idticket <-  transacciones$Idticket
-df %>% head()
-
+set.seed(1234)
+DatosBasket1[sample(nrow(DatosBasket1),size = 10),] %>% kable(booktabs=TRUE) %>% kable_styling(latex_options = "striped")
 ```
 
 
 
+**Observación**: Es necesario mencionar que en cada transacción vemos una cota inferior de los items que han sido comprados, por ejemplo, vemos que en la transacción 7796 se han comprado los productos 15457 y 26978, pero no hemos considerado cuántos items de cada producto pertenecieron a esta compra, ya que posteriormente al hacer uso de la función *read.transacctions*, esta no va a considerar el número de items de cada producto que han sido comprados, sino que únicamente va a utilizar el que hayan sido o no comprados.
+
+La librería arules contiene una serie de funciones para poder encontrar reglas de asociación entre productos, y por este motivo, a pesar de tener información sobre el número de items que son comprados de cada producto para una misma transacción, esta información no nos va a ser de utilidad a la hora de analizar las relaciones entre los productos.
+
+Por último, después de haber transformado nuestros datos, guardamos la columna correspondiente a los productos en un archivo *.csv* para poder posteriormente leerlo correctamente haciendo uso de la función *read.transactions* perteneciente a la librería *arules*.
 
 
-Guardamos este conjunto de datos en formato csv para su correcta lectura en formato basket haciendo uso de la función *read.transactions* perteneciente a la librería *arules*.
+### Análisis de ventas
 
 
 ```{r}
-cestas <- DatosBasket1$Transaccion %>%as_tibble() %>% dplyr::rename("Transaccion" = value)
+cestas <- DatosBasket1$Items %>%as_tibble() %>% dplyr::rename("Items" = value)
 write.csv(cestas,"Datos/muestraTickets.csv", quote = FALSE, row.names = FALSE)
 ```
 
 
+Leemos los datos y vemos una primera información a modo resumen de éstos:
+
+
 ```{r}
 TransBasket <- read.transactions("Datos/muestraTickets.csv", 
-                                 format = 'basket', sep=',',
-                                 header = TRUE )
-TransBasket
+                                 format = 'basket', sep=',', header = TRUE )
+# TransBasket
+
 summary(TransBasket)
 ```
 
 
-Observamos que hay un total de 7801 transacciones y 4631 artículos. Las transacciones son los subconjuntos de estos 4631 artículos.
 
-En el resumen de los datos podemos ver otra información previa que nos puede ser útil:
 
-- Density: Se trata del número total de artículos que se han comprado entre el número total de artículos existentes
 
-- Artículos más frecuentes: los productos que más se han comprado han sido el 1033, el 28716, el 1096, 26785 y 24347
+Observamos que hay un total de 7801 transacciones y 4631 artículos vendidos. Las transacciones son los subconjuntos de estos 4631 artículos.
 
-Productos más frecuentes:
+En el resumen de los datos podemos ver otra información que nos puede ser útil:
+
+- Density: Se trata del número total de artículos que se han comprado entre el número total de artículos existentes, en nuestro caso: *densidad=0.001169*
+
+
+
+- Productos más frecuentes:
 
 | ID Producto          | Cota inferior de unidades vendidas |
 |----------------------|------------------------------------|
@@ -199,18 +190,57 @@ Productos más frecuentes:
 
 : Productos más frecuentes
 
-A continuación vamos a ver una lista con algunas transacciones:
 
-```{r}
-LIST(TransBasket) %>% head(5)
-```
-
+- La media de productos diferentes que han sido comprados es de 5 artículos, y el número máximo  es un total de 82 artículos en una misma transacción. Además, cabe destacar que el 75% de las transacciones no supera los 7 artículos
 
 - Tamaño de las transacciones: 1847 transacciones fueron de un único artículo y 1285 transacciones fueron de dos artículos, indicando estos resultados que la mayoría de clientes compraron entre 1 y 2 artículos en cada transacción. La transacción con más productos diferentes ha sido una transacción con 82 artículos.
 
-Nota: Cabe destacar que esto se trata de una cota inferior, es decir, para una transacción con un único artículo, sabemos que se compró al menos una vez, pero no sabemos cuantos items compró de ese artículo.
 
-A continaucón vamos a mostrar gráficamente cuáles han sido los 15 artículos más comprados y el número de transacciones en las que aparece ese artículo.
+
+Nota: Recordemos que el número de items es una cota inferior, es decir, para una transacción con un único artículo, sabemos que se compró al menos una vez, pero no sabemos cuantas unidades se compraron de ese artículo en esa transacción.
+
+
+A continuación vamos a ver una lista con algunas transacciones:
+
+```{r}
+set.seed(1234)
+labels(TransBasket[sample(7801,6)]) 
+```
+
+
+
+
+- Estudio de los cuantiles y la distribución del tamaño de las transacciones:
+
+
+
+```{r}
+tamanos <- size(TransBasket)
+
+quantile(tamanos, probs = seq(0,1,0.1))
+```
+
+
+Vamos a mostrar gráficamente la distribución de los tamaños de las transacciones:
+
+```{r}
+
+
+data.frame(tamanos) %>%
+  ggplot(aes(x = tamanos)) +
+   geom_histogram(aes(y=..count..), colour="darkblue", fill="lightblue")+
+  scale_x_continuous(breaks=seq(1,80,by=2))+
+  labs(title = "Distribución del tamaño de las transacciones",
+       x = "Tamaño de la transacción")+
+  theme(axis.text = element_text(angle = 45))
+```
+
+La mayoría de los clientes compra entre 1 y 3 productos y el 90% de ellos compra como máximo 9 productos diferentes.
+
+
+
+
+Ahora podemos ver gráficamente cuáles han sido los 15 artículos más vendidos y la frecuencia absoluta de transacciones en las que aparece ese artículo.
 
 
 ```{r}
@@ -221,33 +251,331 @@ install.packages("RColorBrewer")
 #include library RColorBrewer
 library(RColorBrewer)
 }
-itemFrequencyPlot(TransBasket,topN=20,type="absolute",col=brewer.pal(8,'Pastel2'), main="15 artículos más compra")
+itemFrequencyPlot(TransBasket,topN=20,type="absolute",col=brewer.pal(8,'Pastel2'), main="15 artículos más comprados",# xlim="ID producto",ylim="Nº de transacciones"
+                  )
+```
+
+Vemos que los productos 1033, 28716 y 1096 son los tres artículos más vendidos de entre todos los existentes.
+
+También es importante estudiar como se distribuye el soporte de los productos individuales, para posteriormente establecer un límite de soporte. Esto se puede calcular fácilmente con un análisis de los items más frecuentes (con mayor soporte) dentro del conjunto de transacciones.
+
+```{r}
+frec_items <- itemFrequency(x = TransBasket, type = "relative")
+frec_items %>% sort(decreasing = TRUE) %>% head(5)
+```
+
+En el listado anterior podemos observar que el 6.5% de las transacciones contiene al producto 1033, el 5.7% al producto 28716 y que en el 4.58% de éstas se ha vendido el producto 1096.
+
+Vemos que el soporte individual de los items son bastante bajos, ya que tenemos un conjunto de datos con un gran número de transacciones y muchos productos diferentes. 
+
+
+Después de haber visto los aspectos más destacables de nuestros datos, procedemos a la aplicación del algoritmo a priori.
+
+### Aplicación del algoritmo a priori
+
+
+Este algoritmo ya fué descrito en el desarrollo teórico, y nos permitirá generar una serie de reglas de asociación. Como hemos mencionado a lo largo de la descripción de este apartado práctico, el paquete *arules* también implementa el algoritmo *Apripri* para identificar itemsets frecuentes y descubre reglas de asociación con la función *apriori*, donde indicaremos una serie de parámetros: soporte, confianza, tamaño mínimo o máximo y el tipo de asociación requerida (target)
 
 
 
-ggplot(data=transacciones, 
-       aes(x=reorder(Idticket,item) , 
-        y = cantidad , fill= item)) + 
-    geom_bar(stat="identity", position="dodge") +
-    labs(title="Tipo de producto y volumen de ventas del último mes" ,
-         subtitle= "Electronidex", 
-         caption="Fuente: Elaboración propia. Conjunto de datos de transacciones"
-        )+
-  xlab("Tipo de producto")+
-  ylab("Volumen de Ventas")+
-  theme(axis.text.x = element_text(angle = 60, hjust = 1))
+#### Itemsets
+
+En primer lugar, vamos a extraer itemsets formados por al menos dos items que hayan sido comprado almenos 30 veces.
+
+```{r}
+soporte_min <-30/dim(TransBasket)[1]
+Itemsets <- apriori(data=TransBasket,
+                 parameter = list(
+                         supp = soporte_min, # frecuencia con la que dos productos son comprados juntos
+                         conf = 0.5,
+                         minlen=2,
+                         maxlen=80,
+                         target = "frequent itemsets" # Se especifica que se creen itemsets
+                         ))
+
+summary(Itemsets)
+```
 
 
+Hemos encontrado un total de 64 itemsets con un soporte mayor al soporte mínimo indicado de `r soporte_min`. La mayoría de estos conjuntos de items están formados por dos items. Vamos a proceder a mostrar los itemsets con mayor soporte:
+
+```{r}
+Itemsets_frec <- sort(Itemsets, by = "support", decreasing = TRUE)[1:20]
+#inspect(top_20_itemsets)
+
+as(Itemsets_frec, Class = "data.frame") %>%
+  ggplot(aes(x = reorder(items, support), y = support)) +
+  geom_col(colour="darkblue", fill="lightblue") +
+  coord_flip() +
+  labs(title = "Itemsets más frecuentes", x = "itemsets") +
+  theme_bw()
+
+
+```
+Del gráfico anterior podemos observar que la dupla $\{ 1033,1096 \}$ tiene el mayor soporte, indicando el valor de éste que han sido comprados juntos en un 1.25% del total de transacciones.
+
+
+
+Vamos a filtrar los itemsets para seleccionar aquellos que contienen los productos 1033 y 1096.
+
+```{r}
+itemsets_filtrado_maxSupp <- subset(Itemsets,
+                                    subset = items %ain% c("1033", "1096"))
+inspect(itemsets_filtrado_maxSupp)
+```
+
+La mayoría de veces, un total de 96, estos dos items han sido comprados juntos, mientras que han sido comprado con otro producto, el 1086 hasta en 30 ocasiones.
+
+
+#### Reglas de asociación
+
+A continuación vamos a crear reglas de asociación de la misma forma que hemos identificado los itemsets, pero indicando un valor para el parámetro *confianza*
+
+```{r}
+rules <- apriori(TransBasket,
+        parameter = list(
+                         supp = 0.0021, # frecuencia con la que dos productos son comprados juntos
+                         conf = 0.5,
+                         minlen=2,
+                        # maxlen=30,
+                         target = "rules" # Se especifica que se creen reglas
+                                # "frequent itemsets"
+                                # "maximally frequent itemsets"
+                                # "closed frequent itemsets"
+        )
+        
+        )
+
+inspect(rules)
+```
+
+
+
+El algoritmo nos está recomendando comprar productos los productos 1096 y 1033 en la mayoría de las reglas. Se trata de algunos de los productos más vendidos, por lo que no tiene sentido. Estos productos no tienen problemas para su venta, por lo que nuestro objetivo es buscar reglas que recomienden productos que se han vendido en menor volumen.
+
+Para ello, vamos a modificar las reglas, bajando el valor de la confianza y obligando al algoritmo a tener los productos más frecuentes a la izquierda, en la parte de *lhs*.
+
+Veamos las nuevas reglas de asociación:
+
+```{r}
+rulesII <- apriori (data=TransBasket, 
+                       parameter=list (supp=0.0021,
+                                       conf = 0.15,
+                                       minlen=2,
+                                       # Se especifica que se creen reglas
+                                       target = "rules"), 
+                       appearance = list(default="rhs", # Consecuente
+                                         lhs=c("1096","1033","28716" ) # Antecedente
+                                         ), 
+                  control = list (verbose=F)) 
+inspect(rulesII)
+# el problema es confident, es baja
+# Para buscar itemsets, fuerzo la conbinación de productos
+# "iMac","ViewSonic Monitor" conbinación interesante
+```
+
+Hemos obtenido 13 reglas, y en la mayoría de reglas consisten en dos productos en el antecedente, donde aparecen juntos los productos 1033 y 1096, por tanto, podemos observar que la compra conjunta de estos dos productos se hace de manera frecuente.
+
+Vamos a proceder a ordenar las reglas según la confianza
+
+```{r}
+rules_conf <- sort (rulesII, by="confidence", decreasing=TRUE) 
+# 'high-confidence' rules.
+inspect((rules_conf))
+# en rhs me van saliendo los tops
+
+
+# Para representarlos con ggplot se convierte a dataframe 
+as(rules_conf, Class = "data.frame") %>%
+  ggplot(aes(x = reorder(rules, confidence), y = confidence,color="red", fill="red")) +
+  geom_col() +
+  coord_flip() +
+  labs(title = "Itemsets según el parámetro de confianza", x = "Itemsets",y="Confianza") +
+  theme(legend.position='none')
+```
+
+
+Ahora, las ordenamos según el soporte (frecuencia con que los objetos son comprados juntos)
+
+```{r}
+rules_confII <- sort (rulesII, by="support", decreasing=TRUE) 
+# 'high-confidence' rules.
+inspect((rules_confII))
+# en rhs me van saliendo los tops
+
+
+# Para representarlos con ggplot se convierte a dataframe 
+as(rules_confII, Class = "data.frame") %>%
+  ggplot(aes(x = reorder(rules, support), y = support,color="green", fill="green")) +
+  geom_col() +
+  coord_flip() +
+  labs(title = "Itemsets según el parámetro de soporte", x = "Itemsets",y="Soporte") +
+  theme(legend.position='none')
+```
+
+Con esta segunda ordenación observamos los siguiente: los artículos que se han vendido juntos con mayor frecuencia son el 1096 y el 1079, ocupando el 1.02% del total de transacciones. También destacar que la compra de los productos 1033 y 13433 en la misma transacción ha tenido lugar en un 1.01% de las transacciones. El resto de itemsets no tienen una frecuencia ni del 0.35%.
+
+Los valores del soporte son tan bajos debido al gran número de transacciones, por lo tanto, para que una transacción tenga un valor de soporte del 1% se ha tenido que producir un total de `r ceiling(7801/100)` veces.
+
+
+
+#### Evaluación del modelo 
+
+
+
+Veamos un resumen de las reglas encontradas, con las siguientes métricas:
+
+-   Support: 0.0021
+
+-   Confidence: 0.15
+
+```{r}
+summary(rulesII)
+```
+
+Si los valores de support y confidence están próximos a los ajustados, revisar.
+
+Métricas:
+
+-   Soporte:
+
+    -   Valor medio: 0.005335
+
+    -   Valor mínimo: 0.002179
+
+    -   Valor máximo: 0.010255
+
+-   Confianza:
+
+    -   Valor medio: 0.2209
+
+    -   Valor máximo: 0.3125
+
+    -   Valor mínimo: 0.1558
+
+El valor de lift mide la importancia y robustez de una regla:
+
+-   Valor medio: 8.970
+
+-   Valor máximo: 12.438
+
+-   Valor mínimo: 4.657
+
+Hemos obtenido unos valores de lift bastante altos, lo que indica que nuestras reglas son improtantes y robustas. Como ya estudiamos en la descripción teórica, este parámetro indica la fuerza de la asociación entre los productos de la parte de la izquierda (antecedentes) y los de la derecha.
+
+
+```{r}
+inspect( sort(rulesII, by = "lift", decreasing = TRUE)[1] ) %>% kable(booktabs=TRUE) 
+
+# inspect( sort(rulesII, by = "lift", decreasing = FALSE)[1] ) 
+```
+
+La regla más robusta que hemos encontrado es que al comprar los productos 1033 y 1096, se comprará también el 1086. Esta transacción ha ocurrido un total de 10 veces (frecuencia del 0.38%). Su valor de lift es de 12.43, que es un valor bastante alto, indicando así que el producto 1086 (consecuente) está bastante vinculado a la compra conjunta de los productos 1033 y 1096 (antecedentes).
+
+La transacción que más veces se ha repetido ha sido:
+
+```{r}
+inspect( sort(rulesII, by = "count", decreasing = TRUE)[1] ) %>% kable(booktabs=TRUE)
+```
+
+
+
+Comprar el producto 1079 al comprar el 1096, en un total de 80 ocasiones y con un valor de lift de 7.7, confirmando así la robustez de esta regla.
+
+
+
+```{r}
+filtrado_transacciones <- subset(x = TransBasket,
+                                 subset = items %ain% c("1096",
+                                                        "1079"))
+filtrado_transacciones
+```
+
+Vamos a mostrar algunas de las 80 transacciones en las que aparece esta dupla de productos:
+
+```{r}
+inspect(filtrado_transacciones[1:5]) 
+```
+
+```{r}
+summary(filtrado_transacciones)
+```
+
+
+Como podemos ver, las transacciones en las que aparece esta dupla de items tiene de media casi 18 productos diferentes, y el 25% de las transacciones contiene como mínimo 24 productos, por lo que se trata de transacciones con un número elevado de productos.
+
+
+```{r}
+metricas <- interestMeasure(rulesII, measure = c("coverage", "fishersExactTest"),
+                            transactions = transacciones)
+quality(rulesII) <- cbind(quality(rulesII), metricas)
+# inspect(sort(x = reglas, decreasing = TRUE, by = "confidence"))
+df_reglas <- as(rulesII, Class = "data.frame") 
+df_reglas %>% as.tibble() %>% arrange(desc(confidence)) %>% head()
 ```
 
 
 
 
-
-
-### Aplicación del algoritmo a priori
-
 ### Conclusiones
+
+
+
+```{r}
+plot(rules_confII, method="graph", 
+     control=list(type="items")
+     #limit =100 
+     )
+```
+
+
+
+#### Tengo en cuenta n (NO ME HARÁ FALTA)
+
+
+```{r}
+a<-transacciones %>% group_by(Idticket)
+
+lista = list()
+for (i in seq_len(nrow(transacciones))) {
+  lista[[i]] =c(rep(a[i,3] %>% unlist(use.names = FALSE),a[i,4]))
+}
+
+# lista %>% head()
+
+
+df = data.frame()
+
+for (i in seq_len(length(lista))) {
+  df[i,1] = paste(lista[[i]], collapse=",")
+}
+
+df$Idticket <-  transacciones$Idticket
+# df %>% sample_n(10)
+
+
+
+# Unimos una línea por cada ticket con todos los items
+cesta_con_n <- ddply(df, c("Idticket"), 
+                             function(df)
+                               paste(df$V1, collapse = ","))
+names(cesta_con_n)<- c("Idticket","Items")
+```
+
+
+```{r}
+cesta_con_n <- cesta_con_n$Items %>%as_tibble() %>% dplyr::rename("Items" = value)
+write.csv(cesta_con_n,"Datos/muestraTickets_con_n.csv", quote = FALSE, row.names = FALSE)
+
+TransBasket_con_n <- read.transactions("Datos/muestraTickets_con_n.csv", 
+                                 format = 'basket', sep=',',
+                                 header = TRUE )
+TransBasket_con_n
+summary(TransBasket_con_n)
+```
+
+
+Resultados muy parecidos, en realidad únicamente tiene en cuenta una cota inferior.
 
 
 
