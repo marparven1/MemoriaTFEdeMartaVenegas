@@ -31,7 +31,7 @@ output:
 
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE , warning = FALSE)
+knitr::opts_chunk$set(echo = FALSE , warning = FALSE , message = FALSE , fig.pos = "H")
 ```
 
 ```{r , librerias, message=FALSE , echo= FALSE}
@@ -59,7 +59,7 @@ El objetivo principal de este apartado es aplicar un análisis de cesta de la co
 
 Aplicaremos esta técnica para descubrir los patrones de compra de los clientes y tratar así de identificar las relaciones existentes entre productos a la hora de comprar.
 
-Para llevar a cabo este estudio, haremos uso de la librería *arules*, que se trata de un entorno creado para la identificación de reglas de asociación y conjuntos de items frecuentes.
+Para llevar a cabo este estudio haremos uso de la librería *arules*, un entorno creado para la identificación de reglas de asociación y conjuntos de items frecuentes.
 
 ### Lectura y descripción de los datos
 
@@ -92,7 +92,7 @@ A continuación mostramos brevemente algunas de las filas de nuestros datos:
 ```
 
 
-```{r}
+```{r , fig.pos="H"}
 transacciones <- as.data.frame(muestra)
 transacciones %>% head(3) %>% 
   kable(booktabs=TRUE) %>% 
@@ -118,7 +118,7 @@ Procedemos a transformar el conjunto de datos inicial en uno nuevo para poder ap
 
 A continuación vamos a ver las seis últimas filas de nuestro nuevo conjunto de datos.
 
-```{r transFormatoBasket , echo= TRUE}
+```{r transFormatoBasket , echo= TRUE , fig.pos="H"}
 TicketsAgrupados<-transacciones %>% group_by(Idticket) %>% select(item,linea)
 
 # Con el siguiente comando, conseguimos agrupar en una misma colimna todos los items que corresponden a una misma transacción
@@ -127,18 +127,22 @@ DatosBasket <- ddply(TicketsAgrupados, c("Idticket"),
                                paste(TicketsAgrupados$item, collapse = ","))
 
 
-# DatosBasket1 <- DatosBasket %>% rename("Transaccion" = V1) # Me daba error al compilar
+# DatosBasket1 <- DatosBasket %>% 
+# rename("Transaccion" = V1) # Me daba error al compilar
+
 DatosBasket1 <- DatosBasket
 names(DatosBasket1) <- c("Idticket","Items")
 
 
 set.seed(1234)
-DatosBasket1[sample(nrow(DatosBasket1),size = 10),] %>% kable(booktabs=TRUE) %>% kable_styling(latex_options = "striped")
+DatosBasket1[sample(nrow(DatosBasket1),size = 10),] %>% 
+  kable(booktabs=TRUE) %>% 
+  kable_styling(latex_options = "striped")
 ```
 
 
 
-**Observación**: Es necesario mencionar que en cada transacción vemos una cota inferior de los items que han sido comprados, por ejemplo, vemos que en la transacción 7796 se han comprado los productos 15457 y 26978, pero no hemos considerado cuántos items de cada producto pertenecieron a esta compra, ya que posteriormente al hacer uso de la función *read.transacctions*, esta no va a considerar el número de items de cada producto que han sido comprados, sino que únicamente va a utilizar el que hayan sido o no comprados.
+**Observación**: Es necesario mencionar que en cada transacción vemos una cota inferior de los items que han sido comprados, por ejemplo, vemos que en la transacción 7796 se han comprado los productos 15457 y 26978, pero no hemos considerado cuántos items de cada producto pertenecieron a esta compra. Esto se debe a que posteriormente al hacer uso de la función *read.transacctions*, esta no va a considerar el número de items de cada producto que han sido comprados, sino que únicamente va a utilizar el que hayan sido o no comprados.
 
 La librería arules contiene una serie de funciones para poder encontrar reglas de asociación entre productos, y por este motivo, a pesar de tener información sobre el número de items que son comprados de cada producto para una misma transacción, esta información no nos va a ser de utilidad a la hora de analizar las relaciones entre los productos.
 
@@ -173,7 +177,7 @@ Observamos que hay un total de 7801 transacciones y 4631 artículos vendidos. La
 
 En el resumen de los datos podemos ver otra información que nos puede ser útil:
 
-- Density: Se trata del número total de artículos que se han comprado entre el número total de artículos existentes, en nuestro caso: *densidad=0.001169*
+- Density: Se trata del número total de artículos que se han comprado entre el número total de artículos existentes, en nuestro caso: *densidad=0.001169*.
 
 
 
@@ -191,19 +195,19 @@ En el resumen de los datos podemos ver otra información que nos puede ser útil
 : Productos más frecuentes
 
 
-- La media de productos diferentes que han sido comprados es de 5 artículos, y el número máximo  es un total de 82 artículos en una misma transacción. Además, cabe destacar que el 75% de las transacciones no supera los 7 artículos
+- La media de productos por transacción es de 5 artículos. Además, cabe destacar que en el 75% de las transacciones se han comprado 7 artículos o menos.
 
-- Tamaño de las transacciones: 1847 transacciones fueron de un único artículo y 1285 transacciones fueron de dos artículos, indicando estos resultados que la mayoría de clientes compraron entre 1 y 2 artículos en cada transacción. La transacción con más productos diferentes ha sido una transacción con 82 artículos.
+- Tamaño de las transacciones: un total de 1847 transacciones fueron de un único artículo y 1285 transacciones fueron de dos artículos, indicando estos resultados que la mayoría de clientes compraron entre 1 y 2 artículos. La transacción con más productos diferentes ha sido una transacción con 82 artículos.
 
 
 
-Nota: Recordemos que el número de items es una cota inferior, es decir, para una transacción con un único artículo, sabemos que se compró al menos una vez, pero no sabemos cuantas unidades se compraron de ese artículo en esa transacción.
+**Nota**: Recordemos que el número de items es una cota inferior, es decir, para una transacción con un único artículo, sabemos que se compró al menos una vez, pero no sabemos cuantas unidades se compraron.
 
 
 A continuación vamos a ver una lista con algunas transacciones:
 
 ```{r}
-set.seed(1234)
+set.seed(12345)
 labels(TransBasket[sample(7801,6)]) 
 ```
 
@@ -259,7 +263,7 @@ Vemos que los productos 1033, 28716 y 1096 son los tres artículos más vendidos
 
 También es importante estudiar como se distribuye el soporte de los productos individuales, para posteriormente establecer un límite de soporte. Esto se puede calcular fácilmente con un análisis de los items más frecuentes (con mayor soporte) dentro del conjunto de transacciones.
 
-```{r}
+```{r , echo=TRUE}
 frec_items <- itemFrequency(x = TransBasket, type = "relative")
 frec_items %>% sort(decreasing = TRUE) %>% head(5)
 ```
@@ -297,7 +301,10 @@ summary(Itemsets)
 ```
 
 
-Hemos encontrado un total de 64 itemsets con un soporte mayor al soporte mínimo indicado de `r soporte_min`. La mayoría de estos conjuntos de items están formados por dos items. Vamos a proceder a mostrar los itemsets con mayor soporte:
+Hemos encontrado un total de 64 itemsets con un soporte mayor al soporte mínimo indicado de `r soporte_min`. La mayoría de estos conjuntos de items están formados por dos items. 
+
+
+De estos itemsets encontrados, vamos a proceder a mostrar aquellos con mayor soporte:
 
 ```{r}
 Itemsets_frec <- sort(Itemsets, by = "support", decreasing = TRUE)[1:20]
@@ -307,12 +314,12 @@ as(Itemsets_frec, Class = "data.frame") %>%
   ggplot(aes(x = reorder(items, support), y = support)) +
   geom_col(colour="darkblue", fill="lightblue") +
   coord_flip() +
-  labs(title = "Itemsets más frecuentes", x = "itemsets") +
+  labs(title = "Itemsets más frecuentes con mayor soporte", x = "itemsets", y="Soporte") +
   theme_bw()
 
 
 ```
-Del gráfico anterior podemos observar que la dupla $\{ 1033,1096 \}$ tiene el mayor soporte, indicando el valor de éste que han sido comprados juntos en un 1.25% del total de transacciones.
+Del gráfico anterior podemos observar que la dupla $\{ 1033,1096 \}$ tiene el mayor soporte, es decir, que se trata del itemset que más veces ha sido vendido. El soporte, 0.012306115 indica que estos productos han sido vendidos un 1.23% del total de transacciones.
 
 
 
@@ -324,64 +331,88 @@ itemsets_filtrado_maxSupp <- subset(Itemsets,
 inspect(itemsets_filtrado_maxSupp)
 ```
 
-La mayoría de veces, un total de 96, estos dos items han sido comprados juntos, mientras que han sido comprado con otro producto, el 1086 hasta en 30 ocasiones.
+La mayoría de veces, un total de 96, estos dos items han sido comprados exclusivamente, mientras que han sido comprado con otro producto, el 1086 hasta en 30 ocasiones.
+
+
+
 
 
 #### Reglas de asociación
 
-A continuación vamos a crear reglas de asociación de la misma forma que hemos identificado los itemsets, pero indicando un valor para el parámetro *confianza*
+A continuación vamos a crear reglas de asociación de la misma forma que hemos identificado los itemsets, pero indicando un valor mínimo para el parámetro *confianza*, en este caso, del 50%. Vamos a imponer la obtención de reglas cuyos itemsets hayan sido comprado almenos 20 veces.
 
 ```{r}
+soporte_minII <-20/dim(TransBasket)[1]
 rules <- apriori(TransBasket,
         parameter = list(
-                         supp = 0.0021, # frecuencia con la que dos productos son comprados juntos
+                         supp = soporte_minII, # frecuencia con la que dos productos son comprados juntos
                          conf = 0.5,
                          minlen=2,
                         # maxlen=30,
-                         target = "rules" # Se especifica que se creen reglas
-                                # "frequent itemsets"
-                                # "maximally frequent itemsets"
-                                # "closed frequent itemsets"
-        )
-        
-        )
+                         target = "rules") # Se especifica que se creen reglas 
+                        ,
+                  control = list (verbose=F))
 
 inspect(rules)
 ```
 
+```{r}
+summary(rules)
+```
 
 
-El algoritmo nos está recomendando comprar productos los productos 1096 y 1033 en la mayoría de las reglas. Se trata de algunos de los productos más vendidos, por lo que no tiene sentido. Estos productos no tienen problemas para su venta, por lo que nuestro objetivo es buscar reglas que recomienden productos que se han vendido en menor volumen.
+Se han encontrado un total de 13 reglas. Sin embargo, el algoritmo nos está recomendando comprar los productos 1096 y 1033 en la mayoría de las reglas. Se trata de algunos de los productos más vendidos, por lo que no tiene sentido. Estos productos no tienen problemas para su venta, por lo que nuestro objetivo es buscar reglas que recomienden productos que se han vendido en menor volumen.
+
+
+
+
+
+
 
 Para ello, vamos a modificar las reglas, bajando el valor de la confianza y obligando al algoritmo a tener los productos más frecuentes a la izquierda, en la parte de *lhs*.
+
 
 Veamos las nuevas reglas de asociación:
 
 ```{r}
+soporte_minII <-15/dim(TransBasket)[1]
 rulesII <- apriori (data=TransBasket, 
-                       parameter=list (supp=0.0021,
-                                       conf = 0.15,
+                       parameter=list (supp=soporte_minII,
+                                       conf = 0.18,
                                        minlen=2,
                                        # Se especifica que se creen reglas
                                        target = "rules"), 
                        appearance = list(default="rhs", # Consecuente
-                                         lhs=c("1096","1033","28716" ) # Antecedente
+                                         lhs=c("1096","1033") # Antecedente
                                          ), 
-                  control = list (verbose=F)) 
-inspect(rulesII)
-# el problema es confident, es baja
-# Para buscar itemsets, fuerzo la conbinación de productos
-# "iMac","ViewSonic Monitor" conbinación interesante
+                  control = list (verbose=F))
+
+inspect(sort(x = rulesII, decreasing = TRUE, by = "confidence"))
 ```
 
-Hemos obtenido 13 reglas, y en la mayoría de reglas consisten en dos productos en el antecedente, donde aparecen juntos los productos 1033 y 1096, por tanto, podemos observar que la compra conjunta de estos dos productos se hace de manera frecuente.
 
-Vamos a proceder a ordenar las reglas según la confianza
+Vamos a ver una representación gráfica a modo de grafo de las nuevas reglas de asociación encontradas:
+
+```{r}
+plot(rulesII, method="graph", 
+     control=list(type="items")
+     #limit =100 
+     )
+```
+
+
+Finalmente, se han obtenido 10 reglas, y como vemos en el grafo, la mayoría de ellas consisten en dos productos en el antecedente, los productos 1033 y 1096, por tanto, como habíamos observado en el estudio de itemsets frecuentes, la venta conjunta de estos dos productos se hace de manera frecuente. 
+
+Podemos observar con un valor más alto de soporte, la regla que consiste en la venta de estos dos productos que lleva a la venta del producto 1079. Además, las reglas en las que el consecuente son los productos 1086, 1020 y 1046, tienen unos valores de lift bastante altos, indicando así que se trata de reglas robustas.
+
+Vamos a ordenar las reglas en función de los distintos parámetros:
+
+- Ordenación según confianza:
 
 ```{r}
 rules_conf <- sort (rulesII, by="confidence", decreasing=TRUE) 
 # 'high-confidence' rules.
-inspect((rules_conf))
+#inspect((rules_conf))
 # en rhs me van saliendo los tops
 
 
@@ -394,13 +425,12 @@ as(rules_conf, Class = "data.frame") %>%
   theme(legend.position='none')
 ```
 
-
-Ahora, las ordenamos según el soporte (frecuencia con que los objetos son comprados juntos)
+- Ordenación según soporte (frecuencia con que los objetos son comprados juntos):
 
 ```{r}
 rules_confII <- sort (rulesII, by="support", decreasing=TRUE) 
 # 'high-confidence' rules.
-inspect((rules_confII))
+#inspect((rules_confII))
 # en rhs me van saliendo los tops
 
 
@@ -413,21 +443,23 @@ as(rules_confII, Class = "data.frame") %>%
   theme(legend.position='none')
 ```
 
-Con esta segunda ordenación observamos los siguiente: los artículos que se han vendido juntos con mayor frecuencia son el 1096 y el 1079, ocupando el 1.02% del total de transacciones. También destacar que la compra de los productos 1033 y 13433 en la misma transacción ha tenido lugar en un 1.01% de las transacciones. El resto de itemsets no tienen una frecuencia ni del 0.35%.
+Con esta segunda ordenación observamos los siguiente: los artículos que se han vendido juntos con mayor frecuencia son el 1096 y el 1079, con una frecuencia del 1.0% del total de transacciones. También destacar que la compra de los productos 1096 y 1086 en la misma transacción ha tenido lugar en un 0.91% de las transacciones. Además, la venta de los productos 1096 y 1046 se ha producido con una frecuencia del 0.84%. Para el resto de itemsets no tienen una frecuencia ni del 0.35%.
 
 Los valores del soporte son tan bajos debido al gran número de transacciones, por lo tanto, para que una transacción tenga un valor de soporte del 1% se ha tenido que producir un total de `r ceiling(7801/100)` veces.
 
 
 
-#### Evaluación del modelo 
+#### Evaluación de las reglas 
 
 
 
 Veamos un resumen de las reglas encontradas, con las siguientes métricas:
 
--   Support: 0.0021
+-   Support: `r soporte_minII`
 
--   Confidence: 0.15
+-   Confidence: 0.18
+
+
 
 ```{r}
 summary(rulesII)
@@ -436,6 +468,8 @@ summary(rulesII)
 Si los valores de support y confidence están próximos a los ajustados, revisar.
 
 Métricas:
+
+REPASAR ESTO
 
 -   Soporte:
 
@@ -461,7 +495,8 @@ El valor de lift mide la importancia y robustez de una regla:
 
 -   Valor mínimo: 4.657
 
-Hemos obtenido unos valores de lift bastante altos, lo que indica que nuestras reglas son improtantes y robustas. Como ya estudiamos en la descripción teórica, este parámetro indica la fuerza de la asociación entre los productos de la parte de la izquierda (antecedentes) y los de la derecha.
+Hemos obtenido unos valores de lift bastante altos, lo que indica que nuestras reglas son improtantes y robustas. Como ya estudiamos en la descripción teórica, este parámetro indica la fuerza de la asociación entre los productos de la parte de la izquierda (antecedentes) y los de la derecha. Cuanto mayor sea el valor de lift, mayor evidencia tendremos de que la regla no se deba a la aleatoriedad, sino que se trata de un patrón de comportamiento existente.
+
 
 
 ```{r}
@@ -470,7 +505,7 @@ inspect( sort(rulesII, by = "lift", decreasing = TRUE)[1] ) %>% kable(booktabs=T
 # inspect( sort(rulesII, by = "lift", decreasing = FALSE)[1] ) 
 ```
 
-La regla más robusta que hemos encontrado es que al comprar los productos 1033 y 1096, se comprará también el 1086. Esta transacción ha ocurrido un total de 10 veces (frecuencia del 0.38%). Su valor de lift es de 12.43, que es un valor bastante alto, indicando así que el producto 1086 (consecuente) está bastante vinculado a la compra conjunta de los productos 1033 y 1096 (antecedentes).
+La regla más robusta que hemos encontrado es que al comprar los productos 1033 y 1096, se comprará también el 1086. Esta transacción ha ocurrido un total de 30 veces (frecuencia del 0.38%). Su valor de lift es de 12.43, que es un valor bastante alto, indicando así que el producto 1086 (consecuente) está bastante vinculado a la compra conjunta de los productos 1033 y 1096 (antecedentes).
 
 La transacción que más veces se ha repetido ha sido:
 
@@ -482,6 +517,95 @@ inspect( sort(rulesII, by = "count", decreasing = TRUE)[1] ) %>% kable(booktabs=
 
 Comprar el producto 1079 al comprar el 1096, en un total de 80 ocasiones y con un valor de lift de 7.7, confirmando así la robustez de esta regla.
 
+
+
+Otra métrica interesante para cuantificar la calidad de las reglas de asociación obtenidas es el *Test exacto de Fisher*, que permite contrastar las siguientes hipótesis:
+
+$$
+\left\{
+\begin{array}{ll}
+H_{0}: & \text{La regla obtenida se debe al azar, es un resultado aleatorio}     \\
+H_{1}: & \text{La regla obtenida se debe a un patrón de comportamiento real}
+\end{array}
+\right.
+$$
+
+
+
+
+```{r}
+Testfisher <- interestMeasure(rulesII, measure = c( "fishersExactTest"),
+                            transactions = TransBasket)
+# Testfisher
+```
+
+
+```{r}
+quality(rulesII) <- cbind(quality(rulesII), Testfisher)
+# inspect(sort(x = reglas, decreasing = TRUE, by = "confidence"))
+Res_rulesII <- as(rulesII, Class = "data.frame") 
+Res_rulesII %>% as.tibble() %>% arrange(desc(confidence)) %>% head()
+```
+**Conclusión**: Los *p-valores* son todos menores que $\alpha=0.05$, por lo que no existen evidencias significativas a favor de que las reglas obtenidas son fruto del azar, por lo que podemos afirmar que significativamente, las reglas de asociación obtenidas se deben a un comportamiento real de ventas.
+
+#### Reglas maximales
+
+Un itemset es *maximal* si no existe otro itemset que sea su superset. Se dice *regla maximal* a aquella que es generada con un itemset maximal. Vamos a estudiar la presencia de este tipo de reglas en las obtenidas haciendo uso de la función *is.maximal()*
+
+
+
+
+```{r}
+reglas_maximales <- rulesII[is.maximal(rulesII)]
+reglas_maximales
+```
+
+Existen 7 reglas maximales:
+
+```{r}
+inspect(reglas_maximales)[,1:3] %>% 
+  kable(booktabs=TRUE) %>% 
+  kable_styling(latex_options = "striped")
+```
+
+
+#### Reglas redundantes
+
+Se dice que dos reglas son *redundantes* si tienen el mismo antecedente y mismo consecuente. Se trata de reglas que son subconjuntos de otras reglas más grandes.
+
+Por ejemplo, dadas dos reglas de asociación:
+
+\[1. \quad \{A,B \} \rightarrow \{ C \} \\    2. \quad \{ A \} \rightarrow \{ C \} \]
+
+Se tiene que la regla *1* es redundante.
+
+
+Vamos a estudiar la presencia de este tipo de reglas en las obtenidas haciendo uso de la función *is.redundant()*.
+
+
+
+```{r}
+reglas_redundantes <- rulesII[is.redundant(x = rulesII, measure = "confidence")]
+reglas_redundantes
+```
+
+
+No existen reglas redundantes.
+
+
+### Conclusiones
+
+
+
+
+
+
+
+
+
+
+
+### REVISAR
 
 
 ```{r}
@@ -514,19 +638,6 @@ df_reglas <- as(rulesII, Class = "data.frame")
 df_reglas %>% as.tibble() %>% arrange(desc(confidence)) %>% head()
 ```
 
-
-
-
-### Conclusiones
-
-
-
-```{r}
-plot(rules_confII, method="graph", 
-     control=list(type="items")
-     #limit =100 
-     )
-```
 
 
 
@@ -576,6 +687,16 @@ summary(TransBasket_con_n)
 
 
 Resultados muy parecidos, en realidad únicamente tiene en cuenta una cota inferior.
+
+
+
+
+
+
+
+
+
+
 
 
 
