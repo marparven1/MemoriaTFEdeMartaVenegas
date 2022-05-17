@@ -31,7 +31,7 @@ output:
 
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE , warning = FALSE , message = FALSE , fig.pos = "H")
+knitr::opts_chunk$set(echo = FALSE , warning = FALSE , message = FALSE , fig.pos = '!H')
 ```
 
 ```{r , librerias, message=FALSE , echo= FALSE}
@@ -96,7 +96,7 @@ A continuación mostramos brevemente algunas de las filas de nuestros datos:
 transacciones <- as.data.frame(muestra)
 transacciones %>% head(3) %>% 
   kable(booktabs=TRUE) %>% 
-  kable_styling(latex_options = "striped")
+  kable_styling(latex_options = c("striped","hold_position") )
 ```
 
 
@@ -121,7 +121,8 @@ A continuación vamos a ver las seis últimas filas de nuestro nuevo conjunto de
 ```{r transFormatoBasket , echo= TRUE , fig.pos="H"}
 TicketsAgrupados<-transacciones %>% group_by(Idticket) %>% select(item,linea)
 
-# Con el siguiente comando, conseguimos agrupar en una misma colimna todos los items que corresponden a una misma transacción
+# Con el siguiente comando, conseguimos agrupar en una misma columna
+#  todos los items que corresponden a una misma transacción
 DatosBasket <- ddply(TicketsAgrupados, c("Idticket"), 
                              function(TicketsAgrupados)
                                paste(TicketsAgrupados$item, collapse = ","))
@@ -137,7 +138,7 @@ names(DatosBasket1) <- c("Idticket","Items")
 set.seed(1234)
 DatosBasket1[sample(nrow(DatosBasket1),size = 10),] %>% 
   kable(booktabs=TRUE) %>% 
-  kable_styling(latex_options = "striped")
+  kable_styling(latex_options = c("striped","scale_down"))
 ```
 
 
@@ -227,9 +228,7 @@ quantile(tamanos, probs = seq(0,1,0.1))
 
 Vamos a mostrar gráficamente la distribución de los tamaños de las transacciones:
 
-```{r}
-
-
+```{r , fig.pos = "!H" , fig.height=3}
 data.frame(tamanos) %>%
   ggplot(aes(x = tamanos)) +
    geom_histogram(aes(y=..count..), colour="darkblue", fill="lightblue")+
@@ -306,7 +305,7 @@ Hemos encontrado un total de 64 itemsets con un soporte mayor al soporte mínimo
 
 De estos itemsets encontrados, vamos a proceder a mostrar aquellos con mayor soporte:
 
-```{r}
+```{r , fig.pos='H' , fig.height=4}
 Itemsets_frec <- sort(Itemsets, by = "support", decreasing = TRUE)[1:20]
 #inspect(top_20_itemsets)
 
@@ -409,7 +408,7 @@ Vamos a ordenar las reglas en función de los distintos parámetros:
 
 - Ordenación según confianza:
 
-```{r}
+```{r , fig.height=4}
 rules_conf <- sort (rulesII, by="confidence", decreasing=TRUE) 
 # 'high-confidence' rules.
 #inspect((rules_conf))
@@ -427,7 +426,7 @@ as(rules_conf, Class = "data.frame") %>%
 
 - Ordenación según soporte (frecuencia con que los objetos son comprados juntos):
 
-```{r}
+```{r , fig.height=4}
 rules_confII <- sort (rulesII, by="support", decreasing=TRUE) 
 # 'high-confidence' rules.
 #inspect((rules_confII))
@@ -562,7 +561,7 @@ reglas_maximales
 
 Existen 7 reglas maximales:
 
-```{r}
+```{r , fig.pos='!H'}
 inspect(reglas_maximales)[,1:3] %>% 
   kable(booktabs=TRUE) %>% 
   kable_styling(latex_options = "striped")
@@ -595,17 +594,21 @@ No existen reglas redundantes.
 
 ### Conclusiones
 
+Con el estudio y el análisis de las transacciones se ha observado el siguiente patrón de venta: en la mayoría de transacciones se han vendido uno u dos productos diferentes. 
+
+También se ha observado que hay ciertos productos que ocupan un volumen de ventas bastante alto, por ejemplo, la venta conjunta de los productos 1033 y 1096 se ha producido en un 1.23% del conjunto de todas las transacciones. Este valor puede parecer bajo, pero teniendo en cuenta que contamos con 7801 transacciones, supone que la venta de estos artículos se ha producido unas `r sum(inspect(subset(rulesII, subset=lhs %ain% c('1096','1033')  ) )[,'count'])` veces, por lo que es bastante frecuente.
+
+El algoritmo nos ha mostrado reglas para aquellos productos que se más se venden. Observando los valores obtenidos del parámetro *lift*, podemos afirmar que estas reglas son todas bastante robustas, es decir, las reglas no se deben a la aleatoriedad o al azar, sino que se trata de un patrón de comportamiento de ventas real.
+
+debo poner algo más
 
 
 
 
-
-
-
-
-
+<!--
 
 ### REVISAR
+
 
 
 ```{r}
@@ -694,6 +697,8 @@ Resultados muy parecidos, en realidad únicamente tiene en cuenta una cota infer
 
 
 
+
+-->
 
 
 
