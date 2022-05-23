@@ -1,0 +1,153 @@
+---
+author: "Nombre Completo Autor"
+date: "27/10/2017"
+documentclass: book
+forprint: true  # true: imprime a dos caras, false: libro digital
+fontsize: 12pt # 10pt,11pt
+geometry: margin = 2.5cm 
+bibliography: ["bib/library.bib", "bib/paquetes.bib"]
+# metodobib -> true: natbib (descomentar: citation_package: natbib) 
+#           -> false: pandoc (comentar: citation_package: natbib)
+metodobib: true
+#natbib: plainnat, abbrvnat, unsrtnat
+biblio-style: "plainnat"
+#Método 2 (pandoc): descomente una línea de las 2 siguientes en caso de usarlo
+csl: methods-in-ecology-and-evolution.csl      # no numera mejor en las citas
+#csl: acm-sig-proceedings-long-author-list.csl  # numera peor en las citas
+link-citations: yes
+output: 
+  pdf_document:
+    keep_tex: no
+    number_sections: yes
+    citation_package: natbib  # comentado usa: pandoc-citeproc
+    #toc: yes
+    fig_caption: yes
+    template: latex/templateMemoriaTFE.tex
+    includes:
+      #before_body: portadas/latex_paginatitulo_modTFE.tex
+      #in_header: latex/latex_preambulo.tex
+      #after_body: latex/latex_antes_enddoc.tex
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE , warning = FALSE , message = FALSE , fig.pos = '!H')
+```
+
+```{r , librerias, message=FALSE , echo= FALSE}
+library(tidyverse)
+library(dplyr)
+library(kableExtra)
+
+library(plyr) # Transformación de los datos
+
+library(lubridate)
+library(ggplot2) # Visualización
+```
+
+
+
+
+## Modelos estadísticos clásicos
+
+
+
+El objetivo principal de este apartado es aplicar los modelos estadísticos descritos en la parte teórica a un conjunto de datos correspondiente a ventas de dos productos lácteos de dos marcas distintas.
+
+
+
+Aplicaremos distintos modelos estadísticos clásicos con el objetivo de entender las ventas y para predecir el volumen de ventas que éstos tendrán en el futuro.
+
+
+Para llevar a cabo este estudio haremos uso de la librería *-*
+
+
+
+
+### Lectura y descripción de los datos
+
+
+
+```{r , carga de datos}
+load("Datos/datosTFGMarta.RData")
+```
+
+
+
+
+Los datos contienen información correspondiente a ventas de productos lácteos desde el 1 de Septiebre de 2020 hasta el 30 de Enero de 2022, obteniéndose 140025 observaciones.
+
+
+En este conjunto de datos inicial encontramos las siguientes variables:
+
+- **ID_TICKET**: Variable numérica que identifica unívocamente a cada ticket de compra
+- **LINEA_TICLET**: Variable numérica con la línea correspondiente del ticket
+- **FECHA**: Fecha en que se realizó la transacción
+- **CODIGO**: Id producto
+- **CANTIDAD**: Número de artículos comprados
+- **PRECIO**: Precio base del artículo libre de impuestos, euros
+- **PRECIO CON IMPUESTOS**: Precio de venta del artículo, en  euros
+- **DESCUENTO**:  Descuento aplicado
+- **IMPORTE**: Importe de la compra libre de impuestos, en euros
+- **IMPORTE CON IMPUESTOS**: Importe a pagar por el comprador, en euros
+
+A continuación mostramos brevemente algunas de las filas de nuestros datos:
+
+
+
+```{r}
+datos %>% head() %>% 
+  kable(booktabs=TRUE) %>%
+  kable_styling(latex_options = c("striped","scale_down"))
+```
+
+
+En primer lugar, con ayuda de la librería *lubridate* vamos a incluír nuevas variables temporales, como el año, mes, día, día de la semana y semana del año correspondientes a la compra, para así poder hacer un análisis más profundo para ver si la temporalidad afecta a la venta de productos.
+
+
+```{r}
+datos$ano <- year(datos$FECHA) # extraemos el año
+datos$mes<- month(datos$FECHA) # extraemos el mes
+datos$dia<-day(datos$FECHA) # extraemos el día
+datos$SemanaAno<-week(datos$FECHA)
+datos$DiaSemana<-wday(datos$FECHA,week_start = 1 )
+```
+
+Una vez hemos añadido las variables adecuadas, vamos a proceder a realizar un breve resumen estadístico de los datos.
+
+
+
+
+```{r}
+library(dplyr)
+DatosDF = as.data.frame(datos)
+fe = DatosDF %>% group_by(FECHA) %>%  dplyr::summarize(n =  n())
+```
+
+
+
+
+
+
+```{r}
+ggplot(fe )+
+  geom_line(aes(x=fe$FECHA, y = fe$n))
+```
+
+
+```{r}
+datos %>% summary()
+```
+
+
+
+Veamos, en primer lugar, un estudio de la variación de ventas en función del tiempo:
+
+
+
+
+
+
+
+
+

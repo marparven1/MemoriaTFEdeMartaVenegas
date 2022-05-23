@@ -75,7 +75,17 @@ knitr::opts_chunk$set(fig.path = 'figurasR/',
 # Caso práctico con datos reales
 
 
+
+En este apartado se va a llevar a cabo un desarrollo teórico de ...
+
+
+
 ```{r child = 'capitulo05_1.Rmd'}
+```
+
+
+
+```{r child = 'capitulo05_2.Rmd'}
 ```
 
 
