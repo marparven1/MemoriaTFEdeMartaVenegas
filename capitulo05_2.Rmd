@@ -76,7 +76,7 @@ load("Datos/datosTFGMarta.RData")
 
 
 
-Los datos contienen información correspondiente a ventas de productos lácteos desde el 1 de Septiebre de 2020 hasta el 30 de Enero de 2022, obteniéndose un total de 140025 observaciones y se estructuran de la siguiente forma: Cada fila corresponde a la línea de un ticket y hace referencia a la venta de un artículo en particular. De esta forma, para una venta de un único producto únicamente encontraremos una fila en el conjunto de datos que identifique esa venta, sin embargo, para una venta de más de un artículo encontraremos tantas filas como productos se hayan vendido. Como únicamente tenemos las ventas para dos productos, como máximo, habrá dos filas en el conjunto de datos para una misma venta.
+Los datos contienen información correspondiente a ventas de productos lácteos durante un período de 5 meses, desde el 1 de Septiebre de 2020 hasta el 30 de Enero de 2021, obteniéndose un total de 140025 observaciones y se estructuran de la siguiente forma: Cada fila corresponde a la línea de un ticket y hace referencia a la venta de un artículo en particular. De esta forma, para una venta de un único producto únicamente encontraremos una fila en el conjunto de datos que identifique esa venta, sin embargo, para una venta de más de un artículo encontraremos tantas filas como productos se hayan vendido. Como únicamente tenemos las ventas para dos productos, como máximo, habrá dos filas en el conjunto de datos para una misma venta.
 
 
 En este conjunto de datos inicial encontramos las siguientes variables:
@@ -95,7 +95,7 @@ En este conjunto de datos inicial encontramos las siguientes variables:
 
 
 
-Se ha considerado oportuno la extracción de la siguiente información como nuevas variables temporales: día de la semana, semana del año, mes y año de cada instancia a partir de la variable *fecha* y haciendo uso de la librería lubridate. De esta forma, se podrá hacer un análisis del comportamiento de ventas teniendo en cuenta distintas granularidades tratando de ver si la temporalidad afecta a la venta de productos.
+Se ha considerado oportuno la extracción de la siguiente información como nuevas variables temporales: día de la semana, semana del año, mes y año de cada instancia a partir de la variable *fecha* y haciendo uso de la librería lubridate. De esta forma, se podrá hacer un análisis del comportamiento de ventas teniendo en cuenta distintas granularidades tratando de entender cómo afecta la temporalidad a la venta de productos.
 
 
 
@@ -133,35 +133,38 @@ dataset<-as.data.frame(datos) # Datos como DF
 
 
 
-Al estar trabajando con fechas, es muy importante comprobar la uniformidad de los datos (no se como expresarlo), para ello buscaremos la existencia de datos faltantes de la siguiente forma:
+Al estar trabajando con fechas, es muy importante comprobar la uniformidad en los datos, para ello buscaremos la existencia de registros faltantes de la siguiente forma:
 
 
-```{r , missing values}
+```{r , missing values ,  echo=TRUE}
 # Construcción de un cjto de datos con todas las fechas entre la primera fecha y la última de los datos que tenemos
 FechasCompletas <- seq(min(dataset$FECHA), max(dataset$FECHA), by = "day")
 FechasCompletas  <- data.frame(FECHA = FechasCompletas ) # Creo un DF con de fechas
 
-# Merge al conjunto de fechas completas y al Datos3 para añadir NA a aquellos valores faltantes
+# Merge al conjunto de fechas completas y al cjto inicial para añadir NA a aquellos valores faltantes
 DatosCompletos <- merge(FechasCompletas, dataset, by = "FECHA", all.x = TRUE)
 
 # Valores faltantes en el conjunto de datos completo
 Miss_values <- which(is.na(DatosCompletos$ANO) == TRUE)
+
+
 ```
 
-Existe un total de `r length(Miss_values)` valores faltantes, que corresponden a un `r round( (length(Miss_values)/nrow(dataset))*100 , 5 )`% del total de datos. Se trata de un porcentaje ínfimo del total, por lo que procedemos a imputar estos valores ¿¿**de que forma**??
+Con registros faltantes nos referimos a que falten las ventas correspondientes a algún día concreto dentro del período que estamos considerando, 1/09/2020-30/01/2022.
+
+Existe un total de `r length(Miss_values)` valores faltantes, que corresponden a un `r round( (length(Miss_values)/nrow(dataset))*100 , 5 )`% del total de datos. Se trata de un porcentaje ínfimo del total. En otras condiciones, procederíamos a imputar estos valores, sin embargo, estos días no estaban contemplados en el conjunto de datos inicial debido a que corresponden a festivos: `r DatosCompletos[Miss_values[1],1]`, el día de Navidad y `r DatosCompletos[Miss_values[2],1]`, año nuevo. Por este motivo, podemos continuar con nuestro análisis haciendo uso del conjunto de datos inicial.
 
 
+Una vez hemos añadido las variables adecuadas y hemos estudiado la continuidad de los datos, vamos a realizar un breve resumen descriptivo de los datos para así conocer la estructura y el tipo de éstos y ver si es necesario la modificación de alguna variable.
 
-Una vez hemos añadido las variables adecuadas, vamos a realizar un breve resumen rescriptivo de los datos para así conocer la estructura y el tipo de éstos y ver si es necesario la modificación de alguna variable.
 
-
-```{r}
+```{r , echo=TRUE}
 dataset %>% str() # Estructura de los datos trás su transformación
 ```
 
 
 
-```{r}
+```{r ,echo=TRUE}
 dataset %>% summary()  # Resumen de los datos
 ```
 
@@ -190,30 +193,78 @@ VolumenVentasDiarias = dataset %>% group_by(FECHA) %>%  dplyr::summarize(n =  n(
 
 
 ```{r}
-# La idea en shiny es poder mostrar con un gráfico interactivo las ventas totales según día, volumen medio de ventas mensuales, semanales,... es fácil solo es crear un dataset con esta información
+# La idea en shiny es poder mostrar con un gráfico interactivo las ventas totales según   # día, volumen medio de ventas mensuales, semanales,... es fácil solo es crear un dataset # con esta información
 
 ggplot(VolumenVentasDiarias )+
-  geom_line(aes(x=VolumenVentasDiarias$FECHA, y = VolumenVentasDiarias$n) , 
+  geom_line(aes(x=FECHA, y = n) , 
             color ="lightblue"  ) +
   scale_x_date(date_labels = "%d %b %y",date_breaks = "15 days")+
   labs(x="Día" , y = "Volumen total de ventas", caption = "Fuente: Elaboración propia con datos")+
-  #theme_ipsum() +
+ theme_gray() +
   theme(axis.text.x = element_text(angle = 45))+
   ggtitle("Evolución del volumen total de ventas diario")
   
 ```
 
 
-En el gráfico podemos apreciar como las ventas fluctuan bastante, encontrándolas en un rango entre 25 y 2268 ventas diarias. Hay dos momentos donde el volumen de ventas es considerablemente superior al resto, a mediados del mes de Octubre de 2020 y a mediados de Diciembre de este mismo año. Se observa un patrón muy marcado, con picos de muy pocas ventas y otros donde el volumen sube.
+En el gráfico podemos apreciar como el volumen de ventas diario fluctúa bastante en función del día, encontrándolas en un rango entre 25 y 2268 ventas diarias. Hay dos momentos donde el volumen de ventas es considerablemente superior al resto, a mediados del mes de Octubre de 2020 y a mediados de Diciembre de este mismo año. Se observa un patrón muy marcado, con picos de muy pocas ventas y otros donde el volumen sube bastante.
+
+Para tratar de entender mejor el comportamiento de venta, vamos a estudiar la evolución de los valores de ventas en función del día de la semana y mes del año.
+
+
+```{r}
+datos %>% select(FECHA) %>% unique()
+```
 
 
 
+```{r}
+VentasMensuales = DatosDF %>% group_by(MES) %>%  dplyr::summarize(Num_Ventas =  n(),PrecioMedio = mean(PRECIO_CON_IMPUESTOS) )
+
+VentasMensuales$MES=c(
+ifelse(VentasMensuales$MES == 1 , "Enero",
+       
+       ifelse(
+          VentasMensuales$MES == 8 , "Agosto",
+       ifelse(
+         VentasMensuales$MES == 9 , "Septiembre",
+         ifelse( VentasMensuales$MES == 10 , "Octubre",
+                 ifelse(
+                    VentasMensuales$MES == 11 , "Noviembre",
+                    ifelse(VentasMensuales$MES == 12 , "Diciembre"," " ))))))
+)
+VentasMensuales %>% kable(booktabs=TRUE,col.names = c("Mes","Volumen Ventas","Precio Medio")) %>% kable_styling(latex_options = "striped")
+```
+
+```{r}
+Ventas_DiaSem = DatosDF %>% group_by(DIA_SEMANA) %>% dplyr::summarise(
+  Ventas = n() , PrecioMedio = mean(PRECIO_CON_IMPUESTOS) , mean(CANTIDAD) )
+
+
+Ventas_DiaSem$DIA_SEMANA=c(
+ifelse(Ventas_DiaSem$DIA_SEMANA == 1 , "Lunes",
+       ifelse(
+          Ventas_DiaSem$DIA_SEMANA == 2 , "Martes",
+       ifelse(
+        Ventas_DiaSem$DIA_SEMANA== 3 , "Miércoles",
+         ifelse( Ventas_DiaSem$DIA_SEMANA == 4 , "Jueves",
+                 ifelse(
+                    Ventas_DiaSem$DIA_SEMANA == 5 , "Viernes",
+                    ifelse(Ventas_DiaSem$DIA_SEMANA == 6 , "Sábado",
+                           
+                           ifelse(Ventas_DiaSem$DIA_SEMANA == 7 , "Domingo",""))))))))
+Ventas_DiaSem %>% kable(booktabs=TRUE,col.names = c("Dia","Volumen Ventas","Precio Medio")) %>% kable_styling(latex_options = "striped")
+```
 
 
 
+```{r}
+ggplot(Ventas_DiaSem, aes(fill =DIA_SEMANA , x = DIA_SEMANA)) + 
+  geom_histogram()
 
-
-
+ggplot(data=Ventas_DiaSem, aes(x=DIA_SEMANA, y=Ventas, fill=DIA_SEMANA)) + 
+    geom_bar(stat="identity", position="dodge")
+```
 
 
 
