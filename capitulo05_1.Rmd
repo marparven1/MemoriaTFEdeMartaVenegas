@@ -30,11 +30,11 @@ output:
 ---
 
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE , warning = FALSE , message = FALSE , fig.pos = '!H')
+```{r setup}
+knitr::opts_chunk$set(echo = FALSE , warning = FALSE , message = FALSE )
 ```
 
-```{r , librerias, message=FALSE , echo= FALSE}
+```{r }
 library(tidyverse)
 library(dplyr)
 library(kableExtra)
@@ -65,7 +65,7 @@ Para llevar a cabo este estudio haremos uso de la librería *arules*, un entorno
 
 
 
-```{r , carga de datos}
+```{r }
 load("Datos/muestraTickets.RData")
 ```
 

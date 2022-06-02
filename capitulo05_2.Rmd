@@ -30,11 +30,11 @@ output:
 ---
 
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE , warning = FALSE , message = FALSE , fig.pos = 'H')
+```{r }
+knitr::opts_chunk$set(echo = FALSE , warning = FALSE , message = FALSE )
 ```
 
-```{r , librerias, message=FALSE , echo= FALSE}
+```{r , message=FALSE , echo= FALSE}
 library(tidyverse)
 library(dplyr)
 library(kableExtra)
@@ -53,17 +53,14 @@ library(TSA) # Series Temporales (B-C)
 
 
 
-## Modelos estadísticos clásicos
+## Proceso de ciencia de datos
 
 
+Este apartado lo dedicaremos a realizar un proceso de ciencia de datos completo, teniendo en cuenta los siguientes objetivos:
 
-El objetivo principal de este apartado es aplicar los modelos estadísticos descritos en la parte teórica a un conjunto de datos correspondiente a ventas de dos productos lácteos de dos marcas distintas.
-
-En primer lugar, se aplicarán distintos modelos estadísticos clásicos con el objetivo de entender como funcionan las ventas y predecir el volumen de ventas de ambos productos en el futuro. Con este objetivo, trataremos de identificar que variables son las mas adecuadas para la realización de las predicciones. También estudiaremos la existencia de variables que no aportan información adicional al volumen de ventas, y son por tanto irrelevantes para este estudio.
-
-
-Para llevar a cabo este estudio haremos uso de la librería *-*
-
+- Analizar los datos proporcionados para conocer como varían las ventas de productos lácteos con el tiempo
+- Demostrar que existe la posibilidad de construir buenos modelos para predecir el volumen de venta de productos futuro a partir de los datos.
+- Desarrollo de modelos para predecir ventas.
 
 
 
@@ -78,7 +75,7 @@ load("Datos/datosTFGMarta.RData")
 
 
 
-Los datos contienen información correspondiente a ventas de productos lácteos durante un período de 5 meses, desde el 1 de Septiebre de 2020 hasta el 30 de Enero de 2021, obteniéndose un total de 140025 observaciones y se estructuran de la siguiente forma: Cada fila corresponde a la línea de un ticket y hace referencia a la venta de un artículo en particular. De esta forma, para una venta de un único producto únicamente encontraremos una fila en el conjunto de datos que identifique esa venta, sin embargo, para una venta de más de un artículo encontraremos tantas filas como productos se hayan vendido. Como únicamente tenemos las ventas para dos productos, como máximo, habrá dos filas en el conjunto de datos para una misma venta.
+Los datos contienen información correspondiente a ventas de dos productos lácteos durante un período de 5 meses, desde el 1 de Septiembre de 2020 hasta el 30 de Enero de 2021, obteniéndose un total de 140025 observaciones y se estructuran de la siguiente forma: Cada fila corresponde a la línea de un ticket y hace referencia a la venta de un artículo en particular. De esta forma, para una venta de un único producto únicamente encontraremos una fila en el conjunto de datos que identifique esa venta, sin embargo, para una venta de más de un artículo encontraremos tantas filas como productos se hayan vendido. Como únicamente tenemos las ventas para dos productos, como máximo, habrá dos filas en el conjunto de datos para una misma venta.
 
 
 En este conjunto de datos inicial encontramos las siguientes variables:
@@ -96,42 +93,49 @@ En este conjunto de datos inicial encontramos las siguientes variables:
 
 
 
+### Preparación de los datos (Preprocesado)
 
-Se ha considerado oportuno la extracción de la siguiente información como nuevas variables temporales: día de la semana, semana del año, mes y año de cada instancia a partir de la variable *fecha* y haciendo uso de la librería lubridate. De esta forma, se podrá hacer un análisis del comportamiento de ventas teniendo en cuenta distintas granularidades tratando de entender cómo afecta la temporalidad a la venta de productos.
+Una vez leidos los datos, vamos a llevar a cabo la limpieza de éstos para su posterior estudio, representación y modelado. En este punto del proceso, trataremos de encontrar, corregir o eliminar registros erróneos en los datos. 
 
 
+En primer lugar, procedemos a ver la estructura de éstos:
 
 
-```{r , extraccion_fecha}
-datos$ANO         <- year(datos$FECHA) # extraemos el año
-datos$MES         <- month(datos$FECHA) # extraemos el mes
-datos$DIA         <-day(datos$FECHA) # extraemos el día
-datos$SEMANA_ANO <-week(datos$FECHA)
-datos$DIA_SEMANA <-wday(datos$FECHA,week_start = 1 )
+```{r , echo=TRUE}
+datos %>% str() # Estructura de los datos trás su transformación
 ```
 
 
-```{r , reordenacion_cols}
-# Reordeno las columnas 
-datos <- datos %>% select("ID_TICKET"  , "LINEA_TICKET", "CODIGO", "CANTIDAD", "PRECIO", "PRECIO_CON_IMPUESTOS" , "DESCUENTO", "IMPORTE", "IMPORTE_CON_IMPUESTOS" , "FECHA" , "ANO", "MES"    , "DIA", "SEMANA_ANO", "DIA_SEMANA"  )
-```
+A continuación, procedemos a transformar las variables a un formato adecuado y volvemos a visualizar la estructura:
 
-
-
-
-
-```{r , conversion_variables}
+```{r }
 #datos$ID_TICKET<- as.factor(datos$ID_TICKET) # Conversión a factor
 datos$LINEA_TICKET<- as.factor(datos$LINEA_TICKET) # Conversión a factor
 datos$CODIGO<- as.factor(datos$CODIGO) # Conversión a factor
 datos$CANTIDAD<- as.integer(datos$CANTIDAD) # Conversión a entero
-datos$ANO <- as.integer(datos$ANO)
-datos$MES <- as.integer(datos$MES)
-datos$DIA <- as.integer(datos$DIA)
-datos$SEMANA_ANO<- as.integer(datos$SEMANA_ANO)
-datos$DIA_SEMANA<- as.integer(datos$DIA_SEMANA)
 dataset<-as.data.frame(datos) # Datos como DF
 ```
+
+
+```{r , echo=TRUE}
+dataset %>% str() # Estructura de los datos trás su transformación
+```
+
+Hemos factorizado algunas variables y convertido otras de las numéricas.
+
+
+
+#### Duplicados
+
+
+Se comprueba la existencia de registros duplicados:
+
+```{r DUPLICADOS ,echo=TRUE}
+dataset[duplicated(dataset)==TRUE,]
+```
+
+
+#### Datos faltantes
 
 
 
@@ -155,12 +159,75 @@ Con registros faltantes nos referimos a que falten las ventas correspondientes a
 Existe un total de `r length(Miss_values)` valores faltantes, que corresponden a un `r round( (length(Miss_values)/nrow(dataset))*100 , 5 )`% del total de datos. Se trata de un porcentaje ínfimo del total. En otras condiciones, procederíamos a imputar estos valores, sin embargo, estos días no estaban contemplados en el conjunto de datos inicial debido a que corresponden a festivos: `r DatosCompletos[Miss_values[1],1]`, el día de Navidad y `r DatosCompletos[Miss_values[2],1]`, año nuevo. Por este motivo, podemos continuar con nuestro análisis haciendo uso del conjunto de datos inicial.
 
 
-Una vez hemos añadido las variables adecuadas y hemos estudiado la continuidad de los datos, vamos a realizar un breve resumen descriptivo de los datos para así conocer la estructura y el tipo de éstos y ver si es necesario la modificación de alguna variable.
+
+#### Outliers
 
 
-```{r , echo=TRUE}
-dataset %>% str() # Estructura de los datos trás su transformación
+Estudiamos valores atípicos para las variables *cantidad* e *importe con impuestos*, ya que estudiarlos para el resto no tiene mucho interés.
+
+
+
+
+
+```{r}
+boxplot(dataset[,c(5,9)],main="BoxPlot de las variables cantidad e importe con impuestos")
 ```
+
+
+Para la variable cantidad, se considerará un valor atípico la compra de 18 o más artículos. Para la variable precio con impuesto, una compra de 25.02€ podemos considerarla como una compra con un valor extremo.
+
+
+#### Creación de variables temporales
+
+
+
+Se ha considerado oportuno la extracción de la siguiente información como nuevas variables temporales: día de la semana, semana del año, mes y año de cada instancia a partir de la variable *fecha* y haciendo uso de la librería lubridate. De esta forma, se podrá hacer un análisis del comportamiento de ventas teniendo en cuenta distintas granularidades tratando de entender cómo afecta la temporalidad a la venta de productos.
+
+
+
+```{r , extraccion_fecha , echo=TRUE}
+dataset$ANO         <-  year(dataset$FECHA) # Extracción del año
+dataset$MES         <- month(dataset$FECHA) # Extracción del mes
+dataset$DIA         <-   day(dataset$FECHA) # Extracción del día
+dataset$SEMANA_ANO <-   week(dataset$FECHA) # Extracción de la semana del año
+dataset$DIA_SEMANA <-   wday(dataset$FECHA,week_start = 1 )
+```
+
+
+```{r , reordenacion_cols}
+# Reordeno las columnas 
+dataset <- dataset %>% select("ID_TICKET"  , "LINEA_TICKET", "CODIGO", "CANTIDAD", "PRECIO", "PRECIO_CON_IMPUESTOS" , "DESCUENTO", "IMPORTE", "IMPORTE_CON_IMPUESTOS" , "FECHA" , "ANO", "MES"    , "DIA", "SEMANA_ANO", "DIA_SEMANA"  )
+```
+
+
+
+
+```{r}
+dataset$ANO <-       as.integer(dataset$ANO)
+dataset$MES <-       as.integer(dataset$MES)
+dataset$DIA <-       as.integer(dataset$DIA)
+dataset$SEMANA_ANO<- as.integer(dataset$SEMANA_ANO)
+dataset$DIA_SEMANA<- as.integer(dataset$DIA_SEMANA)
+```
+
+
+
+### Análisis exploratorio de datos (EDA)
+
+
+
+Una vez hemos realizado el preprocesamiento de los datos necesario, procedemos a la fase del análisis exploratorio.
+
+Este apartado lo dedicaremos a hacer un análisis profundo de las ventas, añadiendo gráficos que muestren el comportamiento del consumidor.
+
+Como tenemos datos correspondientes a ventas, trataremos de responder a las siguientes cuestiones:
+
+- ¿Cuál es el patrón de venta de cada producto? ¿Se venden las mismas unidades, o destaca la venta de uno de ellos?
+- ¿Cómo varían las ventas en función del tiempo?
+- ¿Qué variables podrían influir más a la hora de vender un producto?
+
+
+#### Resumen de los datos
 
 
 
@@ -169,6 +236,11 @@ dataset %>% summary()  # Resumen de los datos
 ```
 
 
+
+Observamos lo siguiente: 
+
+- La cantidad media de unidades vendidas es de 2.55, sin embargo, el número máximo de items comprado es de 132. Además, el 75% de los usuarios ha comprado 6 unidades de producto o menos.
+- El precio medio (con impuestos) de venta es de 1.44€, siendo el importe medio de venta de 3.68€, aunque encontramos que el importe máximo de venta es de 196.680€
 
 
 ```{r , fig.pos="!H" , include=FALSE}
@@ -180,14 +252,36 @@ dataset %>% head() %>%
 ```
 
 
-A continuación, podemos ver gráficamente la evolución del volumen total de ventas diarias:
+
+Las `r length(dataset)` filas encontradas en el conjunto de datos corresponden a `r length(dataset$ID_TICKET %>% unique())` ventas diferentes.
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r}
+# dataset %>% group_by(LINEA_TICKET) %>% dplyr::summarise(count(LINEA_TICKET) ) %>% ggplot()
+```
+
+
+#### Representaciones gráficas
+
+
+
+En primer lugar, podemos ver gráficamente la evolución del volumen total de ventas diarias:
 
 
 ```{r}
 VolumenVentasDiarias = dataset %>% group_by(FECHA) %>%  dplyr::summarize(n =  n())
 ```
-
-
 
 
 
@@ -208,6 +302,54 @@ ggplot(VolumenVentasDiarias )+
 
 
 En el gráfico podemos apreciar como el volumen de ventas diario fluctúa bastante en función del día, encontrándolas en un rango entre 25 y 2268 ventas diarias. Hay dos momentos donde el volumen de ventas es considerablemente superior al resto, a mediados del mes de Octubre de 2020 y a mediados de Diciembre de este mismo año. Se observa un patrón muy marcado, con picos de muy pocas ventas y otros donde el volumen sube bastante.
+
+
+
+
+
+
+A continuación, vamos a hacer una comparación del volumen de ventas total según cada producto:
+
+```{r}
+Prod =  dataset %>% group_by(CODIGO,CANTIDAD) %>%  dplyr::summarize(n =  n())
+Ventas_Prod = Prod %>% mutate(VolumenTotal = Prod$CANTIDAD * Prod$n) %>% group_by(CODIGO) %>%  dplyr::summarize(VENTAS_TOTALES =  sum(VolumenTotal) )
+```
+
+
+
+```{r}
+ggplot(Ventas_Prod, aes(fill =CODIGO , x = CODIGO , y=VENTAS_TOTALES)) + 
+  geom_histogram(stat="identity", position="dodge")   +
+  labs(x="ID Producto" , y = "Volumen total de ventas", 
+       caption = "Fuente: Elaboración propia con datos de ventas")+
+  scale_fill_brewer(palette="Blues")+
+  theme_minimal()+theme_classic()+ theme(legend.position = 'none')+
+  ggtitle("Comparación de ventas por producto")
+```
+
+
+
+
+
+El volumen de ventas del producto 20445 ha sido ligeramente superior, con un volumen total de ventas de 169196 unidades, frente a las 188867 unidades vendidas del producto con identificador 22336. Estos datos han sido calculados teniendo en cuenta que se han podido vender más de una unidad en una misma transacción.
+
+El importe del producto 20445 es de 1.49€ (precio con impuestos) y el producto 22336 tiene un precio de venta de 1.39€. Esto nos podría llevar a pensar que si se trata del mismo tipo de producto, los usuarios hayan optado por la opción más económica.
+
+
+
+
+
+```{r}
+dataset %>% select(ID_TICKET,CODIGO,IMPORTE_CON_IMPUESTOS) %>% group_by( CODIGO) %>% 
+  dplyr::summarise(IMPORTE_MEDIO= mean(IMPORTE_CON_IMPUESTOS)) %>% 
+  kable(booktabs=TRUE, caption="Importe medio de venta según producto",align = 'c')
+```
+
+
+De nuevo, comprobamos que el importe medio de las ventas del producto 20445 tienen un importe medio de venta menor.
+
+
+
 
 Para tratar de entender mejor el comportamiento de venta, vamos a estudiar la evolución de los valores de ventas en función del día de la semana y mes del año.
 
@@ -236,12 +378,13 @@ ifelse(VentasMensuales$MES == 1 , "Enero",
                     ifelse(VentasMensuales$MES == 12 , "Diciembre"," " ))))))
 )
 
+Ventas_MES_TOT = dataset %>% group_by(ID_TICKET, MES) %>% dplyr::summarise(
+  Ventas = n()   ) %>% group_by(MES) %>% dplyr::summarise(VENTAS_TOTALES = n() ) %>% select(VENTAS_TOTALES)
 
-Ventas_MES_TOT = dataset %>% group_by(MES) %>% dplyr::summarise(
-  Ventas = n()   ) %>% select(Ventas)
 VentasMensuales = cbind.data.frame(VentasMensuales,Ventas_MES_TOT)
 
-VentasMensuales %>% kable(booktabs=TRUE,col.names = c("Mes","Número medio ventas","Volumen ventas total")) %>% kable_styling(latex_options = "striped")
+
+# VentasMensuales %>% kable(booktabs=TRUE,col.names = c("Mes","Número medio ventas","Volumen ventas # total")) %>% kable_styling(latex_options = "striped")
 ```
 
 
@@ -249,10 +392,10 @@ VentasMensuales %>% kable(booktabs=TRUE,col.names = c("Mes","Número medio venta
 
 ```{r}
 # Aquí no ventas medias, ya que solo hay un mes, no hay varios años
-ggplot(VentasMensuales, aes(fill =MES , x = MES , y=Ventas)) + 
+ggplot(VentasMensuales, aes(fill =MES , x = MES , y=VENTAS_TOTALES)) + 
   geom_histogram(stat="identity", position="dodge") +  
    scale_x_discrete(limits = c("Agosto","Septiembre","Octubre","Noviembre","Diciembre","Enero"))+
-  scale_y_discrete(limits=seq(0,25000,by=5000))+
+  scale_y_discrete(limits=seq(0,20000,by=5000))+
 labs(x="Mes" , y = "Volumen de ventas", caption = "Fuente: Elaboración propia con datos")+
 scale_fill_brewer(palette="Blues")+
   theme_minimal()+theme_classic()+ theme(legend.position = 'none')+
@@ -260,7 +403,7 @@ scale_fill_brewer(palette="Blues")+
 ```
 
 
-Observando el gráfico apreciamos una tendencia creciente del número de ventas mensual, donde se tiende a consumir más cada mes. Sin embargo, encontramos que el mes en el que más ventas se han realizado ha sido en el mes de octubre, superando las 25 mil ventas.
+Podemos ver una tendencia creciente del número de ventas mensual, donde se tiende a consumir más cada mes. Sin embargo, encontramos que el mes en el que más ventas se han realizado ha sido en el mes de octubre, superando las 18 mil ventas.
 
 
 
@@ -273,8 +416,10 @@ for (i in 1:length(DIA_SEMANA)) {
 NumMedio_Ventas[i] =  NumMedioVentas
 Ventas_DiaSem = cbind.data.frame(DIA_SEMANA, NumMedio_Ventas)
 }
-Ventas_DiaSem_TOT = dataset %>% group_by(DIA_SEMANA) %>% dplyr::summarise(
-  Ventas = n()   ) %>% select(Ventas)
+
+
+Ventas_DiaSem_TOT =  dataset %>% group_by(ID_TICKET, DIA_SEMANA) %>% dplyr::summarise(
+  Ventas = n()   ) %>% group_by(DIA_SEMANA) %>% dplyr::summarise(VENTAS_TOTALES = n() ) %>% select(VENTAS_TOTALES)
 Ventas_DiaSem = cbind.data.frame(Ventas_DiaSem,Ventas_DiaSem_TOT)
 ```
 
@@ -295,7 +440,7 @@ ifelse(Ventas_DiaSem$DIA_SEMANA == 1 , "Lunes",
 
 
 
-Ventas_DiaSem %>% kable(booktabs=TRUE,col.names = c("Día","Número medio ventas","Volumen ventas total"),caption = "Comparación del volumen total y medio de ventas") %>% kable_styling(latex_options = "striped")
+# Ventas_DiaSem %>% kable(booktabs=TRUE,col.names = c("Día","Número medio ventas","Volumen ventas # total"),caption = "Comparación del volumen total y medio de ventas") %>% kable_styling(latex_options # = "striped")
 ```
 
 
@@ -307,81 +452,41 @@ ggplot(Ventas_DiaSem, aes(fill =DIA_SEMANA , x = DIA_SEMANA , y=NumMedio_Ventas)
 labs(x="Día de la semana" , y = "Volumen medio de ventas", caption = "Fuente: Elaboración propia con datos")+
 scale_fill_brewer(palette="Blues")+
   theme_minimal()+theme_classic()+ theme(legend.position = 'none')+
-  ggtitle("Número medio de ventas según día de la semana")
+  ggtitle("Volumen medio de ventas según día de la semana")
 ```
 
 Observando el gráfico, vemos que el Sábado es el día de la semana donde el número medio de ventas es mayor, superando una media de mil ventas. Por el contrario, el Domingo es el día donde se registra un volumen medio de ventas diario considerablemente inferior.
 
 
 
+##### Variable descuento
+
+Si estudiamos la variable descuento, vemos que hay un descuento hasta en `r dataset[dataset$DESCUENTO !=0,] %>% nrow()` ventas, siendo `r round(dataset[dataset$DESCUENTO !=0,'DESCUENTO'] %>% mean(),2)` € el descuento medio aplicado.
+
+Para el producto 20445, se ha aplicado descuento 638 veces frente a las 640 del producto 22336, por lo que el descuento se ha aplicado un número de veces similar. 
+
+
 
 ```{r}
-# Según día del mes 
+Descuento = dataset[dataset$DESCUENTO !=0,] %>% group_by(CODIGO)  %>%   dplyr::summarise(n())
+```
 
+
+
+```{r}
+ConDescuento = dataset[dataset$DESCUENTO !=0,] %>% group_by( ID_TICKET) %>%  dplyr::summarise( Importe_Imp= sum(IMPORTE_CON_IMPUESTOS)   )
+SinDescuento = dataset[dataset$DESCUENTO ==0,] %>% group_by( ID_TICKET) %>%  dplyr::summarise( Importe_Imp=
+                                                                                                 sum(IMPORTE_CON_IMPUESTOS)    )
+
+
+FechasD = dataset[dataset$DESCUENTO !=0,] %>% select(FECHA) %>% unique()
+FechasND=dataset[dataset$DESCUENTO ==0,] %>% select(FECHA) %>% unique()
 ```
 
 
 
 
 
-Una vez analizado el volumen de ventas de manera descriptiva, vamos a aplicar diferentes modelos estadísticos clásicos con el fin de predecir el volumen de ventas en el futuro. Los modelos seleccionados son: Modelo de Regresión Lineal General y aplicación de Series Temporales.
-
-
-
-### Modelo de Regresión Lineal General
-
-### Análisis de Series Temporales
-
-Se consideró aplicar un análisis de series temporales debido a la estructura de los datos ya que este tipo de análisis contempla la estructura temporal de los datos. Como ya se avanzó en el desarrollo teórico, aplicaremos la metodología Box-Jenkis, la cual tiene en cuenta la dependencia existente de los datos, construyendo así un modelo ARIMA.
-
-Trataremos de modelizar el volumen de ventas total según día de la semana.
-
-```{r}
-# Para agrupar, cuento cuantos tickets únicos hay cada día
-VentasSemanales = as.data.frame ( dataset %>% group_by(FECHA,SEMANA_ANO, ID_TICKET) %>% dplyr::summarise(n()) ) %>% group_by(SEMANA_ANO) %>% dplyr::summarise(n())
-VentasSemanales
-
-tsSemanal = ts(VentasSemanales$`n()`, frequency=53 , 
-         start=c(2020,as.numeric(format(VentasSemanales$FECHA[1], "%j")) )  ) 
-plot(tsSemanal)
-```
-
-En el gráfico se puede apreciar cierta estacionalidad de los datos y también que las oscilaciones van aumentando con el tiempo, indicando que la varianza no es constante. Por este motivo, debemos hacer alguna transformación para que la varianza sea constante en el tiempo.
-
-
-
-Para ello, haremos uso de la familia de transformaciones Box-Cox haciendo uso de la librería *TSA*
-
-
-```{r}
-BoxCox = BoxCox.ar(y=tsDiaria,lambda = seq(0, 1, 0.01),method = "mle")
-
-BoxCox
-```
-
-
-El valor óptimo de $\lambda =$ `r BoxCox$mle`. Sin embargo, necesitamos una transformación sencilla y comprensible, por lo que al ser el intervalo de confianza para $\lambda =$ `r BoxCox$ci` , tomaremos $\lambda =1$ y no transformaremos los datos. El modelo con el valor de $\lambda$  correspondiente al estimador de máxima verosimilitud será algo mejor, pero la transformación es compleja.
-
-
-Para ver si la media es o no constante en el tiempo (estacionalidad), estudiaremos si estamos ante el caso de un proceso integrado, donde la función de autocorrelación simple (FAS) decrecerá linealmente
-
-
-```{r}
-acf(tsDiaria, main="FAS de Ventas diarias")
-```
-
-La FAS muestral decrece de manera lenta, indicando que estamos ante un modelo integrado. Ante esta situación, hacemos una diferencia regular.
-
-```{r}
-tsDiaria_DifReg = diff(tsDiaria,lag=1,diff=1)
-acf(tsDiaria_DifReg, main="FAS de primera diferencia del volumen de ventas", lag=500)
-```
-
-Ahora apreciamos como las autocorrelaciones de período 1 decrecen lentamente, haciendo evidente la necesidad de hacer una diferencia estacional:
-
-```{r}
-diff(tsDiaria_DifReg,lag = 365, diff = 1)
-```
 
 
 
