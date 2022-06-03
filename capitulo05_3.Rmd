@@ -1,10 +1,33 @@
 ---
-title: "ST"
-author: "Marta Venegas Pardo"
-date: "6/2/2022"
-output: html_document
+author: "Nombre Completo Autor"
+date: "27/10/2017"
+documentclass: book
+forprint: true  # true: imprime a dos caras, false: libro digital
+fontsize: 12pt # 10pt,11pt
+geometry: margin = 2.5cm 
+bibliography: ["bib/library.bib", "bib/paquetes.bib"]
+# metodobib -> true: natbib (descomentar: citation_package: natbib) 
+#           -> false: pandoc (comentar: citation_package: natbib)
+metodobib: true
+#natbib: plainnat, abbrvnat, unsrtnat
+biblio-style: "plainnat"
+#Método 2 (pandoc): descomente una línea de las 2 siguientes en caso de usarlo
+csl: methods-in-ecology-and-evolution.csl      # no numera mejor en las citas
+#csl: acm-sig-proceedings-long-author-list.csl  # numera peor en las citas
+link-citations: yes
+output: 
+  pdf_document:
+    keep_tex: no
+    number_sections: yes
+    citation_package: natbib  # comentado usa: pandoc-citeproc
+    #toc: yes
+    fig_caption: yes
+    template: latex/templateMemoriaTFE.tex
+    includes:
+      #before_body: portadas/latex_paginatitulo_modTFE.tex
+      #in_header: latex/latex_preambulo.tex
+      #after_body: latex/latex_antes_enddoc.tex
 ---
-
 
 ```{r  }
 knitr::opts_chunk$set(echo = FALSE , warning = FALSE , message = FALSE )
@@ -25,6 +48,7 @@ library(hrbrthemes) # Temas
 
 library(TSA) # Series Temporales (B-C) (Not working)
 library(tseries) # Test de raíz unitaria
+library(forecast) # Diagnosis del modelo
 
 ```
 
@@ -60,10 +84,10 @@ Trataremos de modelizar el volumen de ventas total según por de la semana. Para
 Ventas_Totales_Dia_Semana = as.data.frame ( dataset %>% group_by(FECHA,DIA_SEMANA, ID_TICKET) %>% dplyr::summarise(ArtVendidos = sum(CANTIDAD)) ) %>% group_by(FECHA) %>% dplyr::summarise(ArtVendidos = sum(ArtVendidos))
 
 F1=as_date('2020-12-25')
-df1 =  cbind.data.frame(F1,1)
+df1 =  cbind.data.frame(F1,0)
 colnames(df1)=colnames(Ventas_Totales_Dia_Semana)
 F2=as_date('2021-01-01')
-df2 =  cbind.data.frame(F2,1)
+df2 =  cbind.data.frame(F2,0)
 colnames(df2)=colnames(Ventas_Totales_Dia_Semana)
 
 
@@ -73,10 +97,11 @@ Ventas_Totales_Dia_Semana_Completo = rbind.data.frame( Ventas_Totales_Dia_Semana
 
 
 
-
+Si construimos la serie con los valores actuales, no podremos aplicar transformaciones a la serie, en particuar la transformación de Box-Cox, ya que existen dos valores nulos. Por este motivo, sumamos una constante a todas las observaciones de modo que sean todas positivas.
 
 
 ```{r}
+Ventas_Totales_Dia_Semana_Completo$ArtVendidos=10+Ventas_Totales_Dia_Semana_Completo$ArtVendidos
 tsDiaSemanal = ts(Ventas_Totales_Dia_Semana_Completo$ArtVendidos, frequency=7,start=c(31,6)) 
 print(tsDiaSemanal,calendar=TRUE)
 ```
@@ -88,7 +113,7 @@ Después de haber definido los datos como una serie temporal, visualizamos la ev
 plot(tsDiaSemanal, main = "Volumen total de venta por día de la semana", xlab="Dia" , ylab = "Volumen de ventas")
 ```
 
-En el gráfico se puede apreciar cierta estacionalidad de los datos, es decir, movimientos que se repiten dregularmente año trás año en los mismo períodos. También observamos que las oscilaciones van aumentando con el tiempo, indicando que la varianza no es constante. Por este motivo, debemos hacer alguna transformación para que la varianza sea constante en el tiempo.
+En el gráfico se puede apreciar cierta estacionalidad de los datos, es decir, movimientos que se repiten regularmente año trás año en los mismo períodos. También observamos que las oscilaciones van aumentando con el tiempo, indicando que la varianza no es constante. Por este motivo, debemos hacer alguna transformación para que la varianza sea constante en el tiempo.
 
 #### Transformación de BoxCox para estabilizar la varianza
 
@@ -122,30 +147,33 @@ plot(tsDiaSemanal_transf, main = "sqrt(Volumen total de venta diario)", xlab="Di
 Vamos a estudiar si el motivo de la no estacionalidad de los datos en media se debe a que se trata de un proceso integrado. Para ello hacemos uso de la función de correlación simple.
 
 ```{r}
-acf(tsDiaSemanal_transf, main="FAS de SQRT de Ventas diarias")
+acf(tsDiaSemanal_transf, main="FAS de SQRT de Ventas diarias" , lag=50)
 ```
 
-La FAS muestral decrece de manera lenta, indicando que estamos ante un modelo integrado.  Debido a esta situación, hacemos una diferencia regular de la serie.
+La FAS muestral decrece de lentamente en los retardos estacionales de período 7, indicando que estamos ante un modelo integrado.  Debido a esta situación, hacemos una diferencia estacional de la serie.
 
 ```{r}
-tsDiaria_DifReg = diff(tsDiaSemanal_transf,lag=1,diff=1)
-acf(tsDiaria_DifReg, main="FAS de primera diferencia regular", lag=500)
+# ndiffs(tsDiaSemanal_transf) # num dif regulares necesarias en la serie para que sea estacionaria
+# nsdiffs(tsDiaSemanal_transf) # num dif estarionarias necesarias en la serie para que sea estacionaria
 ```
 
-Ahora apreciamos como las autocorrelaciones de período 7 decrecen lentamente, haciendo evidente la necesidad de hacer una diferencia estacional.
+
+
+El siguiente gráfico muestra la FAS tras haber hecho una diferencia estacional de la serie (s=7).
 
 ```{r}
-tsDiaria_DifReg_DifEst=diff(tsDiaria_DifReg,lag = 7, diff = 1)
-acf(tsDiaria_DifReg_DifEst, main="FAS tras una diferencia regular y otra estacional", lag=500)
+tsDiaria_DifEst = diff(tsDiaSemanal_transf,lag=7,diff=1)
+acf(tsDiaria_DifEst, main="FAS de primera diferencia estacional", lag=50)
 ```
+
 
 Ahora la función de autocorrelación muestral corresponde a la de un proceso estacionario. Por último, representamos gráficamente la serie diferenciada:
 
 ```{r}
-plot(tsDiaria_DifReg_DifEst)
+plot(tsDiaria_DifEst)
 ```
 
-Observamos que la serie no muestra ningún comportamiento en particular, sino que se aprecia aleatoriedad, por lo que se podría pensar, que nos encontramos ante un proceso estacionario.
+Observamos que la serie no muestra ningún comportamiento en particular, sino que se aprecia aleatoriedad, por lo que se podría pensar, que nos encontramos ante un proceso estacionario. Ahora estamos en condiciones de buscar un modelo estacionario para la serie.
 
 
 #### Contraste de estacionariedad
@@ -166,7 +194,7 @@ H_{1}: & \text{Todas las raíces del polinomio autoregresivo son estacionarias}
 
 
 ```{r}
-adf.test(tsDiaria_DifReg_DifEst)
+adf.test(tsDiaria_DifEst)
 ```
 
 El p-valor del test= $0.01 < 0.05= \alpha$, y por tanto concluímos que no existen evidencias significativas para asumir que el polinomio autoregresivo tiene alguna raíz unitaria, y por tanto, la serie es estacionaria.
@@ -178,29 +206,107 @@ Trataremos de identificar la estructura ARIMA a través de la función de autoco
 
 
 ```{r}
-acf(tsDiaria_DifReg_DifEst, main="FAS tras una diferencia regular y otra estacional", lag=50)
+acf(tsDiaria_DifEst, main="FAS tras una diferencia estacional", lag=50)
 ```
 
-- Parte regular: En los primeros retardos observamos una autocorrelación, lo que podría indicar que el modelo tiene una estructura MA(1) en la parte regular.
+- Parte regular: En los primeros retardos no observamos ninguna autocorrelación significativamente no nula, indicando que el modelo tiene una estructura ARMA(0,0) en la parte regular.
 
-- Parte estacional: En los retardos estacionales, observamos una autocorrelación en el primer retardo, por lo que parecería que la parte estacional también tiene una estructura MA(1).
+
+- Parte estacional: Observamos una autocorrelación en el primer retardo estacional, por lo que parecería que la parte estacional tiene una estructura $MA(1)_{12}$.
 
 Vamos a comprobar estos supuestos con la FAP.
 
 
 ```{r}
 
-pacf(tsDiaria_DifReg_DifEst, main="FAP tras una diferencia regular y otra estacional", lag=50)
+pacf(tsDiaria_DifEst, main="FAP tras una diferencia estacional", lag=50)
 ```
 
 
 
-- Parte regular: En los primeros retardos observamos una única autocorrelación, lo que podría indicar que el modelo tiene una estructura AR(1) en la parte regular.
+- Parte regular: De nuevo, no hay autocorrelaciones significativamente no nulas.
 
-- Parte estacional: En los retardos estacionales, observamos como hay tres autocorrelaciones que decrecen rápidamente y a su izquierda, autocorrelaciones que decrecen también lentamente, lo que avalaría aún más la suposición de un MA(1) en la parte estacional.
-una autocorrelación en el primer retardo, por lo que parecería que la parte estacional también tiene una estructura MA(1).
+- Parte estacional: En los retardos estacionales, observamos como las autocorrelaciones decrecen rápidamente y a su izquierda, no hay autocorrelaciones significativamente no nulas, lo que avalaría aún más la suposición de un MA(1) en la parte estacional. Modelo propuesto: $MA(1)_{12}$
 
 
+
+También observamos como hay otras autocorrelaciones significativamente no nulas, pero esto es debido a que se trata de un intervalo de confianza al 95%, por lo que cabe esperar que haya algunas autocorrelaciones fuera de las bandas.
+
+
+El modelo a considerar es un modelo estacional puro: $ARIMA(0,1,1)_{12}$
+
+
+
+#### Estimación de parámetros y diagnóstico
+
+
+
+
+
+```{r , echo=TRUE}
+Ajuste1 = arima( tsDiaria_DifEst ,   # Serie trás una diferencia estacional
+                 seasonal = list(order=c(0,0,1),period=7))
+Ajuste1
+```
+
+
+Trás comprobar si los coeficientes estimados son o no significativamente nulos, procedemos a eliminar la media del modelo, obteniendo así uno donde todos los coeficientes son significativamente no nulos.
+
+```{r}
+confint(Ajuste1)
+```
+
+
+
+```{r , echo=TRUE}
+Ajuste1_1 = arima( tsDiaria_DifEst ,   # Serie trás una diferencia estacional
+                   order = c(0,0,0),
+                 seasonal = list(order=c(0,0,1),period=7), include.mean = FALSE
+                 )
+Ajuste1_1
+```
+
+
+
+
+```{r}
+confint(Ajuste1_1)
+```
+
+
+Para comprobar si el modelo es o no adecuado, comprobamos su valided a través de la diagnosis de los resíduos.
+Para este ajuste, según el Test de Ljung-Box, no existen evidencias significativas para aceptar la incorrelación de los resíduos: p-valor = $0.002524<0.05 = \alpha$. Además, gráficamente podemos observar que los resíduos no se comportan como un ruido blanco.
+
+```{r}
+checkresiduals(Ajuste1_1,plot = TRUE)
+```
+
+
+
+Vamos a probar otro modelo, en particular, a través del paquete *forecast* haciendo uso de la función *auto.arima*, que busca un modelo que minimiza el AIC.
+
+
+
+
+```{r}
+ajuste2 = auto.arima(tsDiaSemanal_transf,d = 0,D=1)
+```
+
+
+```{r}
+ajuste2
+```
+
+
+```{r}
+checkresiduals(ajuste2)
+```
+
+
+
+El ajuste propuesto es un modelo: $ARIMA(1,0,0)xARIMA(2,0,0)_{7}$, pero tampoco es adecuado, ya que volvemos a rechazar la hipótesis de incorrelación de los resíduos del Test de Ljung-Box.
+
+No encontramos modelo adecuado.
 
 
 

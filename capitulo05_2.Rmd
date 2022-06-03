@@ -616,10 +616,3 @@ FechasND=dataset[dataset$DESCUENTO ==0,] %>% select(FECHA) %>% unique()
 ```
 
 
-
-
-
-
-
-
-
