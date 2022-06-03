@@ -35,57 +35,21 @@ library(tseries) # Test de raíz unitaria
 
 
 
-
-
-### Lectura y descripción de los datos
-
-
-
 ```{r }
-load("Datos/datosTFGMarta.RData")
+load("Datos/Dataset_Final.RData")
 ```
 
 
 
-```{r }
-datos$ANO         <- year(datos$FECHA) # extraemos el año
-datos$MES         <- month(datos$FECHA) # extraemos el mes
-datos$DIA         <-day(datos$FECHA) # extraemos el día
-datos$SEMANA_ANO <-week(datos$FECHA)
-datos$DIA_SEMANA <-wday(datos$FECHA,week_start = 1 )
-```
-
-
-```{r }
-# Reordeno las columnas 
-datos <- datos %>% select("ID_TICKET"  , "LINEA_TICKET", "CODIGO", "CANTIDAD", "PRECIO", "PRECIO_CON_IMPUESTOS" , "DESCUENTO", "IMPORTE", "IMPORTE_CON_IMPUESTOS" , "FECHA" , "ANO", "MES"    , "DIA", "SEMANA_ANO", "DIA_SEMANA"  )
-```
-
-
-
-
-
-```{r }
-#datos$ID_TICKET<- as.factor(datos$ID_TICKET) # Conversión a factor
-datos$LINEA_TICKET<- as.factor(datos$LINEA_TICKET) # Conversión a factor
-datos$CODIGO<- as.factor(datos$CODIGO) # Conversión a factor
-datos$CANTIDAD<- as.integer(datos$CANTIDAD) # Conversión a entero
-datos$ANO <- as.integer(datos$ANO)
-datos$MES <- as.integer(datos$MES)
-datos$DIA <- as.integer(datos$DIA)
-datos$SEMANA_ANO<- as.integer(datos$SEMANA_ANO)
-datos$DIA_SEMANA<- as.integer(datos$DIA_SEMANA)
-dataset<-as.data.frame(datos) # Datos como DF
-```
 
 
 ### Modelo de Regresión Lineal General
 
 ### Análisis de Series Temporales
 
-Se consideró aplicar un análisis de series temporales debido a la estructura de los datos ya que este tipo de análisis contempla la estructura temporal de los datos. Como ya se avanzó en el desarrollo teórico, aplicaremos la metodología Box-Jenkis, la cual tiene en cuenta la dependencia existente de los datos, construyendo así un modelo ARIMA.
+Se consideró aplicar un análisis de series temporales debido a la estructura de los datos. ya que este tipo de análisis contempla la estructura temporal de los mismos Como ya se avanzó en el desarrollo teórico, aplicaremos la metodología Box-Jenkis, la cual tiene en cuenta la dependencia existente de los datos, construyendo así un modelo ARIMA.
 
-Trataremos de modelizar el volumen de ventas total según día de la semana. Para construir la serie, primero hemos añadido los días 25 de Diciembre y 1 de Enero con un número de ventas 0, ya que, si no se tomaba esta decisión, la serie ya no estaría definida según la realidad.
+Trataremos de modelizar el volumen de ventas total según por de la semana. Para construir la serie, primero hemos añadido los días 25 de Diciembre y 1 de Enero con un número de ventas 0, ya que, si no se tomaba esta decisión, la serie ya no estaría definida según la realidad.
 
 
 #### Creación ST y representación de los datos
@@ -118,8 +82,10 @@ print(tsDiaSemanal,calendar=TRUE)
 ```
 
 
+Después de haber definido los datos como una serie temporal, visualizamos la evolución de la serie en el tiempo.
+
 ```{r}
-plot(tsDiaSemanal, main = "Volumen total de venta diario", xlab="Dia" , ylab = "Volumen de ventas")
+plot(tsDiaSemanal, main = "Volumen total de venta por día de la semana", xlab="Dia" , ylab = "Volumen de ventas")
 ```
 
 En el gráfico se puede apreciar cierta estacionalidad de los datos, es decir, movimientos que se repiten dregularmente año trás año en los mismo períodos. También observamos que las oscilaciones van aumentando con el tiempo, indicando que la varianza no es constante. Por este motivo, debemos hacer alguna transformación para que la varianza sea constante en el tiempo.
@@ -128,23 +94,23 @@ En el gráfico se puede apreciar cierta estacionalidad de los datos, es decir, m
 
 
 
-Para ello, haremos uso de la familia de transformaciones Box-Cox haciendo uso de la librería *TSA*. 
+Para encontrar una transformación que haga que la varianza sea constante en el tiempo, haremos uso de la familia de transformaciones Box-Cox con ayuda de la librería *TSA*. 
 
 
 ```{r}
 BoxCox =BoxCox.ar(y=tsDiaSemanal)
-BoxCox
+# BoxCox
 ```
 
 
-La función *BoxCox.ar* sugiere un óptimo de lambda = `r BoxCox$mle`, con un intervalo de confianza al 95%: (`r BoxCox$c[1]`,`r BoxCox$c[2]`). Se necesita una transformación sencilla y comprensible, por lo que se ha obtado por tomar el valor $\lambda=1/2$.
+La función *BoxCox.ar* sugiere un óptimo de $\lambda=$. `r BoxCox$mle`, con un intervalo de confianza al 95%: (`r BoxCox$c[1]`,`r BoxCox$c[2]`). Se necesita una transformación sencilla y comprensible, por lo que se ha obtado por tomar como valor de lambda el extremo inferior del intervalo,$\lambda=1/2$.
 
-
+Transformamos los datos y volvemos a representar la serie.
 
 
 ```{r}
 tsDiaSemanal_transf = sqrt(tsDiaSemanal)
-plot(tsDiaSemanal_transf, main = "sqrt(Volumen total de venta diario)", xlab="Dia" , ylab = "(Volumen de ventas)^2")
+plot(tsDiaSemanal_transf, main = "sqrt(Volumen total de venta diario)", xlab="Dia" , ylab = "sqrt(Volumen de ventas)")
 ```
 
 
@@ -153,7 +119,7 @@ plot(tsDiaSemanal_transf, main = "sqrt(Volumen total de venta diario)", xlab="Di
 
 
 
-Vamos a estudiar si el motivo de la no estacionalidad de los datos en media se debe a que se trata de un proceso integrado
+Vamos a estudiar si el motivo de la no estacionalidad de los datos en media se debe a que se trata de un proceso integrado. Para ello hacemos uso de la función de correlación simple.
 
 ```{r}
 acf(tsDiaSemanal_transf, main="FAS de SQRT de Ventas diarias")
@@ -166,7 +132,7 @@ tsDiaria_DifReg = diff(tsDiaSemanal_transf,lag=1,diff=1)
 acf(tsDiaria_DifReg, main="FAS de primera diferencia regular", lag=500)
 ```
 
-Ahora apreciamos como las autocorrelaciones de período 7 decrecen lentamente, haciendo evidente la necesidad de hacer una diferencia estacional:
+Ahora apreciamos como las autocorrelaciones de período 7 decrecen lentamente, haciendo evidente la necesidad de hacer una diferencia estacional.
 
 ```{r}
 tsDiaria_DifReg_DifEst=diff(tsDiaria_DifReg,lag = 7, diff = 1)
@@ -179,12 +145,12 @@ Ahora la función de autocorrelación muestral corresponde a la de un proceso es
 plot(tsDiaria_DifReg_DifEst)
 ```
 
-Tiene forma de muelle, por lo que estamos ante un proceso estacionario.
+Observamos que la serie no muestra ningún comportamiento en particular, sino que se aprecia aleatoriedad, por lo que se podría pensar, que nos encontramos ante un proceso estacionario.
 
 
 #### Contraste de estacionariedad
 
-Aplicamos el test de raíz unitaria de Dikey-Fuller, donde se contrasta la estacionariedad de los datos a través del siguiente contraste de hipótesis:
+Para confirmar la estacionariedad de los datos sugerida con la observación de la gráfica, necesitamos a plicar un test de hipótesis. Aplicamos el test de raíz unitaria de Dikey-Fuller, donde se contrasta la estacionariedad de los datos a través del siguiente contraste de hipótesis:
 
 
 \[
@@ -197,13 +163,13 @@ H_{1}: & \text{Todas las raíces del polinomio autoregresivo son estacionarias}
 \]
 
 
-Con ayuda de la librería  *tseries*.
+
 
 ```{r}
 adf.test(tsDiaria_DifReg_DifEst)
 ```
 
-El p-valor del test: $p-valor=0.01 < 0.05= \alpha$, y por tanto, no tenemos evidencias significativas para asumir que el polinomio autoregresivo tiene alguna raíz unitaria, y por tanto, la serie es estacionaria.
+El p-valor del test= $0.01 < 0.05= \alpha$, y por tanto concluímos que no existen evidencias significativas para asumir que el polinomio autoregresivo tiene alguna raíz unitaria, y por tanto, la serie es estacionaria.
 
 
 #### Identificación de la estructura ARIMA de la serie 

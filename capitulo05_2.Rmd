@@ -59,7 +59,7 @@ library(TSA) # Series Temporales (B-C)
 Este apartado lo dedicaremos a realizar un proceso de ciencia de datos completo, teniendo en cuenta los siguientes objetivos:
 
 - Analizar los datos proporcionados para conocer como varían las ventas de productos lácteos con el tiempo
-- Demostrar que existe la posibilidad de construir buenos modelos para predecir el volumen de venta de productos futuro a partir de los datos.
+- Demostrar que existe la posibilidad de construir buenos modelos para predecir el volumen futuro de venta de productos a partir de los datos.
 - Desarrollo de modelos para predecir ventas.
 
 
@@ -75,38 +75,33 @@ load("Datos/datosTFGMarta.RData")
 
 
 
-Los datos contienen información correspondiente a ventas de dos productos lácteos durante un período de 5 meses, desde el 1 de Septiembre de 2020 hasta el 30 de Enero de 2021, obteniéndose un total de 140025 observaciones y se estructuran de la siguiente forma: Cada fila corresponde a la línea de un ticket y hace referencia a la venta de un artículo en particular. De esta forma, para una venta de un único producto únicamente encontraremos una fila en el conjunto de datos que identifique esa venta, sin embargo, para una venta de más de un artículo encontraremos tantas filas como productos se hayan vendido. Como únicamente tenemos las ventas para dos productos, como máximo, habrá dos filas en el conjunto de datos para una misma venta.
+Los datos contienen información correspondiente a ventas de dos productos lácteos durante un período de 5 meses, desde el 1 de Septiembre de 2020 hasta el 30 de Enero de 2021, obteniéndose un total de 140025 observaciones y se estructuran de la siguiente forma: Cada fila corresponde a la línea de un ticket y hace referencia a la venta de un artículo en particular. De esta forma, para una venta de un único producto únicamente encontraremos una fila en el conjunto de datos que identifique esa venta, sin embargo, para una venta de más de un artículo encontraremos tantas filas como productos se hayan vendido. 
 
 
 En este conjunto de datos inicial encontramos las siguientes variables:
 
-- **ID_TICKET**: Variable numérica que identifica unívocamente a cada ticket de compra
-- **LINEA_TICLET**: Variable numérica con la línea correspondiente del ticket
-- **FECHA**: Fecha en que se realizó la transacción
-- **CODIGO**: Id producto
-- **CANTIDAD**: Número de artículos comprados
-- **PRECIO**: Precio base del artículo libre de impuestos, euros
-- **PRECIO CON IMPUESTOS**: Precio de venta del artículo, en  euros
-- **DESCUENTO**:  Descuento aplicado
-- **IMPORTE**: Importe de la compra libre de impuestos, en euros
-- **IMPORTE CON IMPUESTOS**: Importe a pagar por el comprador, en euros
+- **ID_TICKET**: Variable numérica que identifica unívocamente a cada ticket de venta.
+- **LINEA_TICLET**: Variable numérica con la línea correspondiente del ticket.
+- **FECHA**: Fecha en que se realizó la venta.
+- **CODIGO**: Identificador del producto
+- **CANTIDAD**: Número de items vendidos de un determinado producto
+- **PRECIO**: Precio base del artículo libre de impuestos, euros.
+- **PRECIO CON IMPUESTOS**: Precio de venta del artículo, en  euros.
+- **DESCUENTO**:  Descuento aplicado.
+- **IMPORTE**: Importe de la compra libre de impuestos, en euros.
+- **IMPORTE CON IMPUESTOS**: Importe a pagar por el comprador, en euros.
 
 
 
 ### Preparación de los datos (Preprocesado)
 
-Una vez leidos los datos, vamos a llevar a cabo la limpieza de éstos para su posterior estudio, representación y modelado. En este punto del proceso, trataremos de encontrar, corregir o eliminar registros erróneos en los datos. 
+En este paso, vamos a llevar a cabo la limpieza de éstos para su posterior estudio, representación y modelado. En este punto del proceso, trataremos de encontrar, corregir o eliminar registros erróneos en los datos. 
 
 
-En primer lugar, procedemos a ver la estructura de éstos:
+#### Transformación de los datos
 
 
-```{r , echo=TRUE}
-datos %>% str() # Estructura de los datos trás su transformación
-```
-
-
-A continuación, procedemos a transformar las variables a un formato adecuado y volvemos a visualizar la estructura:
+Hay algunas variables que necesitan ser transformadas, en particular, la variable código, la cantidad de artículos vendidos y linea del ticket han sido transformadas para tenerlas en un formato adecuado. Vamos a visualizar la nueva estructura de los datos:
 
 ```{r }
 #datos$ID_TICKET<- as.factor(datos$ID_TICKET) # Conversión a factor
@@ -121,18 +116,18 @@ dataset<-as.data.frame(datos) # Datos como DF
 dataset %>% str() # Estructura de los datos trás su transformación
 ```
 
-Hemos factorizado algunas variables y convertido otras de las numéricas.
-
-
 
 #### Duplicados
 
 
-Se comprueba la existencia de registros duplicados:
+Se comprueba la existencia de registros duplicados y concluímos que no existen duplicados.
 
 ```{r DUPLICADOS ,echo=TRUE}
 dataset[duplicated(dataset)==TRUE,]
 ```
+
+
+
 
 
 #### Datos faltantes
@@ -211,6 +206,12 @@ dataset$DIA_SEMANA<- as.integer(dataset$DIA_SEMANA)
 ```
 
 
+```{r}
+# Guardamos el conjunto de datos final
+## save(dataset,file = "Datos/Dataset_Final.RData")
+```
+
+
 
 ### Análisis exploratorio de datos (EDA)
 
@@ -253,7 +254,7 @@ dataset %>% head() %>%
 
 
 
-Las `r length(dataset)` filas encontradas en el conjunto de datos corresponden a `r length(dataset$ID_TICKET %>% unique())` ventas diferentes.
+Las `r nrow(dataset)` filas encontradas en el conjunto de datos corresponden a `r length(dataset$ID_TICKET %>% unique())` ventas diferentes.
 
 
 
@@ -317,7 +318,7 @@ Ventas_Prod = Prod %>% mutate(VolumenTotal = Prod$CANTIDAD * Prod$n) %>% group_b
 
 
 
-```{r}
+```{r , fig.height=3 , fig.width=3}
 ggplot(Ventas_Prod, aes(fill =CODIGO , x = CODIGO , y=VENTAS_TOTALES)) + 
   geom_histogram(stat="identity", position="dodge")   +
   labs(x="ID Producto" , y = "Volumen total de ventas", 
@@ -339,7 +340,7 @@ El importe del producto 20445 es de 1.49€ (precio con impuestos) y el producto
 
 
 
-```{r}
+```{r , fig.pos='H'}
 dataset %>% select(ID_TICKET,CODIGO,IMPORTE_CON_IMPUESTOS) %>% group_by( CODIGO) %>% 
   dplyr::summarise(IMPORTE_MEDIO= mean(IMPORTE_CON_IMPUESTOS)) %>% 
   kable(booktabs=TRUE, caption="Importe medio de venta según producto",align = 'c')
@@ -379,7 +380,7 @@ ifelse(VentasMensuales$MES == 1 , "Enero",
 )
 
 Ventas_MES_TOT = dataset %>% group_by(ID_TICKET, MES) %>% dplyr::summarise(
-  Ventas = n()   ) %>% group_by(MES) %>% dplyr::summarise(VENTAS_TOTALES = n() ) %>% select(VENTAS_TOTALES)
+  Ventas = n()   ) %>% group_by(MES) %>% dplyr::summarise(VENTAS_TOTALES = n() ) %>% select(VENTAS_TOTALES) %>% mutate(CODIGO=rep('TOTAL',6))
 
 VentasMensuales = cbind.data.frame(VentasMensuales,Ventas_MES_TOT)
 
@@ -387,25 +388,98 @@ VentasMensuales = cbind.data.frame(VentasMensuales,Ventas_MES_TOT)
 # VentasMensuales %>% kable(booktabs=TRUE,col.names = c("Mes","Número medio ventas","Volumen ventas # total")) %>% kable_styling(latex_options = "striped")
 ```
 
-
-
-
 ```{r}
+VentasMensuales_Prod = dataset %>% group_by(ID_TICKET, MES,CODIGO) %>% dplyr::summarise(
+  Ventas = n()   ) %>% group_by(MES,CODIGO) %>% dplyr::summarise(VENTAS_TOTALES = n() ) %>% select(VENTAS_TOTALES,CODIGO)
+VentasMensuales_Prod$MES=c(
+ifelse(VentasMensuales_Prod$MES == 1 , "Enero",
+       ifelse(
+          VentasMensuales_Prod$MES == 8 , "Agosto",
+       ifelse(
+         VentasMensuales_Prod$MES == 9 , "Septiembre",
+         ifelse( VentasMensuales_Prod$MES == 10 , "Octubre",
+                 ifelse(
+                    VentasMensuales_Prod$MES == 11 , "Noviembre",
+                    ifelse(VentasMensuales_Prod$MES == 12 , "Diciembre"," " ))))))
+)
+
+
+DatosMes = rbind.data.frame(VentasMensuales_Prod,VentasMensuales[,c(1,3,4)])
+```
+
+
+```{r }
 # Aquí no ventas medias, ya que solo hay un mes, no hay varios años
-ggplot(VentasMensuales, aes(fill =MES , x = MES , y=VENTAS_TOTALES)) + 
+ggplot(DatosMes, aes(fill =CODIGO , x = MES , y=VENTAS_TOTALES)) + 
   geom_histogram(stat="identity", position="dodge") +  
    scale_x_discrete(limits = c("Agosto","Septiembre","Octubre","Noviembre","Diciembre","Enero"))+
   scale_y_discrete(limits=seq(0,20000,by=5000))+
 labs(x="Mes" , y = "Volumen de ventas", caption = "Fuente: Elaboración propia con datos")+
 scale_fill_brewer(palette="Blues")+
-  theme_minimal()+theme_classic()+ theme(legend.position = 'none')+
-  ggtitle("Volumen de ventas según mes del año")
+  theme_minimal()+theme_classic()+ #theme(legend.position = 'none')+
+  ggtitle("Comparación del volumen de ventas según mes del año")
 ```
 
 
-Podemos ver una tendencia creciente del número de ventas mensual, donde se tiende a consumir más cada mes. Sin embargo, encontramos que el mes en el que más ventas se han realizado ha sido en el mes de octubre, superando las 18 mil ventas.
+
+Podemos ver una tendencia creciente del número de ventas total, donde se tiende a vender más cada mes. Sin embargo, encontramos que el mes en el que más ventas se han realizado ha sido en el mes de octubre, superando las 18 mil ventas. Además, si comparamos el volumen de ventas de cada producto, se vende más el producto 20445, sin embargo, en los últimos meses el número de artículos vendido de cada producto se igualó.
 
 
+
+
+
+```{r , fig.height=5 , fig.width=5}
+# # Aquí no ventas medias, ya que solo hay un mes, no hay varios años
+# ggplot(VentasMensuales, aes(fill =MES , x = MES , y=VENTAS_TOTALES)) + 
+#   geom_histogram(stat="identity", position="dodge") +  
+#    scale_x_discrete(limits = # c("Agosto","Septiembre","Octubre","Noviembre","Diciembre","Enero"))+
+#   scale_y_discrete(limits=seq(0,20000,by=5000))+
+# labs(x="Mes" , y = "Volumen de ventas", caption = "Fuente: Elaboración propia con datos")+
+# scale_fill_brewer(palette="Blues")+
+#   theme_minimal()+theme_classic()+ theme(legend.position = 'none')+
+#   ggtitle("Volumen de ventas según mes del año")
+```
+
+```{r}
+NumMedio_Ventas_P1 = rep(NA,7)
+DIA_SEMANA_P1=rep(1:7,by=1)
+for (i in 1:length(DIA_SEMANA_P1)) {
+ NumMedioVentas_P1 =  (dataset %>% group_by(DIA_SEMANA) %>% filter(CODIGO == 20445 & DIA_SEMANA==i ) %>% group_by(FECHA) %>% dplyr::summarise(n()) %>% as.data.frame())[,2] %>% mean()
+NumMedio_Ventas_P1[i] =  NumMedioVentas_P1
+Ventas_DiaSem_P1 = cbind.data.frame(DIA_SEMANA_P1, NumMedio_Ventas_P1)
+Ventas_DiaSem_P1= Ventas_DiaSem_P1 %>% mutate(CODIGO = rep(20445,7))
+}
+
+
+colnames(Ventas_DiaSem_P1) = c("DIA_SEMANA","VENTAS_MEDIAS","CODIGO")
+
+NumMedio_Ventas_P2 = rep(NA,7)
+DIA_SEMANA_P2=rep(1:7,by=1)
+for (i in 1:length(DIA_SEMANA_P2)) {
+ NumMedioVentas_P2 =  (dataset %>% group_by(DIA_SEMANA) %>% filter(CODIGO == 22336 & DIA_SEMANA==i ) %>% group_by(FECHA) %>% dplyr::summarise(n()) %>% as.data.frame())[,2] %>% mean()
+NumMedio_Ventas_P2[i] =  NumMedioVentas_P2
+Ventas_DiaSem_P2 = cbind.data.frame(DIA_SEMANA_P2, NumMedio_Ventas_P2)
+Ventas_DiaSem_P2= Ventas_DiaSem_P2 %>% mutate(CODIGO = rep(22336,7))
+}
+
+
+colnames(Ventas_DiaSem_P2) = c("DIA_SEMANA","VENTAS_MEDIAS","CODIGO")
+
+VentasSemanales_Medias_Codigo = rbind.data.frame(Ventas_DiaSem_P1,Ventas_DiaSem_P2)
+
+
+VentasSemanales_Medias_Codigo$DIA_SEMANA=c(
+ifelse(VentasSemanales_Medias_Codigo$DIA_SEMANA == 1 , "Lunes",
+       ifelse(
+          VentasSemanales_Medias_Codigo$DIA_SEMANA == 2 , "Martes",
+       ifelse(
+        VentasSemanales_Medias_Codigo$DIA_SEMANA== 3 , "Miércoles",
+         ifelse( VentasSemanales_Medias_Codigo$DIA_SEMANA == 4 , "Jueves",
+                 ifelse(
+                    VentasSemanales_Medias_Codigo$DIA_SEMANA == 5 , "Viernes",
+                    ifelse(VentasSemanales_Medias_Codigo$DIA_SEMANA == 6 , "Sábado",
+                           ifelse(VentasSemanales_Medias_Codigo$DIA_SEMANA == 7 , "Domingo",""))))))))
+```
 
 
 ```{r}
@@ -415,16 +489,10 @@ for (i in 1:length(DIA_SEMANA)) {
  NumMedioVentas =  (dataset %>% group_by(DIA_SEMANA) %>% filter(DIA_SEMANA==i) %>% group_by(FECHA) %>% dplyr::summarise(n()) %>% as.data.frame())[,2] %>% mean()
 NumMedio_Ventas[i] =  NumMedioVentas
 Ventas_DiaSem = cbind.data.frame(DIA_SEMANA, NumMedio_Ventas)
+Ventas_DiaSem= Ventas_DiaSem %>% mutate(CODIGO = rep("TOTAL",7))
 }
 
 
-Ventas_DiaSem_TOT =  dataset %>% group_by(ID_TICKET, DIA_SEMANA) %>% dplyr::summarise(
-  Ventas = n()   ) %>% group_by(DIA_SEMANA) %>% dplyr::summarise(VENTAS_TOTALES = n() ) %>% select(VENTAS_TOTALES)
-Ventas_DiaSem = cbind.data.frame(Ventas_DiaSem,Ventas_DiaSem_TOT)
-```
-
-
-```{r}
 Ventas_DiaSem$DIA_SEMANA=c(
 ifelse(Ventas_DiaSem$DIA_SEMANA == 1 , "Lunes",
        ifelse(
@@ -438,28 +506,92 @@ ifelse(Ventas_DiaSem$DIA_SEMANA == 1 , "Lunes",
                            ifelse(Ventas_DiaSem$DIA_SEMANA == 7 , "Domingo",""))))))))
 
 
+colnames(Ventas_DiaSem)=c("DIA_SEMANA","VENTAS_MEDIAS","CODIGO")
 
 
-# Ventas_DiaSem %>% kable(booktabs=TRUE,col.names = c("Día","Número medio ventas","Volumen ventas # total"),caption = "Comparación del volumen total y medio de ventas") %>% kable_styling(latex_options # = "striped")
+Ventas_MED_DIA_SEM= rbind.data.frame(VentasSemanales_Medias_Codigo,Ventas_DiaSem)
+
+```
+
+
+
+
+
+```{r , ventas_TOTALES }
+VentasSemanales_Prod=dataset %>% group_by(ID_TICKET, DIA_SEMANA,CODIGO) %>% dplyr::summarise(
+  Ventas = n()   ) %>% group_by(DIA_SEMANA,CODIGO) %>% dplyr::summarise(VENTAS_TOTALES = n() ) %>% select(VENTAS_TOTALES,CODIGO)
+
+Ventas_DiaSem_TOT =  dataset %>% group_by(ID_TICKET, DIA_SEMANA) %>% dplyr::summarise(
+  Ventas = n()  ) %>% group_by(DIA_SEMANA) %>% dplyr::summarise(VENTAS_TOTALES = n() ) %>% select(VENTAS_TOTALES)
+
+Ventas_DiaSem_TOT= Ventas_DiaSem_TOT %>% mutate(CODIGO = rep("TOTAL",7),DIA_SEMANA=1:7)
+Ventas_DiaSem_TOT=Ventas_DiaSem_TOT[,c(3,1,2)]
+Ventas_TOT_DIA_SEM = rbind.data.frame(VentasSemanales_Prod,Ventas_DiaSem_TOT)
+
+
+Ventas_TOT_DIA_SEM$DIA_SEMANA=c(
+ifelse(Ventas_TOT_DIA_SEM$DIA_SEMANA == 1 , "Lunes",
+       ifelse(
+          Ventas_TOT_DIA_SEM$DIA_SEMANA == 2 , "Martes",
+       ifelse(
+        Ventas_TOT_DIA_SEM$DIA_SEMANA== 3 , "Miércoles",
+         ifelse( Ventas_TOT_DIA_SEM$DIA_SEMANA == 4 , "Jueves",
+                 ifelse(
+                    Ventas_TOT_DIA_SEM$DIA_SEMANA == 5 , "Viernes",
+                    ifelse(Ventas_TOT_DIA_SEM$DIA_SEMANA == 6 , "Sábado",
+                           ifelse(Ventas_TOT_DIA_SEM$DIA_SEMANA == 7 , "Domingo",""))))))))
+```
+
+```{r}
+VENTAS_DIA_SEMANA = merge(Ventas_MED_DIA_SEM,Ventas_TOT_DIA_SEM,by=intersect(names(Ventas_MED_DIA_SEM),names(Ventas_TOT_DIA_SEM)))
 ```
 
 
 
 ```{r}
-ggplot(Ventas_DiaSem, aes(fill =DIA_SEMANA , x = DIA_SEMANA , y=NumMedio_Ventas)) + 
+ggplot(VENTAS_DIA_SEMANA, aes(fill =CODIGO , x = DIA_SEMANA , y=VENTAS_MEDIAS)) + 
   geom_histogram(stat="identity", position="dodge") +  
-   scale_x_discrete(limits = Ventas_DiaSem$DIA_SEMANA)+
-labs(x="Día de la semana" , y = "Volumen medio de ventas", caption = "Fuente: Elaboración propia con datos")+
+   scale_x_discrete(limits = unique(Ventas_MED_DIA_SEM$DIA_SEMANA) )+
+labs(x="Día de la semana" , y = "Volumen medio de ventas", caption = "Fuente: Elaboración propia con datos de ventas")+
 scale_fill_brewer(palette="Blues")+
-  theme_minimal()+theme_classic()+ theme(legend.position = 'none')+
+  theme_minimal()+theme_classic()+ # theme(legend.position = 'none')+
   ggtitle("Volumen medio de ventas según día de la semana")
 ```
 
-Observando el gráfico, vemos que el Sábado es el día de la semana donde el número medio de ventas es mayor, superando una media de mil ventas. Por el contrario, el Domingo es el día donde se registra un volumen medio de ventas diario considerablemente inferior.
 
 
 
-##### Variable descuento
+Observando el gráfico, vemos que el Sábado es el día de la semana donde el volumen de ventas es mayor, superando una media de mil ventas. Por el contrario, el Domingo es el día donde se registra un volumen medio de ventas diario considerablemente inferior.
+
+
+
+
+```{r}
+# ggplot(DatosSemana, aes(fill =CODIGO , x = DIA_SEMANA , y=VENTAS_TOTALES)) + 
+#   geom_histogram(stat="identity", position="dodge") +  
+#    scale_x_discrete(limits = Ventas_DiaSem$DIA_SEMANA)+
+# labs(x="Día de la semana" , y = "Volumen total de ventas", caption = "Fuente: Elaboración # propia con datos")+
+# scale_fill_brewer(palette="Blues")+
+#   theme_minimal()+theme_classic()+ # theme(legend.position = 'none')+
+#   ggtitle("Volumen total de vnetas según día de la semana")
+```
+
+
+
+```{r , fig.height=5 , fig.width=5}
+# ggplot(Ventas_DiaSem, aes(fill =DIA_SEMANA , x = DIA_SEMANA , y=NumMedio_Ventas)) + 
+#   geom_histogram(stat="identity", position="dodge") +  
+#    scale_x_discrete(limits = Ventas_DiaSem$DIA_SEMANA)+
+# labs(x="Día de la semana" , y = "Volumen medio de ventas", caption = "Fuente: Elaboración # propia con datos")+
+# scale_fill_brewer(palette="Blues")+
+#   theme_minimal()+theme_classic()+ theme(legend.position = 'none')+
+#   ggtitle("Volumen medio de ventas según día de la semana")
+```
+
+
+
+
+##### Variable descuento ¡?¿?¿?¿?
 
 Si estudiamos la variable descuento, vemos que hay un descuento hasta en `r dataset[dataset$DESCUENTO !=0,] %>% nrow()` ventas, siendo `r round(dataset[dataset$DESCUENTO !=0,'DESCUENTO'] %>% mean(),2)` € el descuento medio aplicado.
 
