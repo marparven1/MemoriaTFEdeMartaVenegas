@@ -29,7 +29,7 @@ output:
       #after_body: latex/latex_antes_enddoc.tex
 ---
 
-```{r  }
+```{r , echo=FALSE}
 knitr::opts_chunk$set(echo = FALSE , warning = FALSE , message = FALSE )
 ```
 
@@ -71,9 +71,9 @@ load("Datos/Dataset_Final.RData")
 
 ### Análisis de Series Temporales
 
-Se consideró aplicar un análisis de series temporales debido a la estructura de los datos. ya que este tipo de análisis contempla la estructura temporal de los mismos Como ya se avanzó en el desarrollo teórico, aplicaremos la metodología Box-Jenkis, la cual tiene en cuenta la dependencia existente de los datos, construyendo así un modelo ARIMA.
+Se consideró aplicar un análisis de series temporales debido a la estructura de los datos, ya que este tipo de análisis contempla la estructura temporal de los mismos. Como ya se avanzó en el desarrollo teórico, aplicaremos la metodología Box-Jenkis, la cual tiene en cuenta la dependencia existente de los datos, construyendo así un modelo ARIMA.
 
-Trataremos de modelizar el volumen de ventas total según por de la semana. Para construir la serie, primero hemos añadido los días 25 de Diciembre y 1 de Enero con un número de ventas 0, ya que, si no se tomaba esta decisión, la serie ya no estaría definida según la realidad.
+Trataremos de modelizar el volumen de ventas total según día de la semana. Para construir la serie, primero hemos añadido los días 25 de Diciembre y 1 de Enero con un número de ventas 0, ya que, si no se tomaba esta decisión, la serie ya no estaría definida según la realidad.
 
 
 #### Creación ST y representación de los datos
@@ -102,6 +102,7 @@ Si construimos la serie con los valores actuales, no podremos aplicar transforma
 
 ```{r}
 Ventas_Totales_Dia_Semana_Completo$ArtVendidos=10+Ventas_Totales_Dia_Semana_Completo$ArtVendidos
+
 tsDiaSemanal = ts(Ventas_Totales_Dia_Semana_Completo$ArtVendidos, frequency=7,start=c(31,6)) 
 print(tsDiaSemanal,calendar=TRUE)
 ```
@@ -110,7 +111,7 @@ print(tsDiaSemanal,calendar=TRUE)
 Después de haber definido los datos como una serie temporal, visualizamos la evolución de la serie en el tiempo.
 
 ```{r}
-plot(tsDiaSemanal, main = "Volumen total de venta por día de la semana", xlab="Dia" , ylab = "Volumen de ventas")
+plot(tsDiaSemanal, main = "Volumen total de venta por según día de la semana", xlab="Dia" , ylab = "Volumen de ventas")
 ```
 
 En el gráfico se puede apreciar cierta estacionalidad de los datos, es decir, movimientos que se repiten regularmente año trás año en los mismo períodos. También observamos que las oscilaciones van aumentando con el tiempo, indicando que la varianza no es constante. Por este motivo, debemos hacer alguna transformación para que la varianza sea constante en el tiempo.
@@ -122,19 +123,20 @@ En el gráfico se puede apreciar cierta estacionalidad de los datos, es decir, m
 Para encontrar una transformación que haga que la varianza sea constante en el tiempo, haremos uso de la familia de transformaciones Box-Cox con ayuda de la librería *TSA*. 
 
 
-```{r}
+```{r , fig.height=4 , fig.width=6}
 BoxCox =BoxCox.ar(y=tsDiaSemanal)
 # BoxCox
 ```
 
 
-La función *BoxCox.ar* sugiere un óptimo de $\lambda=$. `r BoxCox$mle`, con un intervalo de confianza al 95%: (`r BoxCox$c[1]`,`r BoxCox$c[2]`). Se necesita una transformación sencilla y comprensible, por lo que se ha obtado por tomar como valor de lambda el extremo inferior del intervalo,$\lambda=1/2$.
+La función *BoxCox.ar* sugiere un óptimo de $\lambda=$ `r BoxCox$mle`, con un intervalo de confianza al 95%: (`r BoxCox$c[1]`,`r BoxCox$c[2]`). Se necesita una transformación sencilla y comprensible, por lo que se ha obtado por tomar como valor de lambda el extremo inferior del intervalo, $\lambda=1/2$.
 
 Transformamos los datos y volvemos a representar la serie.
 
 
 ```{r}
 tsDiaSemanal_transf = sqrt(tsDiaSemanal)
+
 plot(tsDiaSemanal_transf, main = "sqrt(Volumen total de venta diario)", xlab="Dia" , ylab = "sqrt(Volumen de ventas)")
 ```
 
@@ -144,13 +146,13 @@ plot(tsDiaSemanal_transf, main = "sqrt(Volumen total de venta diario)", xlab="Di
 
 
 
-Vamos a estudiar si el motivo de la no estacionalidad de los datos en media se debe a que se trata de un proceso integrado. Para ello hacemos uso de la función de correlación simple.
+Vamos a estudiar si el motivo de la no estacionalidad de los datos en media se debe a que se trata de un proceso integrado. Para ello, hacemos uso de la función de autocorrelación simple.
 
 ```{r}
 acf(tsDiaSemanal_transf, main="FAS de SQRT de Ventas diarias" , lag=50)
 ```
 
-La FAS muestral decrece de lentamente en los retardos estacionales de período 7, indicando que estamos ante un modelo integrado.  Debido a esta situación, hacemos una diferencia estacional de la serie.
+La FAS muestral decrece de lentamente en los retardos estacionales de período 7, indicando que estamos ante un modelo integrado.  Debido a esta situación, hacemos una diferencia estacional de la serie y volvemos a representar la FAS (s=7).
 
 ```{r}
 # ndiffs(tsDiaSemanal_transf) # num dif regulares necesarias en la serie para que sea estacionaria
@@ -159,9 +161,9 @@ La FAS muestral decrece de lentamente en los retardos estacionales de período 7
 
 
 
-El siguiente gráfico muestra la FAS tras haber hecho una diferencia estacional de la serie (s=7).
 
-```{r}
+
+```{r echo=TRUE}
 tsDiaria_DifEst = diff(tsDiaSemanal_transf,lag=7,diff=1)
 acf(tsDiaria_DifEst, main="FAS de primera diferencia estacional", lag=50)
 ```
@@ -178,7 +180,7 @@ Observamos que la serie no muestra ningún comportamiento en particular, sino qu
 
 #### Contraste de estacionariedad
 
-Para confirmar la estacionariedad de los datos sugerida con la observación de la gráfica, necesitamos a plicar un test de hipótesis. Aplicamos el test de raíz unitaria de Dikey-Fuller, donde se contrasta la estacionariedad de los datos a través del siguiente contraste de hipótesis:
+Para confirmar la estacionariedad de los datos sugerida con la observación de la gráfica, necesitamos aplicar un test de hipótesis. Aplicamos el test de raíz unitaria de Dikey-Fuller, donde se contrasta la estacionariedad de los datos a través del siguiente test de hipótesis:
 
 
 \[
@@ -197,12 +199,12 @@ H_{1}: & \text{Todas las raíces del polinomio autoregresivo son estacionarias}
 adf.test(tsDiaria_DifEst)
 ```
 
-El p-valor del test= $0.01 < 0.05= \alpha$, y por tanto concluímos que no existen evidencias significativas para asumir que el polinomio autoregresivo tiene alguna raíz unitaria, y por tanto, la serie es estacionaria.
+El p-valor del test= $0.01 < 0.05= \alpha$, y por tanto concluímos que no existen evidencias significativas para asumir que el polinomio autoregresivo tiene alguna raíz unitaria, la serie es estacionaria.
 
 
 #### Identificación de la estructura ARIMA de la serie 
 
-Trataremos de identificar la estructura ARIMA a través de la función de autocorrelación simple (FAC) y de la función de autocorrelación parcial (FAP).
+Trataremos de identificar la estructura ARIMA más adecuada para esta serie a través de la función de autocorrelación simple (FAC) y de la función de autocorrelación parcial (FAP). Determinar el modelo más adecuado consistirá en e identificar el orden de los procesos de medias móviles y autoregresivos de la componente estacional y la componente regular.
 
 
 ```{r}
@@ -224,7 +226,7 @@ pacf(tsDiaria_DifEst, main="FAP tras una diferencia estacional", lag=50)
 
 
 
-- Parte regular: De nuevo, no hay autocorrelaciones significativamente no nulas.
+- Parte regular: De nuevo, no hay autocorrelaciones significativamente no nulas en los primeros retardos.
 
 - Parte estacional: En los retardos estacionales, observamos como las autocorrelaciones decrecen rápidamente y a su izquierda, no hay autocorrelaciones significativamente no nulas, lo que avalaría aún más la suposición de un MA(1) en la parte estacional. Modelo propuesto: $MA(1)_{12}$
 
@@ -233,52 +235,73 @@ pacf(tsDiaria_DifEst, main="FAP tras una diferencia estacional", lag=50)
 También observamos como hay otras autocorrelaciones significativamente no nulas, pero esto es debido a que se trata de un intervalo de confianza al 95%, por lo que cabe esperar que haya algunas autocorrelaciones fuera de las bandas.
 
 
-El modelo a considerar es un modelo estacional puro: $ARIMA(0,1,1)_{12}$
+El modelo a considerar es un modelo estacional multiplicativo integrado de medias móviles puro: $ARIMA(0,1,1)_{12}$
 
 
 
-#### Estimación de parámetros y diagnóstico
+#### Estimación de parámetros y diagnóstico del modelo
 
 
+Una vez hemos obtenido un modelo, se han estimado sus parámetros con la función *arima*.
 
 
 
 ```{r , echo=TRUE}
 Ajuste1 = arima( tsDiaria_DifEst ,   # Serie trás una diferencia estacional
-                 seasonal = list(order=c(0,0,1),period=7))
+                 seasonal = list(order=c(0,0,1),period=7 ))
 Ajuste1
 ```
 
 
 Trás comprobar si los coeficientes estimados son o no significativamente nulos, procedemos a eliminar la media del modelo, obteniendo así uno donde todos los coeficientes son significativamente no nulos.
 
+
 ```{r}
-confint(Ajuste1)
+confint(Ajuste1) # Intervalo de confianza 
 ```
 
 
 
 ```{r , echo=TRUE}
 Ajuste1_1 = arima( tsDiaria_DifEst ,   # Serie trás una diferencia estacional
-                   order = c(0,0,0),
-                 seasonal = list(order=c(0,0,1),period=7), include.mean = FALSE
+                   order = c(0,0,0),seasonal = list(order=c(0,0,1),period=7), 
+                 include.mean = FALSE # Eliminamos la media
                  )
 Ajuste1_1
-```
-
-
-
-
-```{r}
 confint(Ajuste1_1)
 ```
 
+El modelo ajustado corresponde a la siguiente ecuación: \[Y_t =(1-L^7)(1+0.9999 \Theta^7)\alpha_t , \qquad \alpha_t \sim RB(0,\sigma^2) \]
 
-Para comprobar si el modelo es o no adecuado, comprobamos su valided a través de la diagnosis de los resíduos.
-Para este ajuste, según el Test de Ljung-Box, no existen evidencias significativas para aceptar la incorrelación de los resíduos: p-valor = $0.002524<0.05 = \alpha$. Además, gráficamente podemos observar que los resíduos no se comportan como un ruido blanco.
+
+Para comprobar si el modelo es o no adecuado, comprobamos su validez a través de la diagnosis de los resíduos y concluímos que este ajuste no es adecuado, ya que según el Test de Ljung-Box, no existen evidencias significativas para aceptar la incorrelación de los resíduos: p-valor = $0.002524<0.05 = \alpha$. Además, gráficamente podemos observar que los resíduos no se comportan como un ruido blanco.
+
+
 
 ```{r}
-checkresiduals(Ajuste1_1,plot = TRUE)
+checkresiduals(Ajuste1_1, plot=FALSE)
+```
+
+
+
+```{r}
+par(mfrow=c(2,2))
+# Gráfica de los resíduos
+plot(window(rstandard(Ajuste1_1),start=c(31,6)), 
+     ylab='Resíduos estandarizados',type='o')
+abline(h=0)
+# FAS de los resíduos
+acf(as.vector(window(rstandard(Ajuste1_1),
+                     start=c(31,6))),lag.max=36,
+    main="FAS de los resíduos")
+# Histograma 
+#win.graph(width=4, height=4,pointsize=8)
+hist(window(rstandard(Ajuste1_1),start=c(31,6)),
+   xlab='Resíduos estandarizados',
+     main="Histograma")
+# Gráfica QQ-Normal 
+qqnorm(window(rstandard(Ajuste1_1),start=c(31,6)))
+qqline(window(rstandard(Ajuste1_1),start=c(31,6)))
 ```
 
 
@@ -290,10 +313,6 @@ Vamos a probar otro modelo, en particular, a través del paquete *forecast* haci
 
 ```{r}
 ajuste2 = auto.arima(tsDiaSemanal_transf,d = 0,D=1)
-```
-
-
-```{r}
 ajuste2
 ```
 
@@ -306,7 +325,58 @@ checkresiduals(ajuste2)
 
 El ajuste propuesto es un modelo: $ARIMA(1,0,0)xARIMA(2,0,0)_{7}$, pero tampoco es adecuado, ya que volvemos a rechazar la hipótesis de incorrelación de los resíduos del Test de Ljung-Box.
 
-No encontramos modelo adecuado.
+
+
+No hemos podido encontrar un modelo adecuado que se ajuste a los datos y que pase la diagnosis, ya que los resíduos no provenían en ningún caso de un proceso de ruido blanco, es decir, no estaban incorrelados entre sí. Por este motivo, al no ser los retardos independientes, un retardo puede guardar cierta relación con otro retardo k períodos después. En estos casos, la autocorrelación puede conducir a una inexactitud en el modelo predictivo, que nos llevaría a interpretaciones erróneas.
+
+La tabla mostrada a continuación expone los diferentes modelos ajutado, el valor del AIC y el p-valor obtenido del test de Ljung-Box. De haber pasado algún modelo la diagnosis, el seleccionado para realizar predicciones del volumen de ventas habría sido aquel con menor valor del AIC.
+
+
+```{r , include=FALSE}
+A1 = checkresiduals(Ajuste1_1, plot=FALSE)
+p.valor1= A1$p.value
+modelo1= "ARIMA(0,1,1)_7"
+aic1=Ajuste1_1$aic
+
+A2 = checkresiduals(ajuste2, plot=FALSE)
+p.valor2= A2$p.value
+modelo2="ARIMA(1,0,0)x(2,1,0)_7 "
+aic2=ajuste2$aicc
+
+Ajuste3 = arima( tsDiaria_DifEst ,   # Serie trás una diferencia estacional
+                   order = c(0,0,0),
+                 seasonal = list(order=c(1,0,1),period=7) )
+A3= checkresiduals(Ajuste3, plot=FALSE)
+p.valor3=A3$p.value
+modelo3="ARIMA(1,1,1)_7"
+aic3=Ajuste3$aic  
+
+Ajuste4 = arima( tsDiaria_DifEst ,   # Serie trás una diferencia estacional
+                   order = c(0,0,0),
+                 seasonal = list(order=c(1,0,0),period=7),
+                 include.mean = FALSE)
+A4= checkresiduals(Ajuste4, plot=FALSE)
+p.valor4=A4$p.value
+modelo4="ARIMA(1,1,0)_7"
+aic4=Ajuste4$aic
+```
+
+
+```{r}
+p.valor=c(p.valor1,p.valor2,p.valor3,p.valor4)
+aic=c(aic1,aic2,aic3,aic4)
+modelo=c(modelo1,modelo2,modelo3,modelo4)
+
+comparacion_moodelos = cbind.data.frame(modelo,aic,p.valor)
+rownames(comparacion_moodelos)=c("Modelo 1","Modelo 2","Modelo 3","Modelo 4")
+comparacion_moodelos %>% 
+  kable(booktabs=TRUE,col.names = c("MODELO","AIC","p-valor")) %>% 
+  kable_styling(latex_options = "striped") %>% 
+  footnote(general = "El p-valor corresponde al test de Ljung-Box" )
+```
+
+
+
 
 
 
