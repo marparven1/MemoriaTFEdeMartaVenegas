@@ -1,6 +1,9 @@
 ---
 author: "Nombre Completo Autor"
-date: "27/10/2017"
+date: "04/06/2022"
+header-includes: #allows you to add in your own Latex packages
+  - \usepackage{float} #use the 'float' package
+  - \floatplacement{figure}{H} #make every figure with caption = h
 documentclass: book
 forprint: true  # true: imprime a dos caras, false: libro digital
 fontsize: 12pt # 10pt,11pt
@@ -30,7 +33,7 @@ output:
 ---
 
 ```{r , echo=FALSE}
-knitr::opts_chunk$set(echo = FALSE , warning = FALSE , message = FALSE )
+knitr::opts_chunk$set(echo = FALSE , warning = FALSE , message = FALSE ,fig.pos = 'h',out.extra = '')
 ```
 
 ```{r , message=FALSE , echo= FALSE}
@@ -362,7 +365,7 @@ aic4=Ajuste4$aic
 ```
 
 
-```{r}
+```{r }
 p.valor=c(p.valor1,p.valor2,p.valor3,p.valor4)
 aic=c(aic1,aic2,aic3,aic4)
 modelo=c(modelo1,modelo2,modelo3,modelo4)
@@ -371,7 +374,7 @@ comparacion_moodelos = cbind.data.frame(modelo,aic,p.valor)
 rownames(comparacion_moodelos)=c("Modelo 1","Modelo 2","Modelo 3","Modelo 4")
 comparacion_moodelos %>% 
   kable(booktabs=TRUE,col.names = c("MODELO","AIC","p-valor")) %>% 
-  kable_styling(latex_options = "striped") %>% 
+  kable_styling(latex_options = c("striped" ,"HOLD_position") ) %>% 
   footnote(general = "El p-valor corresponde al test de Ljung-Box" )
 ```
 

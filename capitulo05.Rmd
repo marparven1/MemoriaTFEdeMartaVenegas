@@ -78,10 +78,11 @@ knitr::opts_chunk$set(fig.path = 'figurasR/',
 
 En este apartado se va a llevar a cabo la aplicación de las diferentes técnicas estudiadas de forma teórica en los cuatro primeros capítulos. 
 
-En primer lugar, un estudio de cesta de la compra y posteriormente, se llevará a cabo un DSP completo, que consta de las siguientes partes: extracción y lectura de datos, preprocesado, análisis exploratorio y modelado. En la parte de modelado, se aplicarán las diferentes técnicas estudiadas en la parte teórica: una serie de técnicas estadísticas clásicas como el modelo de regresión lineal y un análisis de series temporales, así como diferentes algoritmos de aprendizaje automático. El proceso de la ciencia de datos concluirá con la comparación del rendimiento de los diferentes modelos entrenados, el cálculo de errores y extracción de conclusiones.
+En primer lugar, un estudio de cesta de la compra para descubrir asociaciones entre productos.
+Posteriormente, se llevará a cabo un DSP completo, que consta de las siguientes partes: extracción y lectura de datos, preprocesado, análisis exploratorio y modelado. En la parte de modelado, se aplicarán las diferentes técnicas estudiadas en la parte teórica: una serie de técnicas estadísticas clásicas como el modelo de regresión lineal y un análisis de series temporales, así como diferentes algoritmos de aprendizaje automático. El proceso de la ciencia de datos concluirá con la comparación del rendimiento de los diferentes modelos entrenados, el cálculo de errores y extracción de conclusiones.
 
 
-Los datos que se han utilizado corresponden a una muestra de una base de datos anonimizadas empleadas en el proyecto *Advanced Promotional Engine*, dirigido por Dº Jose Luis Pino, tutor del TFG y se encuentran en formato dataFrame. La primera muestra de tickets, utilizada en el análisis de cesta de la compra, contiene información correspondiente a transacciones de una cadena de supermercados. La segunda muestra, empleada para el proceso de ciencia de datos, corresponde a las ventas de dos productos lácteos similares de marcas distintas en un período de cinco meses.
+Los datos que se han utilizado corresponden a una muestra de una base de datos anonimizadas empleadas en el proyecto *Advanced Promotional Engine*, dirigido por Dº Jose Luis Pino, tutor del TFG y se encuentran en formato dataFrame. La primera muestra de tickets, utilizada en el análisis de cesta de la compra contiene información correspondiente a transacciones de una cadena de supermercados. La segunda muestra, empleada para el proceso de ciencia de datos, corresponde a las ventas de dos productos lácteos similares de marcas distintas en un período de cinco meses.
 
 
 

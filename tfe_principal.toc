@@ -41,8 +41,37 @@
 \contentsline {chapter}{\numberline {5}Caso pr\IeC {\'a}ctico con datos reales}{33}{chapter.5}% 
 \contentsline {section}{\numberline {5.1}An\IeC {\'a}lisis de cesta de la compra para productos l\IeC {\'a}cteos}{33}{section.5.1}% 
 \contentsline {subsection}{\numberline {5.1.1}Introducci\IeC {\'o}n}{33}{subsection.5.1.1}% 
-\contentsline {subsection}{\numberline {5.1.2}Lectura y descripci\IeC {\'o}n de los datos}{33}{subsection.5.1.2}% 
-\contentsline {subsection}{\numberline {5.1.3}Aplicaci\IeC {\'o}n del algoritmo a priori}{36}{subsection.5.1.3}% 
-\contentsline {subsection}{\numberline {5.1.4}Conclusiones}{36}{subsection.5.1.4}% 
-\contentsline {chapter}{Conclusiones}{37}{section*.13}% 
-\contentsline {chapter}{Bibliograf\IeC {\'\i }a}{39}{section*.13}% 
+\contentsline {subsection}{\numberline {5.1.2}Lectura y descripci\IeC {\'o}n de los datos}{34}{subsection.5.1.2}% 
+\contentsline {subsection}{\numberline {5.1.3}An\IeC {\'a}lisis de ventas}{35}{subsection.5.1.3}% 
+\contentsline {subsection}{\numberline {5.1.4}Aplicaci\IeC {\'o}n del algoritmo a priori}{38}{subsection.5.1.4}% 
+\contentsline {subsubsection}{\numberline {5.1.4.1}Itemsets}{38}{subsubsection.5.1.4.1}% 
+\contentsline {subsubsection}{\numberline {5.1.4.2}Reglas de asociaci\IeC {\'o}n}{40}{subsubsection.5.1.4.2}% 
+\contentsline {subsubsection}{\numberline {5.1.4.3}Evaluaci\IeC {\'o}n de las reglas}{43}{subsubsection.5.1.4.3}% 
+\contentsline {subsubsection}{\numberline {5.1.4.4}Reglas maximales}{46}{subsubsection.5.1.4.4}% 
+\contentsline {subsubsection}{\numberline {5.1.4.5}Reglas redundantes}{46}{subsubsection.5.1.4.5}% 
+\contentsline {subsection}{\numberline {5.1.5}Conclusiones}{47}{subsection.5.1.5}% 
+\contentsline {section}{\numberline {5.2}Proceso de ciencia de datos}{47}{section.5.2}% 
+\contentsline {subsection}{\numberline {5.2.1}Lectura y descripci\IeC {\'o}n de los datos}{47}{subsection.5.2.1}% 
+\contentsline {subsection}{\numberline {5.2.2}Preparaci\IeC {\'o}n de los datos (Preprocesado)}{48}{subsection.5.2.2}% 
+\contentsline {subsubsection}{\numberline {5.2.2.1}Transformaci\IeC {\'o}n de los datos}{48}{subsubsection.5.2.2.1}% 
+\contentsline {subsubsection}{\numberline {5.2.2.2}Duplicados}{48}{subsubsection.5.2.2.2}% 
+\contentsline {subsubsection}{\numberline {5.2.2.3}Datos faltantes}{48}{subsubsection.5.2.2.3}% 
+\contentsline {subsubsection}{\numberline {5.2.2.4}Outliers}{49}{subsubsection.5.2.2.4}% 
+\contentsline {subsubsection}{\numberline {5.2.2.5}Creaci\IeC {\'o}n de variables}{50}{subsubsection.5.2.2.5}% 
+\contentsline {subsubsection}{\numberline {5.2.2.6}Datasets de entrada de modelos}{50}{subsubsection.5.2.2.6}% 
+\contentsline {subsection}{\numberline {5.2.3}An\IeC {\'a}lisis exploratorio de datos (EDA)}{50}{subsection.5.2.3}% 
+\contentsline {subsubsection}{\numberline {5.2.3.1}Resumen de los datos}{51}{subsubsection.5.2.3.1}% 
+\contentsline {subsubsection}{\numberline {5.2.3.2}Representaciones gr\IeC {\'a}ficas}{51}{subsubsection.5.2.3.2}% 
+\contentsline {paragraph}{\numberline {5.2.3.2.1}Variable precio}{54}{paragraph.5.2.3.2.1}% 
+\contentsline {subsubsection}{\numberline {5.2.3.3}Grado de asociaci\IeC {\'o}n de las variables}{55}{subsubsection.5.2.3.3}% 
+\contentsline {section}{\numberline {5.3}Modelos estad\IeC {\'\i }sticos cl\IeC {\'a}sicos}{56}{section.5.3}% 
+\contentsline {subsection}{\numberline {5.3.1}Modelo de Regresi\IeC {\'o}n Lineal General}{56}{subsection.5.3.1}% 
+\contentsline {subsection}{\numberline {5.3.2}An\IeC {\'a}lisis de Series Temporales}{56}{subsection.5.3.2}% 
+\contentsline {subsubsection}{\numberline {5.3.2.1}Creaci\IeC {\'o}n ST y representaci\IeC {\'o}n de los datos}{56}{subsubsection.5.3.2.1}% 
+\contentsline {subsubsection}{\numberline {5.3.2.2}Transformaci\IeC {\'o}n de BoxCox para estabilizar la varianza}{57}{subsubsection.5.3.2.2}% 
+\contentsline {subsubsection}{\numberline {5.3.2.3}Transformaciones para estabilizar la media}{58}{subsubsection.5.3.2.3}% 
+\contentsline {subsubsection}{\numberline {5.3.2.4}Contraste de estacionariedad}{60}{subsubsection.5.3.2.4}% 
+\contentsline {subsubsection}{\numberline {5.3.2.5}Identificaci\IeC {\'o}n de la estructura ARIMA de la serie}{60}{subsubsection.5.3.2.5}% 
+\contentsline {subsubsection}{\numberline {5.3.2.6}Estimaci\IeC {\'o}n de par\IeC {\'a}metros y diagn\IeC {\'o}stico del modelo}{62}{subsubsection.5.3.2.6}% 
+\contentsline {chapter}{Conclusiones}{66}{section*.19}% 
+\contentsline {chapter}{Bibliograf\IeC {\'\i }a}{67}{section*.19}% 

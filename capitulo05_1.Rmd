@@ -246,7 +246,7 @@ La mayoría de los clientes compra entre 1 y 3 productos y el 90% de ellos compr
 Ahora podemos ver gráficamente cuáles han sido los 15 artículos más vendidos y la frecuencia absoluta de transacciones en las que aparece ese artículo.
 
 
-```{r}
+```{r , fig.height=3}
 # Create an item frequency plot for the top 20 items
 if (!require("RColorBrewer")) {
   # install color package of R
@@ -305,7 +305,7 @@ Hemos encontrado un total de 64 itemsets con un soporte mayor al soporte mínimo
 
 De estos itemsets encontrados, vamos a proceder a mostrar aquellos con mayor soporte:
 
-```{r , fig.pos='H' , fig.height=4}
+```{r , fig.pos='H' , fig.height=3}
 Itemsets_frec <- sort(Itemsets, by = "support", decreasing = TRUE)[1:20]
 #inspect(top_20_itemsets)
 
@@ -392,7 +392,7 @@ inspect(sort(x = rulesII, decreasing = TRUE, by = "confidence"))
 
 Vamos a ver una representación gráfica a modo de grafo de las nuevas reglas de asociación encontradas:
 
-```{r}
+```{r , fig.height=3}
 plot(rulesII, method="graph", 
      control=list(type="items")
      #limit =100 
@@ -408,7 +408,7 @@ Vamos a ordenar las reglas en función de los distintos parámetros:
 
 - Ordenación según confianza:
 
-```{r , fig.height=4}
+```{r , fig.height=3}
 rules_conf <- sort (rulesII, by="confidence", decreasing=TRUE) 
 # 'high-confidence' rules.
 #inspect((rules_conf))

@@ -1,6 +1,9 @@
 ---
 author: "Nombre Completo Autor"
 date: "27/10/2017"
+header-includes: #allows you to add in your own Latex packages
+  - \usepackage{float} #use the 'float' package
+  - \floatplacement{figure}{H} #make every figure with caption = h
 documentclass: book
 forprint: true  # true: imprime a dos caras, false: libro digital
 fontsize: 12pt # 10pt,11pt
@@ -30,7 +33,7 @@ output:
 ---
 
 
-```{r }
+```{r , echo=FALSE}
 knitr::opts_chunk$set(echo = FALSE , warning = FALSE , message = FALSE )
 ```
 
@@ -45,8 +48,9 @@ library(dplyr)
 
 library(lubridate)
 library(ggplot2) # Visualización
+library(plotly)
 library(hrbrthemes) # Temas 
-
+library(corrplot)
 library(TSA) # Series Temporales (B-C)
 ```
 
@@ -68,14 +72,14 @@ Este apartado lo dedicaremos a realizar un proceso de ciencia de datos completo,
 
 
 
-```{r , carga de datos}
+```{r }
 load("Datos/datosTFGMarta.RData")
 ```
 
 
 
 
-Los datos contienen información correspondiente a ventas de dos productos lácteos durante un período de 5 meses, desde el 1 de Septiembre de 2020 hasta el 30 de Enero de 2021, obteniéndose un total de 140025 observaciones y se estructuran de la siguiente forma: Cada fila corresponde a la línea de un ticket y hace referencia a la venta de un artículo en particular. De esta forma, para una venta de un único producto únicamente encontraremos una fila en el conjunto de datos que identifique esa venta, sin embargo, para una venta de más de un artículo encontraremos tantas filas como productos se hayan vendido. 
+Los datos contienen información correspondiente a ventas de dos productos lácteos (con y sin calcio) durante un período de 5 meses, desde el 1 de Septiembre de 2020 hasta el 30 de Enero de 2021, obteniéndose un total de 140025 observaciones y se estructuran de la siguiente forma: Cada fila corresponde a la línea de un ticket y hace referencia a la venta de un artículo en particular.
 
 
 En este conjunto de datos inicial encontramos las siguientes variables:
@@ -95,7 +99,7 @@ En este conjunto de datos inicial encontramos las siguientes variables:
 
 ### Preparación de los datos (Preprocesado)
 
-En este paso, vamos a llevar a cabo la limpieza de éstos para su posterior estudio, representación y modelado. En este punto del proceso, trataremos de encontrar, corregir o eliminar registros erróneos en los datos. 
+En este paso, vamos a llevar a cabo la limpieza de los datos para su posterior estudio, representación y modelado. En este punto del proceso, trataremos de encontrar, corregir o eliminar registros erróneos en los datos. 
 
 
 #### Transformación de los datos
@@ -113,7 +117,7 @@ dataset<-as.data.frame(datos) # Datos como DF
 
 
 ```{r , echo=TRUE}
-dataset %>% str() # Estructura de los datos trás su transformación
+dataset %>% str() # Estructura de los datos trás reformateo
 ```
 
 
@@ -138,15 +142,19 @@ Al estar trabajando con fechas, es muy importante comprobar la uniformidad en lo
 
 
 ```{r , missing values ,  echo=TRUE}
-# Construcción de un cjto de datos con todas las fechas entre la primera fecha y la última de los datos que tenemos
+# Construcción de un cjto de datos con todas las fechas entre la primera fecha
+#  y la última de los datos que tenemos
 FechasCompletas <- seq(min(dataset$FECHA), max(dataset$FECHA), by = "day")
-FechasCompletas  <- data.frame(FECHA = FechasCompletas ) # Creo un DF con de fechas
 
-# Merge al conjunto de fechas completas y al cjto inicial para añadir NA a aquellos valores faltantes
+# Creo un DF de fechas
+FechasCompletas  <- data.frame(FECHA = FechasCompletas ) 
+
+# Merge al conjunto de fechas completas y al cjto inicial para añadir NA 
+# a aquellos valores faltantes
 DatosCompletos <- merge(FechasCompletas, dataset, by = "FECHA", all.x = TRUE)
 
 # Valores faltantes en el conjunto de datos completo
-Miss_values <- which(is.na(DatosCompletos$ANO) == TRUE)
+Miss_values <- which(is.na(DatosCompletos$ID_TICKET) == TRUE)
 ```
 
 Con registros faltantes nos referimos a que falten las ventas correspondientes a algún día concreto dentro del período que estamos considerando, 1/09/2020-30/01/2022.
@@ -158,21 +166,32 @@ Existe un total de `r length(Miss_values)` valores faltantes, que corresponden a
 #### Outliers
 
 
-Estudiamos valores atípicos para las variables *cantidad* e *importe con impuestos*, ya que estudiarlos para el resto no tiene mucho interés.
-
-
+Estudiamos valores atípicos para las variables *precio*, *cantidad* e *importe con impuestos*, ya que estudiarlos para el resto no tiene mucho interés.
 
 
 
 ```{r}
-boxplot(dataset[,c(5,9)],main="BoxPlot de las variables cantidad e importe con impuestos")
+# fig <- plot_ly(y = ~dataset[,6], type = "box",name="PRECIO")
+# fig <- fig %>% layout(title = "BoxPlot de la variable precio ")
+# fig
+# 
+# 
+# fig <- plot_ly(y = ~dataset[,4], type = "box",name="CANTIDAD")
+# fig <- fig %>% add_trace(y = ~dataset[,9],name="IMPORTE")
+# fig <- fig %>% layout(title = "BoxPlot de la cantidad y el importe")
+# fig
+
+par(mfrow=c(1,2))
+boxplot(dataset[,c(4,9)], main="Cantidad e importe con impuestos")
+boxplot(dataset[,6],main="Precio con impuestos")
+par(mfrow=c(1,1))
 ```
 
+Para la variable precio con impuestos, un importe menor de 1.31€ se podría considerar un valor extremo, existiendo dos valores atípicos entre los datos con unos precios de venta de 79 y 76 céntimos.
+Para la variable cantidad, se considerará un valor atípico la compra de 14 o más artículos. Para la variable importe con impuestos, una compra de más de 18.07€ podemos considerarla como una compra con un valor extremo.
 
-Para la variable cantidad, se considerará un valor atípico la compra de 18 o más artículos. Para la variable precio con impuesto, una compra de 25.02€ podemos considerarla como una compra con un valor extremo.
 
-
-#### Creación de variables temporales
+#### Creación de variables
 
 
 
@@ -191,7 +210,11 @@ dataset$DIA_SEMANA <-   wday(dataset$FECHA,week_start = 1 )
 
 ```{r , reordenacion_cols}
 # Reordeno las columnas 
-dataset <- dataset %>% select("ID_TICKET"  , "LINEA_TICKET", "CODIGO", "CANTIDAD", "PRECIO", "PRECIO_CON_IMPUESTOS" , "DESCUENTO", "IMPORTE", "IMPORTE_CON_IMPUESTOS" , "FECHA" , "ANO", "MES"    , "DIA", "SEMANA_ANO", "DIA_SEMANA"  )
+dataset <- dataset %>% select("ID_TICKET"  , "LINEA_TICKET", "CODIGO",
+                              "CANTIDAD", "PRECIO", "PRECIO_CON_IMPUESTOS" ,
+                              "DESCUENTO", "IMPORTE", "IMPORTE_CON_IMPUESTOS" ,
+                              "FECHA" , "ANO", "MES"    , "DIA", "SEMANA_ANO",
+                              "DIA_SEMANA"  )
 ```
 
 
@@ -206,10 +229,130 @@ dataset$DIA_SEMANA<- as.integer(dataset$DIA_SEMANA)
 ```
 
 
+
+Además de las variables temporales, vamos a añadir una nueva variable: *TIPO*, que representa el tipo de producto lácteo, siendo esta una variable categórica que toma dos posibles valores: *Con calcio* o *sin calcio*. El producto que no lleva calcio es aquel con identificador 20445
+
+
 ```{r}
-# Guardamos el conjunto de datos final
-## save(dataset,file = "Datos/Dataset_Final.RData")
+dataset$TIPO = ifelse(
+  dataset$CODIGO == 20445 , "Sin Calcio" , "Con calcio"
+)
+
+datset = dataset[,c(3,16,1,2,4:15)]
 ```
+
+
+
+#### Datasets de entrada de modelos 
+
+
+La variable objetivo es el volumen de ventas diario, por lo que necesitamos transformar el conjunto de datos inicial en uno que tenga una variable *ventas* con el volumen total de ventas diario. Obtendremos un datset con el volumen total, otro con el volumen de ventas diario del producto 20445 y un tercer conjunto de datos con el volumen de ventas del producto 22336, para así poder modelar el volumen de ventas en cada ocasión.
+
+```{r }
+VolVentas_FECHA = dataset %>%
+  group_by(FECHA) %>%
+  dplyr::summarise(VENTAS = sum(CANTIDAD),
+                   PRECIO_MEDIO_IMPUESTOS = mean(PRECIO_CON_IMPUESTOS),
+                   DESCUENTO_MEDIO = mean(DESCUENTO),
+                   IMPORTE_MEDIO_IMPUESTOS=mean(IMPORTE_CON_IMPUESTOS)
+                   )
+NUM_TRANSACCIONES = as.data.frame(datset %>%
+                                    group_by(FECHA) %>% 
+                                    dplyr::summarise( unique(ID_TICKET) ) %>%
+                                    group_by(FECHA) %>% 
+                                    dplyr::summarise(n()))$'n()'
+VolVentas_FECHA$NUM_TRANSACCIONES =NUM_TRANSACCIONES
+VolVentas_FECHA=VolVentas_FECHA[,c(1,2,6,3:5)]
+
+VolVentas_CALCIO_FECHA = dataset %>%
+  filter(CODIGO == 22336) %>% 
+  group_by(FECHA) %>%
+  dplyr::summarise(VENTAS = sum(CANTIDAD),
+                   PRECIO_MEDIO_IMPUESTOS = mean(PRECIO_CON_IMPUESTOS),
+                   DESCUENTO_MEDIO = mean(DESCUENTO),
+                   IMPORTE_MEDIO_IMPUESTOS=mean(IMPORTE_CON_IMPUESTOS) )
+NUM_TRANSACCIONES_C = as.data.frame(datset %>%filter(CODIGO == 22336) %>%
+                                      group_by(FECHA) %>%
+                                      dplyr::summarise( unique(ID_TICKET) ) %>%
+                                      group_by(FECHA) %>%
+                                      dplyr::summarise(n()))$'n()'
+VolVentas_CALCIO_FECHA$NUM_TRANSACCIONES =NUM_TRANSACCIONES_C
+VolVentas_CALCIO_FECHA=VolVentas_CALCIO_FECHA[,c(1,2,6,3:5)]
+
+
+
+VolVentas_SIN_CALCIO_FECHA = dataset %>% 
+  filter(CODIGO == 20445) %>% 
+  group_by(FECHA) %>%
+  dplyr::summarise(VENTAS = sum(CANTIDAD),
+                   PRECIO_MEDIO_IMPUESTOS = mean(PRECIO_CON_IMPUESTOS),
+                   DESCUENTO_MEDIO = mean(DESCUENTO),
+                   IMPORTE_MEDIO_IMPUESTOS=mean(IMPORTE_CON_IMPUESTOS) )
+NUM_TRANSACCIONES_SC = as.data.frame(datset %>%
+                                       filter(CODIGO == 20445) %>% 
+                                       group_by(FECHA) %>%
+                                       dplyr::summarise( unique(ID_TICKET) ) %>%
+                                       group_by(FECHA) %>%
+                                       dplyr::summarise(n()))$'n()'
+VolVentas_SIN_CALCIO_FECHA$NUM_TRANSACCIONES =NUM_TRANSACCIONES_SC
+VolVentas_SIN_CALCIO_FECHA=VolVentas_SIN_CALCIO_FECHA[,c(1,2,6,3:5)]
+
+```
+
+
+```{r}
+# VENTAS TOTALES 
+VolVentas_FECHA$ANO         <-  year(VolVentas_FECHA$FECHA) 
+VolVentas_FECHA$MES         <- month(VolVentas_FECHA$FECHA) 
+VolVentas_FECHA$DIA         <-   day(VolVentas_FECHA$FECHA) 
+VolVentas_FECHA$SEMANA_ANO <-   week(VolVentas_FECHA$FECHA) 
+VolVentas_FECHA$DIA_SEMANA <-   wday(VolVentas_FECHA$FECHA,week_start = 1 )
+VolVentas_FECHA$ANO <-       as.integer(VolVentas_FECHA$ANO)
+VolVentas_FECHA$MES <-       as.integer(VolVentas_FECHA$MES)
+VolVentas_FECHA$DIA <-       as.integer(VolVentas_FECHA$DIA)
+VolVentas_FECHA$SEMANA_ANO<- as.integer(VolVentas_FECHA$SEMANA_ANO)
+VolVentas_FECHA$DIA_SEMANA<- as.integer(VolVentas_FECHA$DIA_SEMANA) 
+
+# PROD CON CALCIO
+VolVentas_CALCIO_FECHA$ANO         <-  year(VolVentas_CALCIO_FECHA$FECHA) 
+VolVentas_CALCIO_FECHA$MES         <- month(VolVentas_CALCIO_FECHA$FECHA) 
+VolVentas_CALCIO_FECHA$DIA         <-   day(VolVentas_CALCIO_FECHA$FECHA) 
+VolVentas_CALCIO_FECHA$SEMANA_ANO <-   week(VolVentas_CALCIO_FECHA$FECHA) 
+VolVentas_CALCIO_FECHA$DIA_SEMANA <-   wday(VolVentas_CALCIO_FECHA$FECHA,week_start = 1 )
+VolVentas_CALCIO_FECHA$ANO <-       as.integer(VolVentas_CALCIO_FECHA$ANO)
+VolVentas_CALCIO_FECHA$MES <-       as.integer(VolVentas_CALCIO_FECHA$MES)
+VolVentas_CALCIO_FECHA$DIA <-       as.integer(VolVentas_CALCIO_FECHA$DIA)
+VolVentas_CALCIO_FECHA$SEMANA_ANO<- as.integer(VolVentas_CALCIO_FECHA$SEMANA_ANO)
+VolVentas_CALCIO_FECHA$DIA_SEMANA<- as.integer(VolVentas_CALCIO_FECHA$DIA_SEMANA)
+
+# PROD SIN CALCIO
+VolVentas_SIN_CALCIO_FECHA$ANO         <-  year(VolVentas_SIN_CALCIO_FECHA$FECHA) 
+VolVentas_SIN_CALCIO_FECHA$MES         <- month(VolVentas_SIN_CALCIO_FECHA$FECHA) 
+VolVentas_SIN_CALCIO_FECHA$DIA         <-   day(VolVentas_SIN_CALCIO_FECHA$FECHA) 
+VolVentas_SIN_CALCIO_FECHA$SEMANA_ANO <-   week(VolVentas_SIN_CALCIO_FECHA$FECHA) 
+VolVentas_SIN_CALCIO_FECHA$DIA_SEMANA <-   wday(VolVentas_SIN_CALCIO_FECHA$FECHA,week_start = 1 )
+VolVentas_SIN_CALCIO_FECHA$ANO <-       as.integer(VolVentas_SIN_CALCIO_FECHA$ANO)
+VolVentas_SIN_CALCIO_FECHA$MES <-       as.integer(VolVentas_SIN_CALCIO_FECHA$MES)
+VolVentas_SIN_CALCIO_FECHA$DIA <-       as.integer(VolVentas_SIN_CALCIO_FECHA$DIA)
+VolVentas_SIN_CALCIO_FECHA$SEMANA_ANO<- as.integer(VolVentas_SIN_CALCIO_FECHA$SEMANA_ANO)
+VolVentas_SIN_CALCIO_FECHA$DIA_SEMANA<- as.integer(VolVentas_SIN_CALCIO_FECHA$DIA_SEMANA)
+```
+
+Los conjuntos de datos para el entrenamiento de modelo constan de las siguientes variables: fecha, ventas totales, número de transacciones, precio medio con impuestos, descuento medio, importe medio con impuestos, año, mes, día, semana del año y día de la semana.
+
+
+
+
+Una vez tenemos los cuatro conjuntos de datos, tres con los correspondientes volúmenes de ventas diarios y el dataset inicial con el pre procesado necesario, procedemos a guardarlos en formato RData para poder acceder a ellos en cualquier momento que sea necesario.
+
+```{r , echo=TRUE}
+# Guardamos el conjunto de datos final
+### save(dataset,file = "Datos/Dataset_Final.RData")
+### save(VolVentas_SIN_CALCIO_FECHA,file = "Datos/VENTAS_Dia_SCALCIO.RData")
+### save(VolVentas_CALCIO_FECHA,file = "Datos/VENTAS_Dia_CALCIO.RData")
+### save(VolVentas_FECHA,file = "Datos/VENTAS_Dia_TOTAL.RData")
+```
+
 
 
 
@@ -232,24 +375,40 @@ Como tenemos datos correspondientes a ventas, trataremos de responder a las sigu
 
 
 
+
+
+
 ```{r ,echo=TRUE}
-dataset %>% summary()  # Resumen de los datos
+VolVentas_FECHA[,c(1:6)] %>% summary()  # Resumen de los datos
 ```
 
 
 
 Observamos lo siguiente: 
 
-- La cantidad media de unidades vendidas es de 2.55, sin embargo, el número máximo de items comprado es de 132. Además, el 75% de los usuarios ha comprado 6 unidades de producto o menos.
-- El precio medio (con impuestos) de venta es de 1.44€, siendo el importe medio de venta de 3.68€, aunque encontramos que el importe máximo de venta es de 196.680€
+- La cantidad media diaria de productos vendidos es de 1978 unidades, con una media diaria de 537 transacciones
+- El precio medio (con impuestos) de los productos es de 1.44€, siendo el importe medio diario de venta de 3.58€
+- El descuento medio no llega a los 10 céntimos de euro.
 
 
-```{r , fig.pos="!H" , include=FALSE}
+```{r}
+#dataset %>% group_by(ID_TICKET) %>% dplyr::summarise(sum(CANTIDAD)) %>% summary()
+#dataset %>% group_by(ID_TICKET) %>% dplyr::summarise(mean(IMPORTE_CON_IMPUESTOS)) %>% summary()
+```
+
+Analizando el número de items vendidos y el importe de venta, es interesante mencionar que de media, se han vendido cuatro items por transacción, con un precio medio de 4.25€.
+El 75% de las ventas ha sido de seis items o menos, habiendo transacciones donde el número de productos ascendía hasta las 132 unidades. Con respecto al importe de venta (con impuestos), éste ha variando desde los 69 céntimos a los 196.680€. Sin embargo únicamente el 25% de las transacciones han sido de más de 8.34€. 
+
+
+
+
+
+```{r  , include=FALSE}
 # A continuación mostramos brevemente algunas de las filas de nuestros datos:
 
 dataset %>% head() %>% 
   kable(booktabs=TRUE) %>%
-  kable_styling(latex_options = c("striped","scale_down"))
+  kable_styling(latex_options = c("striped","scale_down","HOLD_position"))
 ```
 
 
@@ -260,19 +419,6 @@ Las `r nrow(dataset)` filas encontradas en el conjunto de datos corresponden a `
 
 
 
-
-
-
-
-
-
-
-
-```{r}
-# dataset %>% group_by(LINEA_TICKET) %>% dplyr::summarise(count(LINEA_TICKET) ) %>% ggplot()
-```
-
-
 #### Representaciones gráficas
 
 
@@ -281,18 +427,28 @@ En primer lugar, podemos ver gráficamente la evolución del volumen total de ve
 
 
 ```{r}
-VolumenVentasDiarias = dataset %>% group_by(FECHA) %>%  dplyr::summarize(n =  n())
+VolumenVentasDiarias = dataset %>% group_by(FECHA,ID_TICKET) %>%  dplyr::summarize(n =  n()) %>% as.data.frame() %>% group_by(FECHA) %>%  dplyr::summarize(n =  n())
+VolumenVentasDiarias = VolumenVentasDiarias %>% mutate(CODIGO = rep("TOTAL",nrow(VolumenVentasDiarias)))
+
+
+VolumenVentasDiarias_P1=dataset %>% filter(CODIGO==20445) %>% group_by(FECHA,ID_TICKET) %>%  dplyr::summarize(n =  n()) %>% as.data.frame() %>% group_by(FECHA) %>%  dplyr::summarize(n =  n())
+VolumenVentasDiarias_P1 = VolumenVentasDiarias_P1 %>% mutate(CODIGO = rep(20445,nrow(VolumenVentasDiarias_P1)))
+
+VolumenVentasDiarias_P2=dataset %>% filter(CODIGO==22336) %>% group_by(FECHA,ID_TICKET) %>%  dplyr::summarize(n =  n()) %>% as.data.frame() %>% group_by(FECHA) %>%  dplyr::summarize(n =  n())
+VolumenVentasDiarias_P2 = VolumenVentasDiarias_P2 %>% mutate(CODIGO = rep(22336,nrow(VolumenVentasDiarias_P2)))
+
+VolumenVentasDiarioTodo=
+rbind.data.frame(VolumenVentasDiarias,VolumenVentasDiarias_P1,VolumenVentasDiarias_P2)
 ```
 
 
 
 
-```{r}
+```{r , fig.height=3}
 # La idea en shiny es poder mostrar con un gráfico interactivo las ventas totales según   # día, volumen medio de ventas mensuales, semanales,... es fácil solo es crear un dataset # con esta información
 
-ggplot(VolumenVentasDiarias )+
-  geom_line(aes(x=FECHA, y = n) , 
-            color ="lightblue"  ) +
+ggplot(VolumenVentasDiarioTodo )+
+  geom_line(aes(x=FECHA, y = n, group=CODIGO, colour=CODIGO)  ) +
   scale_x_date(date_labels = "%d %b %y",date_breaks = "15 days")+
   labs(x="Día" , y = "Volumen total de ventas", caption = "Fuente: Elaboración propia con datos")+
  theme_gray() +
@@ -302,52 +458,57 @@ ggplot(VolumenVentasDiarias )+
 ```
 
 
-En el gráfico podemos apreciar como el volumen de ventas diario fluctúa bastante en función del día, encontrándolas en un rango entre 25 y 2268 ventas diarias. Hay dos momentos donde el volumen de ventas es considerablemente superior al resto, a mediados del mes de Octubre de 2020 y a mediados de Diciembre de este mismo año. Se observa un patrón muy marcado, con picos de muy pocas ventas y otros donde el volumen sube bastante.
+
+En el gráfico podemos apreciar como el volumen de ventas diario fluctúa bastante en función del día, encontrándolas en un rango entre 17 y 1440 ventas diarias. Hay dos momentos donde el volumen de ventas es considerablemente superior al resto, a mediados del mes de Octubre de 2020 y a mediados de Diciembre de este mismo año. Se observa un patrón muy marcado, con picos de muy pocas ventas y otros donde el volumen sube bastante para ambos productos, sin embargo, podemos afirmar que las ventas son ligeramente superiores para el producto 20445.
 
 
 
 
 
-
-A continuación, vamos a hacer una comparación del volumen de ventas total según cada producto:
+A continuación, vamos a hacer una comparación del volumen de ventas total por productos:
 
 ```{r}
-Prod =  dataset %>% group_by(CODIGO,CANTIDAD) %>%  dplyr::summarize(n =  n())
-Ventas_Prod = Prod %>% mutate(VolumenTotal = Prod$CANTIDAD * Prod$n) %>% group_by(CODIGO) %>%  dplyr::summarize(VENTAS_TOTALES =  sum(VolumenTotal) )
+Ventas_Prod=cbind.data.frame(
+VENTAS_TOTALES=c(VolVentas_SIN_CALCIO_FECHA$VENTAS %>% sum(),VolVentas_CALCIO_FECHA$VENTAS %>% sum()),
+TIPO = c("SIN CALCIO","CON CALCIO") ) 
 ```
 
 
 
-```{r , fig.height=3 , fig.width=3}
-ggplot(Ventas_Prod, aes(fill =CODIGO , x = CODIGO , y=VENTAS_TOTALES)) + 
+
+
+
+
+```{r , fig.height=3 , fig.width=5 , fig.align='center'}
+ggplot(Ventas_Prod, aes(fill =TIPO , x = TIPO , y=VENTAS_TOTALES)) + 
   geom_histogram(stat="identity", position="dodge")   +
   labs(x="ID Producto" , y = "Volumen total de ventas", 
        caption = "Fuente: Elaboración propia con datos de ventas")+
-  scale_fill_brewer(palette="Blues")+
-  theme_minimal()+theme_classic()+ theme(legend.position = 'none')+
-  ggtitle("Comparación de ventas por producto")
+ scale_fill_brewer(palette="BuGn")+
+  theme_bw()+ theme(legend.position = 'none')+
+  ggtitle("Comparación de ventas por tipo de producto")
 ```
 
 
 
+El volumen de ventas del producto con calcio ha sido ligeramente superior, con un volumen total de ventas de 188867 unidades frente a las 169196 unidades vendidas del producto que no lleva calcio. 
+
+El importe de venta del producto con calcio es de 1.49€ (precio con impuestos) y el producto que no lleva calcio tiene un precio de venta de 1.39€. Esto nos conduce a que los usuarios no han optado siempre por la compra de la opción más económica, sino que han comprado en un mayor número de ocasiones el producto con calcio.
+
+En la tabla que se muestra a continuación, vemos que en las transacciones donde aparece el producto con calcio, han tenido un importe medio de venta ligeramente superior que en las que aparece el producto sin calcio.
 
 
-El volumen de ventas del producto 20445 ha sido ligeramente superior, con un volumen total de ventas de 169196 unidades, frente a las 188867 unidades vendidas del producto con identificador 22336. Estos datos han sido calculados teniendo en cuenta que se han podido vender más de una unidad en una misma transacción.
-
-El importe del producto 20445 es de 1.49€ (precio con impuestos) y el producto 22336 tiene un precio de venta de 1.39€. Esto nos podría llevar a pensar que si se trata del mismo tipo de producto, los usuarios hayan optado por la opción más económica.
-
-
-
-
-
-```{r , fig.pos='H'}
-dataset %>% select(ID_TICKET,CODIGO,IMPORTE_CON_IMPUESTOS) %>% group_by( CODIGO) %>% 
-  dplyr::summarise(IMPORTE_MEDIO= mean(IMPORTE_CON_IMPUESTOS)) %>% 
-  kable(booktabs=TRUE, caption="Importe medio de venta según producto",align = 'c')
+```{r }
+dataset %>% select(ID_TICKET,TIPO,IMPORTE_CON_IMPUESTOS,PRECIO_CON_IMPUESTOS) %>% 
+  group_by( TIPO) %>% 
+  dplyr::summarise(IMPORTE_MEDIO= round(mean(IMPORTE_CON_IMPUESTOS),2),
+                   PRECIO_MEDIO= round(mean(PRECIO_CON_IMPUESTOS),2)) %>% 
+  kable(booktabs=TRUE, caption="Importe medio de venta y precio por producto.",align = 'c',
+          col.names = c("Tipo producto","Importe medio transacción","Precio medio producto")) %>% 
+  kable_styling(latex_options = c("striped","HOLD_position"))
 ```
 
 
-De nuevo, comprobamos que el importe medio de las ventas del producto 20445 tienen un importe medio de venta menor.
 
 
 
@@ -356,263 +517,180 @@ Para tratar de entender mejor el comportamiento de venta, vamos a estudiar la ev
 
 
 
-```{r}
-NumMedio_Ventas = rep(NA,12)
-MES=seq(1,12,by=1)
-for (i in 1:length(MES)) {
- NumMedioVentas =  (dataset %>% group_by(MES) %>% filter(MES==i) %>% group_by(FECHA) %>% dplyr::summarise(n()) %>% as.data.frame())[,2] %>% mean()
-NumMedio_Ventas[i] =  NumMedioVentas
-Ventas_Mes = cbind.data.frame(MES, NumMedio_Ventas)
-}
-
-VentasMensuales = Ventas_Mes[-c(which(is.na(Ventas_Mes$NumMedio_Ventas) )),]
-
-VentasMensuales$MES=c(
-ifelse(VentasMensuales$MES == 1 , "Enero",
-       ifelse(
-          VentasMensuales$MES == 8 , "Agosto",
-       ifelse(
-         VentasMensuales$MES == 9 , "Septiembre",
-         ifelse( VentasMensuales$MES == 10 , "Octubre",
-                 ifelse(
-                    VentasMensuales$MES == 11 , "Noviembre",
-                    ifelse(VentasMensuales$MES == 12 , "Diciembre"," " ))))))
-)
-
-Ventas_MES_TOT = dataset %>% group_by(ID_TICKET, MES) %>% dplyr::summarise(
-  Ventas = n()   ) %>% group_by(MES) %>% dplyr::summarise(VENTAS_TOTALES = n() ) %>% select(VENTAS_TOTALES) %>% mutate(CODIGO=rep('TOTAL',6))
-
-VentasMensuales = cbind.data.frame(VentasMensuales,Ventas_MES_TOT)
 
 
-# VentasMensuales %>% kable(booktabs=TRUE,col.names = c("Mes","Número medio ventas","Volumen ventas # total")) %>% kable_styling(latex_options = "striped")
-```
+
 
 ```{r}
-VentasMensuales_Prod = dataset %>% group_by(ID_TICKET, MES,CODIGO) %>% dplyr::summarise(
-  Ventas = n()   ) %>% group_by(MES,CODIGO) %>% dplyr::summarise(VENTAS_TOTALES = n() ) %>% select(VENTAS_TOTALES,CODIGO)
-VentasMensuales_Prod$MES=c(
-ifelse(VentasMensuales_Prod$MES == 1 , "Enero",
+VENTAS_MENSUALES = 
+rbind.data.frame(
+  VolVentas_CALCIO_FECHA %>% group_by(MES) %>% dplyr::summarise(TOTAL_VENTAS = sum(VENTAS)) %>% mutate(TIPO = "CON CALCIO"),
+  VolVentas_SIN_CALCIO_FECHA %>% group_by(MES) %>% dplyr::summarise(TOTAL_VENTAS=sum(VENTAS))%>% mutate(TIPO = "SIN CALCIO"),
+  VolVentas_FECHA %>% group_by(MES) %>% dplyr::summarise(TOTAL_VENTAS=sum(VENTAS))%>% mutate(TIPO = "TOTAL") ) 
+
+VENTAS_MENSUALES$MES=c(
+ifelse(VENTAS_MENSUALES$MES == 1 , "Enero",
        ifelse(
-          VentasMensuales_Prod$MES == 8 , "Agosto",
+          VENTAS_MENSUALES$MES == 8 , "Agosto",
        ifelse(
-         VentasMensuales_Prod$MES == 9 , "Septiembre",
-         ifelse( VentasMensuales_Prod$MES == 10 , "Octubre",
+         VENTAS_MENSUALES$MES == 9 , "Septiembre",
+         ifelse( VENTAS_MENSUALES$MES == 10 , "Octubre",
                  ifelse(
-                    VentasMensuales_Prod$MES == 11 , "Noviembre",
-                    ifelse(VentasMensuales_Prod$MES == 12 , "Diciembre"," " ))))))
+                    VENTAS_MENSUALES$MES == 11 , "Noviembre",
+                    ifelse(VENTAS_MENSUALES$MES == 12 , "Diciembre"," " ))))))
 )
-
-
-DatosMes = rbind.data.frame(VentasMensuales_Prod,VentasMensuales[,c(1,3,4)])
 ```
 
 
-```{r }
+
+```{r ,fig.height=3 , fig.width=6}
 # Aquí no ventas medias, ya que solo hay un mes, no hay varios años
-ggplot(DatosMes, aes(fill =CODIGO , x = MES , y=VENTAS_TOTALES)) + 
+ggplot(VENTAS_MENSUALES, aes(fill =TIPO , x = MES , y=TOTAL_VENTAS)) + 
   geom_histogram(stat="identity", position="dodge") +  
    scale_x_discrete(limits = c("Agosto","Septiembre","Octubre","Noviembre","Diciembre","Enero"))+
-  scale_y_discrete(limits=seq(0,20000,by=5000))+
-labs(x="Mes" , y = "Volumen de ventas", caption = "Fuente: Elaboración propia con datos")+
-scale_fill_brewer(palette="Blues")+
-  theme_minimal()+theme_classic()+ #theme(legend.position = 'none')+
-  ggtitle("Comparación del volumen de ventas según mes del año")
+labs(x="Mes" , y = "Volumen de ventas", caption = "Fuente: Elaboración propia con datos de ventas diarias")+
+scale_fill_brewer(palette="BuGn")+
+  theme_bw()+ #theme(legend.position = 'none')+
+  ggtitle("Comparación del número total de artículos vendidios según mes del año")
 ```
 
 
-
-Podemos ver una tendencia creciente del número de ventas total, donde se tiende a vender más cada mes. Sin embargo, encontramos que el mes en el que más ventas se han realizado ha sido en el mes de octubre, superando las 18 mil ventas. Además, si comparamos el volumen de ventas de cada producto, se vende más el producto 20445, sin embargo, en los últimos meses el número de artículos vendido de cada producto se igualó.
-
-
+Inicialmente, podemos ver una tendencia creciente del número de ventas total, donde se tiende a vender más cada mes.Sin embargo, en el mes de Octubre se alcanza un maximo de artículos vendidos, con un total de 68805 artículos. En los meses siguientes el comportamiento fué de una disminución de la venta, con posterior subida del número de artículos vendidos y luego otro descenso. La tendencia general de venta de artículos es creciente, la clientela tiende a comprar más productos cada vez.
+Respecto a las ventas de cada producto individual, todos los meses ha sido mayor el volumen de venta del artículo con calcio, alcanzándose en el mes de Octubre el mayor número de artículos vendidos de cada tipo, superando en ambos casos las 32 mil unidades vendidas.
 
 
 
-```{r , fig.height=5 , fig.width=5}
-# # Aquí no ventas medias, ya que solo hay un mes, no hay varios años
-# ggplot(VentasMensuales, aes(fill =MES , x = MES , y=VENTAS_TOTALES)) + 
-#   geom_histogram(stat="identity", position="dodge") +  
-#    scale_x_discrete(limits = # c("Agosto","Septiembre","Octubre","Noviembre","Diciembre","Enero"))+
-#   scale_y_discrete(limits=seq(0,20000,by=5000))+
-# labs(x="Mes" , y = "Volumen de ventas", caption = "Fuente: Elaboración propia con datos")+
-# scale_fill_brewer(palette="Blues")+
-#   theme_minimal()+theme_classic()+ theme(legend.position = 'none')+
-#   ggtitle("Volumen de ventas según mes del año")
-```
+
+
+
+
+
+
 
 ```{r}
-NumMedio_Ventas_P1 = rep(NA,7)
-DIA_SEMANA_P1=rep(1:7,by=1)
-for (i in 1:length(DIA_SEMANA_P1)) {
- NumMedioVentas_P1 =  (dataset %>% group_by(DIA_SEMANA) %>% filter(CODIGO == 20445 & DIA_SEMANA==i ) %>% group_by(FECHA) %>% dplyr::summarise(n()) %>% as.data.frame())[,2] %>% mean()
-NumMedio_Ventas_P1[i] =  NumMedioVentas_P1
-Ventas_DiaSem_P1 = cbind.data.frame(DIA_SEMANA_P1, NumMedio_Ventas_P1)
-Ventas_DiaSem_P1= Ventas_DiaSem_P1 %>% mutate(CODIGO = rep(20445,7))
-}
+VENTAS_SEMANALES = 
+rbind.data.frame(
+  
+  VolVentas_CALCIO_FECHA %>% group_by(DIA_SEMANA) %>% dplyr::summarise(VENTAS_MEDIAS = ceiling(mean(VENTAS)) ) %>% mutate(TIPO = "CON CALCIO"),
+  
+  VolVentas_SIN_CALCIO_FECHA %>% group_by(DIA_SEMANA) %>% dplyr::summarise(VENTAS_MEDIAS=ceiling(mean(VENTAS)) )%>% mutate(TIPO = "SIN CALCIO"),
+  
+  VolVentas_FECHA %>% group_by(DIA_SEMANA) %>% dplyr::summarise(VENTAS_MEDIAS=ceiling(mean(VENTAS)) )%>% mutate(TIPO = "TOTAL") ) 
 
 
-colnames(Ventas_DiaSem_P1) = c("DIA_SEMANA","VENTAS_MEDIAS","CODIGO")
-
-NumMedio_Ventas_P2 = rep(NA,7)
-DIA_SEMANA_P2=rep(1:7,by=1)
-for (i in 1:length(DIA_SEMANA_P2)) {
- NumMedioVentas_P2 =  (dataset %>% group_by(DIA_SEMANA) %>% filter(CODIGO == 22336 & DIA_SEMANA==i ) %>% group_by(FECHA) %>% dplyr::summarise(n()) %>% as.data.frame())[,2] %>% mean()
-NumMedio_Ventas_P2[i] =  NumMedioVentas_P2
-Ventas_DiaSem_P2 = cbind.data.frame(DIA_SEMANA_P2, NumMedio_Ventas_P2)
-Ventas_DiaSem_P2= Ventas_DiaSem_P2 %>% mutate(CODIGO = rep(22336,7))
-}
-
-
-colnames(Ventas_DiaSem_P2) = c("DIA_SEMANA","VENTAS_MEDIAS","CODIGO")
-
-VentasSemanales_Medias_Codigo = rbind.data.frame(Ventas_DiaSem_P1,Ventas_DiaSem_P2)
-
-
-VentasSemanales_Medias_Codigo$DIA_SEMANA=c(
-ifelse(VentasSemanales_Medias_Codigo$DIA_SEMANA == 1 , "Lunes",
+VENTAS_SEMANALES$DIA_SEMANA=c(
+ifelse(VENTAS_SEMANALES$DIA_SEMANA == 1 , "Lunes",
        ifelse(
-          VentasSemanales_Medias_Codigo$DIA_SEMANA == 2 , "Martes",
+          VENTAS_SEMANALES$DIA_SEMANA == 2 , "Martes",
        ifelse(
-        VentasSemanales_Medias_Codigo$DIA_SEMANA== 3 , "Miércoles",
-         ifelse( VentasSemanales_Medias_Codigo$DIA_SEMANA == 4 , "Jueves",
+        VENTAS_SEMANALES$DIA_SEMANA== 3 , "Miércoles",
+         ifelse( VENTAS_SEMANALES$DIA_SEMANA == 4 , "Jueves",
                  ifelse(
-                    VentasSemanales_Medias_Codigo$DIA_SEMANA == 5 , "Viernes",
-                    ifelse(VentasSemanales_Medias_Codigo$DIA_SEMANA == 6 , "Sábado",
-                           ifelse(VentasSemanales_Medias_Codigo$DIA_SEMANA == 7 , "Domingo",""))))))))
-```
-
-
-```{r}
-NumMedio_Ventas = rep(NA,7)
-DIA_SEMANA=seq(1,7,by=1)
-for (i in 1:length(DIA_SEMANA)) {
- NumMedioVentas =  (dataset %>% group_by(DIA_SEMANA) %>% filter(DIA_SEMANA==i) %>% group_by(FECHA) %>% dplyr::summarise(n()) %>% as.data.frame())[,2] %>% mean()
-NumMedio_Ventas[i] =  NumMedioVentas
-Ventas_DiaSem = cbind.data.frame(DIA_SEMANA, NumMedio_Ventas)
-Ventas_DiaSem= Ventas_DiaSem %>% mutate(CODIGO = rep("TOTAL",7))
-}
-
-
-Ventas_DiaSem$DIA_SEMANA=c(
-ifelse(Ventas_DiaSem$DIA_SEMANA == 1 , "Lunes",
-       ifelse(
-          Ventas_DiaSem$DIA_SEMANA == 2 , "Martes",
-       ifelse(
-        Ventas_DiaSem$DIA_SEMANA== 3 , "Miércoles",
-         ifelse( Ventas_DiaSem$DIA_SEMANA == 4 , "Jueves",
-                 ifelse(
-                    Ventas_DiaSem$DIA_SEMANA == 5 , "Viernes",
-                    ifelse(Ventas_DiaSem$DIA_SEMANA == 6 , "Sábado",
-                           ifelse(Ventas_DiaSem$DIA_SEMANA == 7 , "Domingo",""))))))))
-
-
-colnames(Ventas_DiaSem)=c("DIA_SEMANA","VENTAS_MEDIAS","CODIGO")
-
-
-Ventas_MED_DIA_SEM= rbind.data.frame(VentasSemanales_Medias_Codigo,Ventas_DiaSem)
-
+                    VENTAS_SEMANALES$DIA_SEMANA == 5 , "Viernes",
+                    ifelse(VENTAS_SEMANALES$DIA_SEMANA == 6 , "Sábado",
+                           ifelse(VENTAS_SEMANALES$DIA_SEMANA == 7 , "Domingo",""))))))))
 ```
 
 
 
-
-
-```{r , ventas_TOTALES }
-VentasSemanales_Prod=dataset %>% group_by(ID_TICKET, DIA_SEMANA,CODIGO) %>% dplyr::summarise(
-  Ventas = n()   ) %>% group_by(DIA_SEMANA,CODIGO) %>% dplyr::summarise(VENTAS_TOTALES = n() ) %>% select(VENTAS_TOTALES,CODIGO)
-
-Ventas_DiaSem_TOT =  dataset %>% group_by(ID_TICKET, DIA_SEMANA) %>% dplyr::summarise(
-  Ventas = n()  ) %>% group_by(DIA_SEMANA) %>% dplyr::summarise(VENTAS_TOTALES = n() ) %>% select(VENTAS_TOTALES)
-
-Ventas_DiaSem_TOT= Ventas_DiaSem_TOT %>% mutate(CODIGO = rep("TOTAL",7),DIA_SEMANA=1:7)
-Ventas_DiaSem_TOT=Ventas_DiaSem_TOT[,c(3,1,2)]
-Ventas_TOT_DIA_SEM = rbind.data.frame(VentasSemanales_Prod,Ventas_DiaSem_TOT)
-
-
-Ventas_TOT_DIA_SEM$DIA_SEMANA=c(
-ifelse(Ventas_TOT_DIA_SEM$DIA_SEMANA == 1 , "Lunes",
-       ifelse(
-          Ventas_TOT_DIA_SEM$DIA_SEMANA == 2 , "Martes",
-       ifelse(
-        Ventas_TOT_DIA_SEM$DIA_SEMANA== 3 , "Miércoles",
-         ifelse( Ventas_TOT_DIA_SEM$DIA_SEMANA == 4 , "Jueves",
-                 ifelse(
-                    Ventas_TOT_DIA_SEM$DIA_SEMANA == 5 , "Viernes",
-                    ifelse(Ventas_TOT_DIA_SEM$DIA_SEMANA == 6 , "Sábado",
-                           ifelse(Ventas_TOT_DIA_SEM$DIA_SEMANA == 7 , "Domingo",""))))))))
-```
-
-```{r}
-VENTAS_DIA_SEMANA = merge(Ventas_MED_DIA_SEM,Ventas_TOT_DIA_SEM,by=intersect(names(Ventas_MED_DIA_SEM),names(Ventas_TOT_DIA_SEM)))
-```
-
-
-
-```{r}
-ggplot(VENTAS_DIA_SEMANA, aes(fill =CODIGO , x = DIA_SEMANA , y=VENTAS_MEDIAS)) + 
+```{r ,fig.height=3 , fig.width=6}
+# Aquí no ventas medias, ya que solo hay un mes, no hay varios años
+ggplot(VENTAS_SEMANALES, aes(fill =TIPO , x = DIA_SEMANA , y=VENTAS_MEDIAS)) + 
   geom_histogram(stat="identity", position="dodge") +  
-   scale_x_discrete(limits = unique(Ventas_MED_DIA_SEM$DIA_SEMANA) )+
-labs(x="Día de la semana" , y = "Volumen medio de ventas", caption = "Fuente: Elaboración propia con datos de ventas")+
-scale_fill_brewer(palette="Blues")+
-  theme_minimal()+theme_classic()+ # theme(legend.position = 'none')+
-  ggtitle("Volumen medio de ventas según día de la semana")
+   scale_x_discrete(limits = c("Lunes","Martes","Miércoles","Jueves","Viernes","Sábado","Domingo"))+
+labs(x="Mes" , y = "Volumen medio de ventas", caption = "Fuente: Elaboración propia con datos de ventas diarias")+
+scale_fill_brewer(palette="BuGn")+
+  theme_bw()+ #theme(legend.position = 'none')+
+  ggtitle("Comparación del número medio de artículos vendidios según día de la semana")
+```
+
+
+Observando el gráfico, vemos que el Sábado es el día de la semana donde el núnmero de artículos vendidos es mayor, con un total de 2323 items. Por el contrario, el Domingo no se superan ni los 250 artículos vendidos, en media. Cabe destacar que los Domingos se ha vendido, de media, mayor número de items sin calcio, comportamiento que no había ocurrido hasta el momento. Los Jueves es un día donde también se tiende a vender gran candidad de productos. 
+
+
+
+
+
+
+
+
+##### Variable precio
+
+
+
+El precio medio de venta del producto que no lleva calcio es de `r (dataset %>%group_by(ID_TICKET) %>% filter( CODIGO == 20445))$PRECIO  %>% mean() %>% round(2)`€, mientras que para el artículo con calcio es algo superior: `r (dataset %>%group_by(ID_TICKET) %>% filter( CODIGO == 22336))$PRECIO  %>% mean() %>% round(2)`€. Sin embargo, el precio de éstos ha variado a lo largo del tiempo, y con el estudio de esta variable, vamos a tratar de averiguar si esta variación se debe a la época del año o al número de artículos comprado, ya que podría haber promociones para tratar de impulsar las ventas donde los precios pudieran verse afectados. 
+
+Los precios de los productos varían debido a descuentos aplicados a todos los artículos de una misma compra en función del importe de la misma, por ejemplo, si se superan los 50€, se hará un 10% de descuento, y por tanto, habremos pagado menos por cada artículo. Sin embargo, la variable descuento, se aplica a cada artículo de manera individual, por ejemplo, en la transacción con identificador 22551535 se vendieron 6 unidades del producto 22336 por un precio de 1.49€ (impuestos incluidos) cada unidad, lo que supone un total de 8.94€ por las 6 unidades, pero se ha aplicado un descuento del 5.03%.
+
+```{r}
+dataset %>% filter(ID_TICKET ==22551535 ) %>% select(c("ID_TICKET","LINEA_TICKET","CODIGO","CANTIDAD","PRECIO_CON_IMPUESTOS","DESCUENTO","IMPORTE_CON_IMPUESTOS")) %>% kable() %>% kable_styling(latex_options = "scale_down")
 ```
 
 
 
+Se ha aplicado descuento en un total de `r dataset[dataset$DESCUENTO !=0,] %>% nrow()` artículos, siendo el descuento medio aplicado del `r round( dataset[dataset$DESCUENTO !=0,]$DESCUENTO %>% mean(),2)`% respecto del importe total de la venta. Estos descuentos han sido aplicados durante todo el período temporal estudiado. El mayor descuento aplicado ha sido del 50%, aplicado en dos ocasiones a mediados de Diciembre. En el gráfico mostrado a continuación, se presenta un histograma comparativo del volumen de ventas total de cada producto en función del descuento habiendo dividido los datos en tres intervalos de tal manera que se ha tomado la distribución de los deciles de esta variable: 
 
-Observando el gráfico, vemos que el Sábado es el día de la semana donde el volumen de ventas es mayor, superando una media de mil ventas. Por el contrario, el Domingo es el día donde se registra un volumen medio de ventas diario considerablemente inferior.
+```{r}
+dataset[dataset$DESCUENTO !=0,]$DESCUENTO %>% quantile(probs= seq(0,1,by=0.1))
+```
 
+Lo que podemos observar es que donde se acentúa más la diferencia del volumen de ventas es al aplicar los mayores descuentos, en un 10% del total de observaciones.
+
+
+
+
+```{r , fig.height=4 }
+# par(mfrow=c(1,3))
+# ggplot(dataset[dataset$DESCUENTO < 10.00 & dataset$DESCUENTO>=3.66,] %>% group_by(TIPO) %>% # dplyr::summarise(VENTAS=sum(CANTIDAD))%>% mutate(DESCUENTO = "[3.66,10)")
+#        , aes(fill =TIPO , x = TIPO , y=VENTAS)) + 
+#   geom_histogram(stat="identity", position="dodge") +
+#   labs(x="Descuento aplicado" , y = "Volumen total de ventas")+
+# scale_fill_brewer(palette="BuGn")+
+#   theme_bw()+ theme(legend.position = 'none')+
+#   ggtitle(label = "Descuento del 3.66% al 9.99%")
+# 
+# 
+# ggplot(dataset[dataset$DESCUENTO >= 10.00 & dataset$DESCUENTO < 14.99,] %>% group_by(TIPO) %>% # dplyr::summarise(VENTAS=sum(CANTIDAD)) %>% mutate(DESCUENTO = "[10,14.99)")
+#        , aes(fill =TIPO , x = TIPO , y=VENTAS)) + 
+#   geom_histogram(stat="identity", position="dodge") +
+#   labs(x="Descuento aplicado" , y = "Volumen total de ventas")+
+# scale_fill_brewer(palette="BuGn")+
+#   theme_bw()+ theme(legend.position = 'none')+
+#     ggtitle(label = "Descuento del 10% al 14.98%")
+
+ggplot(dataset[dataset$DESCUENTO >= 14.99,] %>% group_by(TIPO) %>% dplyr::summarise(VENTAS=sum(CANTIDAD))%>% mutate(DESCUENTO = "[14.99,50]")
+       , aes(fill =TIPO , x = TIPO , y=VENTAS)) + 
+  geom_histogram(stat="identity", position="dodge") +
+  labs(x="Descuento aplicado" , y = "Volumen total de ventas")+
+scale_fill_brewer(palette="BuGn")+
+  theme_bw()+ theme(legend.position = 'none')+
+    ggtitle(label = "Descuento del 14.99% o más")
+
+par(mfrow=c(1,3))
+```
+
+#### Grado de asociación de las variables
 
 
 
 ```{r}
-# ggplot(DatosSemana, aes(fill =CODIGO , x = DIA_SEMANA , y=VENTAS_TOTALES)) + 
-#   geom_histogram(stat="identity", position="dodge") +  
-#    scale_x_discrete(limits = Ventas_DiaSem$DIA_SEMANA)+
-# labs(x="Día de la semana" , y = "Volumen total de ventas", caption = "Fuente: Elaboración # propia con datos")+
-# scale_fill_brewer(palette="Blues")+
-#   theme_minimal()+theme_classic()+ # theme(legend.position = 'none')+
-#   ggtitle("Volumen total de vnetas según día de la semana")
+M = cor(VolVentas_FECHA[,-1])
+corrplot(M, method = "number",title = "Matriz de correlación",type = 'lower', diag = FALSE)
 ```
 
 
 
-```{r , fig.height=5 , fig.width=5}
-# ggplot(Ventas_DiaSem, aes(fill =DIA_SEMANA , x = DIA_SEMANA , y=NumMedio_Ventas)) + 
-#   geom_histogram(stat="identity", position="dodge") +  
-#    scale_x_discrete(limits = Ventas_DiaSem$DIA_SEMANA)+
-# labs(x="Día de la semana" , y = "Volumen medio de ventas", caption = "Fuente: Elaboración # propia con datos")+
-# scale_fill_brewer(palette="Blues")+
-#   theme_minimal()+theme_classic()+ theme(legend.position = 'none')+
-#   ggtitle("Volumen medio de ventas según día de la semana")
-```
-
-
-
-
-##### Variable descuento ¡?¿?¿?¿?
-
-Si estudiamos la variable descuento, vemos que hay un descuento hasta en `r dataset[dataset$DESCUENTO !=0,] %>% nrow()` ventas, siendo `r round(dataset[dataset$DESCUENTO !=0,'DESCUENTO'] %>% mean(),2)` € el descuento medio aplicado.
-
-Para el producto 20445, se ha aplicado descuento 638 veces frente a las 640 del producto 22336, por lo que el descuento se ha aplicado un número de veces similar. 
+Observamos como el grado de asociación positiva entre la variable número de transacciones diaria y la variable objetivo, ventas diarias (número de items) es muy elevado, indicando así que conforme más transacciones se hayan producido, mayor número de artículos se venderán. También tienen una correlación importante la variable volumen de ventas e importe medio con impuestos de la transacción. El comportamiento es similar en los conjuntos de datos individuales para cada producto.
 
 
 
 ```{r}
-Descuento = dataset[dataset$DESCUENTO !=0,] %>% group_by(CODIGO)  %>%   dplyr::summarise(n())
+# library(SmartEDA)
+#  ExpCatStat(VolVentas_FECHA,Target="VENTAS",result = # "Stat",clim=10,nlim=5,bins=10,Pclass="Yes",plot=TRUE,top=10,Round=2)
 ```
 
 
 
-```{r}
-ConDescuento = dataset[dataset$DESCUENTO !=0,] %>% group_by( ID_TICKET) %>%  dplyr::summarise( Importe_Imp= sum(IMPORTE_CON_IMPUESTOS)   )
-SinDescuento = dataset[dataset$DESCUENTO ==0,] %>% group_by( ID_TICKET) %>%  dplyr::summarise( Importe_Imp=
-                                                                                                 sum(IMPORTE_CON_IMPUESTOS)    )
 
-
-FechasD = dataset[dataset$DESCUENTO !=0,] %>% select(FECHA) %>% unique()
-FechasND=dataset[dataset$DESCUENTO ==0,] %>% select(FECHA) %>% unique()
-```
 
 
