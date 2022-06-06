@@ -1,6 +1,6 @@
 ---
 author: "Nombre Completo Autor"
-date: "04/06/2022"
+date: "27/10/2017"
 header-includes: #allows you to add in your own Latex packages
   - \usepackage{float} #use the 'float' package
   - \floatplacement{figure}{H} #make every figure with caption = h
@@ -32,59 +32,9 @@ output:
       #after_body: latex/latex_antes_enddoc.tex
 ---
 
+
 ```{r , echo=FALSE}
-knitr::opts_chunk$set(echo = FALSE , warning = FALSE , message = FALSE ,fig.pos = 'h',out.extra = '')
+knitr::opts_chunk$set(echo = FALSE , warning = FALSE , message = FALSE )
 ```
 
-```{r , message=FALSE , echo= FALSE}
-library(tidyverse)
-library(dplyr)
-library(kableExtra)
-
-library(plyr) # Transformación de los datos
-library(dplyr)
-
-
-library(lubridate)
-library(ggplot2) # Visualización
-library(hrbrthemes) # Temas 
-
-library(TSA) # Series Temporales (B-C) (Not working)
-library(tseries) # Test de raíz unitaria
-library(forecast) # Diagnosis del modelo
-
-```
-
-
-
-### Modelado
-
-A continuación, se expone la aplicación de los modelos predictivos estudiados con el objetivo de predecir la demanda de productos diaria a partir de las siguientes variables explicativas: número de transacciones, precio medio con impuestos, descuento medio, importe medio con impuestos, año, mes, día, semana del año y día de la semana.
-Para los diferentes modelos entrenados, se recogerá su rendimiento para posteriormente compararlos y elegir el mejor modelo para predecir la demanda.
-
-#### Modelos estadísticos clásicos
-
-
-
-
-
-
-
-
-```{r child = 'ModeladoClasico.Rmd'}
-```
-
-
-
-
-
-#### Técnicas de aprendizaje automático
-
-
-
-```{r child = 'A_Automatico.Rmd'}
-```
-
-
-
-
+aprendizaje automático

@@ -73,11 +73,11 @@ knitr::opts_chunk$set(fig.path = 'figurasR/',
 \renewcommand{\footrulewidth}{0.4pt}
 ```
 
-# Proceso de ciencia de datos (Data science process)
+# Proceso de la ciencia de datos (Data science process)
 
 ## Introducción
 
-La ciencia de datos es la combinación de múltiples campos, como la estadística, la inteligencia artificial (IA), el análisis de datos,... con el objetivo de extraer información de valor de esos datos. La ciencia de datos, abarca las siguientes etapas: recolección de los datos, limpieza, análisis exploratorio, construcción y validación de modelos y predicciones.
+La ciencia de datos es la combinación de múltiples campos, como la estadística, la inteligencia artificial (IA), el análisis de datos,... con el objetivo de extraer información de valor de los datos. La ciencia de datos, abarca las siguientes etapas: recolección de los datos, limpieza, análisis exploratorio, construcción y validación de modelos y predicciones.
 
 Una parte importante de la ciencia de datos es el Aprendizaje Automático o Machine Learning (ML). Se trata de un subcampo dentro de la ciencia de datos, concretamente, una subcategoría de la inteligencia artificial. Está basada en algoritmos, y consiste en que éstos descubran de manera autónoma patrones recurrentes del conjunto de datos. Los algoritmos de ML al detectar patrones en los datos, aprenden y mejoran el rendimiento en la ejecución de una tarea o al hacer predicciones. Una vez entrenado y validado el modelo, el algoritmo podrá encontrar patrones en nuevos datos (predicciones)
 
@@ -87,7 +87,7 @@ El aprendizaje estadístico supervisado es una de las principales herramientas d
 
 
 
-## Etapas del proceso de ciencia de datos
+## Etapas del proceso de la ciencia de datos
 
 A continuación se van a exponer las diferentes etapas que es necesario completar para la correcta realización de un proceso de ciencia de datos (DSP; Data Science Process)
 
@@ -198,7 +198,7 @@ Min_{w,b} \frac{1}{2} ||w||^2 + C \sum_{i=1}^n (\xi_i + \xi_i^*)
 y_i - w \cdot x_i -b & \leq \epsilon, +\xi_i  \\ 
 w \cdot x_i + b - y_i & \leq \epsilon + \xi_i^*
 \\
-\xi_i , \xi_i^* & \geq 0 \forall i
+\xi_i , \xi_i^* & \geq 0 \text{ } \forall i
 \end{cases}\]
 
 Cuando el error es menor que $\epsilon$, las variables de holgura valen 0. Para resolverlo, podemos recurrir al problema dural y al uso de funciones base para trabajar en espacios de mayor dimensión.

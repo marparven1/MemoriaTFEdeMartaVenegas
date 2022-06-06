@@ -57,7 +57,7 @@ library(TSA) # Series Temporales (B-C)
 
 
 
-## Proceso de ciencia de datos
+## Proceso de la ciencia de datos
 
 
 Este apartado lo dedicaremos a realizar un proceso de ciencia de datos completo, teniendo en cuenta los siguientes objetivos:
@@ -166,7 +166,7 @@ Existe un total de `r length(Miss_values)` valores faltantes, que corresponden a
 #### Outliers
 
 
-Estudiamos valores atípicos para las variables *precio*, *cantidad* e *importe con impuestos*, ya que estudiarlos para el resto no tiene mucho interés.
+Estudiamos valores atípicos para las variables *precio con impuestos*, *cantidad* e *importe con impuestos*, ya que estudiarlos para el resto no tiene mucho interés.
 
 
 
@@ -182,8 +182,8 @@ Estudiamos valores atípicos para las variables *precio*, *cantidad* e *importe 
 # fig
 
 par(mfrow=c(1,2))
-boxplot(dataset[,c(4,9)], main="Cantidad e importe con impuestos")
-boxplot(dataset[,6],main="Precio con impuestos")
+boxplot(dataset[,c(4,9)], main="Cantidad e importe (impuestos)")
+boxplot(dataset[,6],main="Precio (impuestos)")
 par(mfrow=c(1,1))
 ```
 
@@ -240,6 +240,7 @@ dataset$TIPO = ifelse(
 
 datset = dataset[,c(3,16,1,2,4:15)]
 ```
+
 
 
 
@@ -338,7 +339,66 @@ VolVentas_SIN_CALCIO_FECHA$SEMANA_ANO<- as.integer(VolVentas_SIN_CALCIO_FECHA$SE
 VolVentas_SIN_CALCIO_FECHA$DIA_SEMANA<- as.integer(VolVentas_SIN_CALCIO_FECHA$DIA_SEMANA)
 ```
 
-Los conjuntos de datos para el entrenamiento de modelo constan de las siguientes variables: fecha, ventas totales, número de transacciones, precio medio con impuestos, descuento medio, importe medio con impuestos, año, mes, día, semana del año y día de la semana.
+Los conjuntos de datos para el entrenamiento de modelos de aprendizaje automático constan de las siguientes variables: fecha, ventas totales, número de transacciones, precio medio con impuestos, descuento medio, importe medio con impuestos, año, mes, día, semana del año y día de la semana.
+
+
+
+Para el modelo de Regresión de Poisson es necesario tener un conjunto de datos con variables *dummy* para el día de la semana y el mes del año, con la intención de representar la pertenencia de cada instancia a los distintos grupos. Posteriormente, es necesario factorizar estas nuevas variables, ya que es algo imprescindible para ejecutar el modelo.
+
+Para la creación de variables *dummy*, definimos una función *crea_col_dummy*, que hace uso de la función mutate y spread. 
+
+```{r}
+VolVentas_FECHA_poiss           = VolVentas_FECHA
+VolVentas_CALCIO_FECHA_poiss    = VolVentas_CALCIO_FECHA
+VolVentas_SIN_CALCIO_FECHA_poiss=VolVentas_SIN_CALCIO_FECHA
+```
+
+
+
+
+```{r echo=TRUE}
+
+crea_col_dummy <- function(DataFrame, Columna) {
+  DataFrame %>% 
+    mutate(valor = 1) %>% 
+    spread(key = Columna, value = valor, fill = 0)
+}
+
+VolVentas_FECHA_poiss           = crea_col_dummy(VolVentas_FECHA_poiss           ,"DIA_SEMANA")
+VolVentas_CALCIO_FECHA_poiss    = crea_col_dummy(VolVentas_CALCIO_FECHA_poiss    ,"DIA_SEMANA")
+VolVentas_SIN_CALCIO_FECHA_poiss= crea_col_dummy(VolVentas_SIN_CALCIO_FECHA_poiss,"DIA_SEMANA")
+```
+
+
+```{r}
+colnames(VolVentas_FECHA_poiss)= c("FECHA" ,"VENTAS","NUM_TRANSACCIONES"   ,"PRECIO_MEDIO_IMPUESTOS"  ,"DESCUENTO_MEDIO","IMPORTE_MEDIO_IMPUESTOS","ANO","MES","DIA","SEMANA_ANO","LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO", "DOMINGO" )
+colnames(VolVentas_CALCIO_FECHA_poiss)= c("FECHA" ,"VENTAS","NUM_TRANSACCIONES"   ,"PRECIO_MEDIO_IMPUESTOS"  ,"DESCUENTO_MEDIO","IMPORTE_MEDIO_IMPUESTOS","ANO","MES","DIA","SEMANA_ANO","LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO", "DOMINGO" )
+colnames(VolVentas_SIN_CALCIO_FECHA_poiss)= c("FECHA" ,"VENTAS","NUM_TRANSACCIONES"   ,"PRECIO_MEDIO_IMPUESTOS"  ,"DESCUENTO_MEDIO","IMPORTE_MEDIO_IMPUESTOS","ANO","MES","DIA","SEMANA_ANO","LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO", "DOMINGO" )
+```
+
+
+```{r echo=TRUE}
+VolVentas_FECHA_poiss = crea_col_dummy(VolVentas_FECHA_poiss,"MES")
+VolVentas_CALCIO_FECHA_poiss= crea_col_dummy(VolVentas_CALCIO_FECHA_poiss,"MES")
+VolVentas_SIN_CALCIO_FECHA_poiss= crea_col_dummy(VolVentas_SIN_CALCIO_FECHA_poiss,"MES")
+```
+
+
+```{r }
+colnames(VolVentas_FECHA_poiss)= c("FECHA" ,"VENTAS","NUM_TRANSACCIONES"   ,"PRECIO_MEDIO_IMPUESTOS"  ,"DESCUENTO_MEDIO","IMPORTE_MEDIO_IMPUESTOS","ANO","DIA","SEMANA_ANO","LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO", "DOMINGO","ENERO","AGOSTO",   "SEPTIEMBRE",    "OCTUBRE","NOVIEMBRE","DICIEMBRE"  )
+colnames(VolVentas_CALCIO_FECHA_poiss)= c("FECHA" ,"VENTAS","NUM_TRANSACCIONES"   ,"PRECIO_MEDIO_IMPUESTOS"  ,"DESCUENTO_MEDIO","IMPORTE_MEDIO_IMPUESTOS","ANO","DIA","SEMANA_ANO","LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO", "DOMINGO","ENERO","AGOSTO",   "SEPTIEMBRE",    "OCTUBRE","NOVIEMBRE","DICIEMBRE"  )
+colnames(VolVentas_SIN_CALCIO_FECHA_poiss)= c("FECHA" ,"VENTAS","NUM_TRANSACCIONES"   ,"PRECIO_MEDIO_IMPUESTOS"  ,"DESCUENTO_MEDIO","IMPORTE_MEDIO_IMPUESTOS","ANO","DIA","SEMANA_ANO","LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO", "DOMINGO","ENERO","AGOSTO",   "SEPTIEMBRE",    "OCTUBRE","NOVIEMBRE","DICIEMBRE"  )
+```
+
+
+
+
+```{r}
+VolVentas_FECHA_poiss=mutate_at(VolVentas_FECHA_poiss, vars("ANO","DIA","SEMANA_ANO","LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO", "DOMINGO","ENERO","AGOSTO",   "SEPTIEMBRE",    "OCTUBRE","NOVIEMBRE","DICIEMBRE" ), as.factor)
+VolVentas_CALCIO_FECHA_poiss=mutate_at(VolVentas_CALCIO_FECHA_poiss, vars("ANO","DIA","SEMANA_ANO","LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO", "DOMINGO","ENERO","AGOSTO",   "SEPTIEMBRE",    "OCTUBRE","NOVIEMBRE","DICIEMBRE" ), as.factor)
+VolVentas_SIN_CALCIO_FECHA_poiss=mutate_at(VolVentas_SIN_CALCIO_FECHA_poiss, vars("ANO","DIA","SEMANA_ANO","LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO", "DOMINGO","ENERO","AGOSTO",   "SEPTIEMBRE",    "OCTUBRE","NOVIEMBRE","DICIEMBRE" ), as.factor)
+
+```
 
 
 
@@ -347,10 +407,15 @@ Una vez tenemos los cuatro conjuntos de datos, tres con los correspondientes vol
 
 ```{r , echo=TRUE}
 # Guardamos el conjunto de datos final
-### save(dataset,file = "Datos/Dataset_Final.RData")
-### save(VolVentas_SIN_CALCIO_FECHA,file = "Datos/VENTAS_Dia_SCALCIO.RData")
-### save(VolVentas_CALCIO_FECHA,file = "Datos/VENTAS_Dia_CALCIO.RData")
-### save(VolVentas_FECHA,file = "Datos/VENTAS_Dia_TOTAL.RData")
+# save(dataset,file = "Datos/Dataset_Final.RData")
+# save(VolVentas_SIN_CALCIO_FECHA,file = "Datos/VENTAS_Dia_SCALCIO.RData")
+# save(VolVentas_CALCIO_FECHA,file = "Datos/VENTAS_Dia_CALCIO.RData")
+# save(VolVentas_FECHA,file = "Datos/VENTAS_Dia_TOTAL.RData")
+# 
+# save(VolVentas_FECHA_poiss,file = "Datos/VENTAS_Dia_TOTAL_poiss.RData")
+# save(VolVentas_CALCIO_FECHA_poiss,file = "Datos/VENTAS_Dia_CALCIO_poiss.RData")
+# save(VolVentas_SIN_CALCIO_FECHA_poiss,file = "Datos/VENTAS_Dia_SCALCIO_poiss.RData")
+
 ```
 
 
@@ -459,7 +524,7 @@ ggplot(VolumenVentasDiarioTodo )+
 
 
 
-En el gráfico podemos apreciar como el volumen de ventas diario fluctúa bastante en función del día, encontrándolas en un rango entre 17 y 1440 ventas diarias. Hay dos momentos donde el volumen de ventas es considerablemente superior al resto, a mediados del mes de Octubre de 2020 y a mediados de Diciembre de este mismo año. Se observa un patrón muy marcado, con picos de muy pocas ventas y otros donde el volumen sube bastante para ambos productos, sin embargo, podemos afirmar que las ventas son ligeramente superiores para el producto 20445.
+En el gráfico podemos apreciar como el volumen de ventas diario fluctúa bastante en función del día, encontrándolas en un rango entre 17 y 1440 ventas diarias. Hay dos momentos donde el volumen de ventas es considerablemente superior al resto, a mediados del mes de Octubre de 2020 y a mediados de Diciembre de este mismo año. Se observa un patrón muy marcado, con picos de muy pocas ventas y otros donde el volumen sube bastante para ambos productos, sin embargo, podemos afirmar que las ventas son ligeramente superiores para el producto con calcio (22336).
 
 
 

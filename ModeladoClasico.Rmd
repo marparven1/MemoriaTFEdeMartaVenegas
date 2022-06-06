@@ -1,0 +1,465 @@
+---
+author: "Nombre Completo Autor"
+date: "27/10/2017"
+header-includes: #allows you to add in your own Latex packages
+  - \usepackage{float} #use the 'float' package
+  - \floatplacement{figure}{H} #make every figure with caption = h
+documentclass: book
+forprint: true  # true: imprime a dos caras, false: libro digital
+fontsize: 12pt # 10pt,11pt
+geometry: margin = 2.5cm 
+bibliography: ["bib/library.bib", "bib/paquetes.bib"]
+# metodobib -> true: natbib (descomentar: citation_package: natbib) 
+#           -> false: pandoc (comentar: citation_package: natbib)
+metodobib: true
+#natbib: plainnat, abbrvnat, unsrtnat
+biblio-style: "plainnat"
+#Método 2 (pandoc): descomente una línea de las 2 siguientes en caso de usarlo
+csl: methods-in-ecology-and-evolution.csl      # no numera mejor en las citas
+#csl: acm-sig-proceedings-long-author-list.csl  # numera peor en las citas
+link-citations: yes
+output: 
+  pdf_document:
+    keep_tex: no
+    number_sections: yes
+    citation_package: natbib  # comentado usa: pandoc-citeproc
+    #toc: yes
+    fig_caption: yes
+    template: latex/templateMemoriaTFE.tex
+    includes:
+      #before_body: portadas/latex_paginatitulo_modTFE.tex
+      #in_header: latex/latex_preambulo.tex
+      #after_body: latex/latex_antes_enddoc.tex
+---
+
+
+```{r , echo=FALSE}
+knitr::opts_chunk$set(echo = FALSE , warning = FALSE , message = FALSE )
+```
+
+
+
+```{r }
+load("Datos/Dataset_Final.RData")
+load("Datos/VENTAS_Dia_CALCIO_poiss.RData")
+load("Datos/VENTAS_Dia_SCALCIO_poiss.RData")
+load("Datos/VENTAS_Dia_TOTAL_poiss.RData")
+```
+
+
+
+
+
+
+
+
+
+
+
+
+##### Modelo de Regresión de Poisson
+
+
+Dado que la variable respuesta es discreta y de tipo conteo, se ha elegido este modelo, en el que se asume que el volumen de ventas diario,*Y*, sigue una distribución de Poisson.
+
+\[Y \sim Po(\mu), \quad \mu=\text{Número medio de ventas diario}\]
+
+
+###### Partición de los datos
+
+Se ha tomado una partición de 80% 20% para datos de entrenamiento y testeo, con el objetivo de entrenar el modelo para posteriormente estudiar su rendimiento.
+
+
+```{r}
+n=nrow(VolVentas_FECHA_poiss)
+indin= 1:n
+nent=ceiling(0.8*n) # número de registros de entrenamiento
+ntest= n-nent # número de registros de testeo
+set.seed(100822)
+indient= sort(sample(indin,nent)) # índices de entrenamiento
+inditest= setdiff(indin,indient) # índices de testeo
+```
+
+
+```{r}
+Ventas_TOTAL_ENT= VolVentas_FECHA_poiss[indient,]
+Ventas_TOTAL_TEST=VolVentas_FECHA_poiss[inditest,]
+
+Ventas_CALCIO_ENT= VolVentas_CALCIO_FECHA_poiss[indient,]
+Ventas_CALCIO_TEST=VolVentas_CALCIO_FECHA_poiss[inditest,]
+
+Ventas_SIN_CALCIO_ENT= VolVentas_SIN_CALCIO_FECHA_poiss[indient,]
+Ventas_SIN_CALCIO_TEST=VolVentas_SIN_CALCIO_FECHA_poiss[inditest,]
+```
+
+
+
+
+
+
+
+
+
+
+
+##### Modelado
+
+En primer lugar, estimaremos los parámetros del modelo de regresión de Poisson, utilizando un conjunto de datos con variables dummy para el día de la semana y el mes del año, con la intención de representar la pertenencia de cada instancia a los distintos grupos.
+
+```{r}
+ModeloP_TOT = glm(VENTAS~PRECIO_MEDIO_IMPUESTOS+NUM_TRANSACCIONES+DESCUENTO_MEDIO+IMPORTE_MEDIO_IMPUESTOS+DIA+SEMANA_ANO+ENERO+AGOSTO+SEPTIEMBRE+OCTUBRE+NOVIEMBRE+DICIEMBRE+LUNES+MARTES+MIERCOLES+JUEVES+VIERNES+SABADO,
+                  family = poisson(link = "log"),
+                  data=Ventas_TOTAL_ENT
+                  )
+summary(ModeloP_TOT)
+```
+
+
+En la salida, podemos ver la estimación de los coeficientes de regresión para las distintas variables mirando en la columna *estimate*, indicando el cambio medio en el número de ventas que se produciría si aumentáramos en una unidad esa variable. También encontramos una columna para el error estándar, el valor del estadístico Z y el p-valor. 
+
+El modelo ajustado es el siguiente: 
+
+tambien podemos ver el error estándar, el valor del estadístico Z y el p-valor 
+
+Las variables relacionadas con el precio, importe de la transacción y descuento, son altamente significativas, indicando que tienen gran influencia en el volumen de ventas. Por ejemplo, la estimación del coeficiente para la variable *descuento medio* es $\hat\beta_{descuento}  =0.062617 > 0$, indicando así que si el descuento medio aumenta en una unidad y el resto de variables se mantienen constantes, el volumen medio de ventas aumentará en: $e^{0.062617}=$ `r round(exp(0.062617))` unidad.
+
+Por el contrario no podemos considerar que algunos días del mes como el día 9,14, 20 o 21 sean significativos en el modelo de cara a predeci el volumen de ventas diario para un nivel de significación del 95%.
+
+
+```{r}
+ModeloP_TOT$fitted.values
+```
+
+
+##### Análisis de Series Temporales
+
+Se consideró aplicar un análisis de series temporales debido a la estructura de los datos, ya que este tipo de análisis contempla la estructura temporal de los mismos. Como ya se avanzó en el desarrollo teórico, aplicaremos la metodología Box-Jenkis, la cual tiene en cuenta la dependencia existente de los datos, construyendo así un modelo ARIMA.
+
+Trataremos de modelizar el volumen de ventas total según día de la semana. Para construir la serie, primero hemos añadido los días 25 de Diciembre y 1 de Enero con un número de ventas 0, ya que, si no se tomaba esta decisión, la serie ya no estaría definida según la realidad.
+
+
+
+###### Creación ST y representación de los datos
+
+
+```{r}
+# Para agrupar, cuento cuantos tickets únicos hay cada día
+Ventas_Totales_Dia_Semana = as.data.frame ( dataset %>% group_by(FECHA,DIA_SEMANA, ID_TICKET) %>% dplyr::summarise(ArtVendidos = sum(CANTIDAD)) ) %>% group_by(FECHA) %>% dplyr::summarise(ArtVendidos = sum(ArtVendidos))
+
+F1=as_date('2020-12-25')
+df1 =  cbind.data.frame(F1,0)
+colnames(df1)=colnames(Ventas_Totales_Dia_Semana)
+F2=as_date('2021-01-01')
+df2 =  cbind.data.frame(F2,0)
+colnames(df2)=colnames(Ventas_Totales_Dia_Semana)
+
+
+
+Ventas_Totales_Dia_Semana_Completo = rbind.data.frame( Ventas_Totales_Dia_Semana[1:146,],df1 , Ventas_Totales_Dia_Semana[147:152,],df2 , Ventas_Totales_Dia_Semana[153:181,] )
+```
+
+Los datos que se han utilizado para el análisis han sido las ventas totales para cada día, agrupando los datos según día de la semana, obteniendo así datos con período S=7. 
+
+Sin embargo, si construimos la serie con los valores actuales, no podremos aplicarle transformaciones, en particular la transformación de Box-Cox, ya que existen dos valores nulos, las ventas para los días 25 de Diciembre y 1 de Enero. Por este motivo, sumamos una constante a todas las observaciones de modo que sean todas positivas.
+
+
+*Nota*: la constante que hemos sumado es de 10 unidades.
+
+
+
+
+```{r}
+Ventas_Totales_Dia_Semana_Completo$ArtVendidos=
+  10+Ventas_Totales_Dia_Semana_Completo$ArtVendidos
+```
+
+El primer dato, indica que el sábado de la semana 31 del año se vendieron un total de 2049 artículos, aunque en la realidad es que se vendieron 10 unidades menos, pero se le ha sumado una constante a la serie.
+
+
+```{r, echo=TRUE}
+tsDiaSemanal = ts(Ventas_Totales_Dia_Semana_Completo$ArtVendidos,
+                  frequency=7, # Período
+                  start=c(31,6) # Semana 36, sábado
+                  ) 
+print(tsDiaSemanal,calendar=TRUE)
+```
+
+
+Después de haber definido los datos como una serie temporal, visualizamos la evolución de la serie en el tiempo.
+
+```{r}
+plot(tsDiaSemanal, main = "Volumen total de venta por según día de la semana", xlab="Dia" , ylab = "Volumen de ventas")
+```
+
+En el gráfico se puede apreciar cierta estacionalidad de los datos, es decir, movimientos que se repiten regularmente año trás año en los mismo períodos. También observamos que las oscilaciones van aumentando con el tiempo, indicando que la varianza no es constante. Por este motivo, debemos hacer alguna transformación para que la varianza sea constante en el tiempo.
+
+###### Transformación de BoxCox para estabilizar la varianza
+
+
+
+Para encontrar una transformación que haga que la varianza sea constante en el tiempo, haremos uso de la familia de transformaciones Box-Cox con ayuda de la librería *TSA*. 
+
+
+```{r , fig.height=4 , fig.width=6}
+BoxCox =BoxCox.ar(y=tsDiaSemanal)
+# BoxCox
+```
+
+
+La función *BoxCox.ar* sugiere un óptimo de $\lambda=$ `r BoxCox$mle`, con un intervalo de confianza al 95%: (`r BoxCox$c[1]`,`r BoxCox$c[2]`). Se necesita una transformación sencilla y comprensible, por lo que se ha obtado por tomar como valor de lambda el extremo inferior del intervalo, $\lambda=1/2$.
+
+Transformamos los datos y volvemos a representar la serie.
+
+
+```{r}
+tsDiaSemanal_transf = sqrt(tsDiaSemanal)
+
+plot(tsDiaSemanal_transf, main = "sqrt(Volumen total de venta diario)", xlab="Dia" , ylab = "sqrt(Volumen de ventas)")
+```
+
+
+
+###### Transformaciones para estabilizar la media
+
+
+
+Vamos a estudiar si el motivo de la no estacionalidad de los datos en media se debe a que se trata de un proceso integrado. Para ello, hacemos uso de la función de autocorrelación simple.
+
+```{r}
+acf(tsDiaSemanal_transf, main="FAS de SQRT de Ventas diarias" , lag=50)
+```
+
+La FAS muestral decrece de lentamente en los retardos estacionales de período 7, indicando que estamos ante un modelo integrado.  Debido a esta situación, hacemos una diferencia estacional de la serie y volvemos a representar la FAS (s=7).
+
+```{r}
+# ndiffs(tsDiaSemanal_transf) # num dif regulares necesarias en la serie para que sea estacionaria
+# nsdiffs(tsDiaSemanal_transf) # num dif estarionarias necesarias en la serie para que sea estacionaria
+```
+
+
+
+
+
+```{r echo=TRUE}
+tsDiaria_DifEst = diff(tsDiaSemanal_transf,lag=7,diff=1)
+acf(tsDiaria_DifEst, main="FAS de primera diferencia estacional", lag=50)
+```
+
+
+Ahora la función de autocorrelación muestral corresponde a la de un proceso estacionario. Por último, representamos gráficamente la serie diferenciada:
+
+```{r}
+plot(tsDiaria_DifEst)
+```
+
+Observamos que la serie no muestra ningún comportamiento en particular, sino que se aprecia aleatoriedad, por lo que se podría pensar, que nos encontramos ante un proceso estacionario. Ahora estamos en condiciones de buscar un modelo estacionario para la serie.
+
+
+###### Contraste de estacionariedad
+
+Para confirmar la estacionariedad de los datos sugerida con la observación de la gráfica, necesitamos aplicar un test de hipótesis. Aplicamos el test de raíz unitaria de Dikey-Fuller, donde se contrasta la estacionariedad de los datos a través del siguiente test de hipótesis:
+
+
+\[
+\left\{
+\begin{array}{ll}
+H_{0}: &  \text{El polinomio autoregresivo tiene una raíz unitaria}  \\
+H_{1}: & \text{Todas las raíces del polinomio autoregresivo son estacionarias}
+\end{array}
+\right.
+\]
+
+
+
+
+```{r}
+adf.test(tsDiaria_DifEst)
+```
+
+El p-valor del test= $0.01 < 0.05= \alpha$, y por tanto concluímos que no existen evidencias significativas para asumir que el polinomio autoregresivo tiene alguna raíz unitaria, la serie es estacionaria.
+
+
+###### Identificación de la estructura ARIMA de la serie 
+
+Trataremos de identificar la estructura ARIMA más adecuada para esta serie a través de la función de autocorrelación simple (FAC) y de la función de autocorrelación parcial (FAP). Determinar el modelo más adecuado consistirá en e identificar el orden de los procesos de medias móviles y autoregresivos de la componente estacional y la componente regular.
+
+
+```{r}
+acf(tsDiaria_DifEst, main="FAS tras una diferencia estacional", lag=50)
+```
+
+- Parte regular: En los primeros retardos no observamos ninguna autocorrelación significativamente no nula, indicando que el modelo tiene una estructura ARMA(0,0) en la parte regular.
+
+
+- Parte estacional: Observamos una autocorrelación en el primer retardo estacional, por lo que parecería que la parte estacional tiene una estructura $MA(1)_{12}$.
+
+Vamos a comprobar estos supuestos con la FAP.
+
+
+```{r}
+
+pacf(tsDiaria_DifEst, main="FAP tras una diferencia estacional", lag=50)
+```
+
+
+
+- Parte regular: De nuevo, no hay autocorrelaciones significativamente no nulas en los primeros retardos.
+
+- Parte estacional: En los retardos estacionales, observamos como las autocorrelaciones decrecen rápidamente y a su izquierda, no hay autocorrelaciones significativamente no nulas, lo que avalaría aún más la suposición de un MA(1) en la parte estacional. Modelo propuesto: $MA(1)_{12}$
+
+
+
+También observamos como hay otras autocorrelaciones significativamente no nulas, pero esto es debido a que se trata de un intervalo de confianza al 95%, por lo que cabe esperar que haya algunas autocorrelaciones fuera de las bandas.
+
+
+El modelo a considerar es un modelo estacional multiplicativo integrado de medias móviles puro: $ARIMA(0,1,1)_{12}$
+
+
+
+###### Estimación de parámetros y diagnóstico del modelo
+
+
+Una vez hemos obtenido un modelo, se han estimado sus parámetros con la función *arima*.
+
+
+
+```{r , echo=TRUE}
+Ajuste1 = arima( tsDiaria_DifEst ,   # Serie trás una diferencia estacional
+                 seasonal = list(order=c(0,0,1),period=7 ))
+Ajuste1
+```
+
+
+Trás comprobar si los coeficientes estimados son o no significativamente nulos, procedemos a eliminar la media del modelo, obteniendo así uno donde todos los coeficientes son significativamente no nulos.
+
+
+```{r}
+confint(Ajuste1) # Intervalo de confianza 
+```
+
+
+
+```{r , echo=TRUE}
+Ajuste1_1 = arima( tsDiaria_DifEst ,   # Serie trás una diferencia estacional
+                   order = c(0,0,0),seasonal = list(order=c(0,0,1),period=7), 
+                 include.mean = FALSE # Eliminamos la media
+                 )
+Ajuste1_1
+confint(Ajuste1_1)
+```
+
+El modelo ajustado corresponde a la siguiente ecuación: \[Y_t =(1-L^7)(1+0.9999 \Theta^7)\alpha_t , \qquad \alpha_t \sim RB(0,\sigma^2) \]
+
+
+Para comprobar si el modelo es o no adecuado, comprobamos su validez a través de la diagnosis de los resíduos y concluímos que este ajuste no es adecuado, ya que según el Test de Ljung-Box, no existen evidencias significativas para aceptar la incorrelación de los resíduos: p-valor = $0.002524<0.05 = \alpha$. Además, gráficamente podemos observar que los resíduos no se comportan como un ruido blanco.
+
+
+
+```{r}
+checkresiduals(Ajuste1_1, plot=FALSE)
+```
+
+
+
+```{r}
+par(mfrow=c(2,2))
+# Gráfica de los resíduos
+plot(window(rstandard(Ajuste1_1),start=c(31,6)), 
+     ylab='Resíduos estandarizados',type='o')
+abline(h=0)
+# FAS de los resíduos
+acf(as.vector(window(rstandard(Ajuste1_1),
+                     start=c(31,6))),lag.max=36,
+    main="FAS de los resíduos")
+# Histograma 
+#win.graph(width=4, height=4,pointsize=8)
+hist(window(rstandard(Ajuste1_1),start=c(31,6)),
+   xlab='Resíduos estandarizados',
+     main="Histograma")
+# Gráfica QQ-Normal 
+qqnorm(window(rstandard(Ajuste1_1),start=c(31,6)))
+qqline(window(rstandard(Ajuste1_1),start=c(31,6)))
+```
+
+
+
+Vamos a probar otro modelo, en particular, a través del paquete *forecast* haciendo uso de la función *auto.arima*, que busca un modelo que minimiza el AIC.
+
+
+
+
+```{r}
+ajuste2 = auto.arima(tsDiaSemanal_transf,d = 0,D=1)
+ajuste2
+```
+
+
+```{r}
+checkresiduals(ajuste2)
+```
+
+
+
+El ajuste propuesto es un modelo: $ARIMA(1,0,0)xARIMA(2,0,0)_{7}$, pero tampoco es adecuado, ya que volvemos a rechazar la hipótesis de incorrelación de los resíduos del Test de Ljung-Box.
+
+
+
+No hemos podido encontrar un modelo adecuado que se ajuste a los datos y que pase la diagnosis, ya que los resíduos no provenían en ningún caso de un proceso de ruido blanco, es decir, no estaban incorrelados entre sí. Por este motivo, al no ser los retardos independientes, un retardo puede guardar cierta relación con otro retardo k períodos después. En estos casos, la autocorrelación puede conducir a una inexactitud en el modelo predictivo, que nos llevaría a interpretaciones erróneas.
+
+La tabla mostrada a continuación expone los diferentes modelos ajutado, el valor del AIC y el p-valor obtenido del test de Ljung-Box. De haber pasado algún modelo la diagnosis, el seleccionado para realizar predicciones del volumen de ventas habría sido aquel con menor valor del AIC.
+
+
+```{r , include=FALSE}
+A1 = checkresiduals(Ajuste1_1, plot=FALSE)
+p.valor1= A1$p.value
+modelo1= "ARIMA(0,1,1)_7"
+aic1=Ajuste1_1$aic
+
+A2 = checkresiduals(ajuste2, plot=FALSE)
+p.valor2= A2$p.value
+modelo2="ARIMA(1,0,0)x(2,1,0)_7 "
+aic2=ajuste2$aicc
+
+Ajuste3 = arima( tsDiaria_DifEst ,   # Serie trás una diferencia estacional
+                   order = c(0,0,0),
+                 seasonal = list(order=c(1,0,1),period=7) )
+A3= checkresiduals(Ajuste3, plot=FALSE)
+p.valor3=A3$p.value
+modelo3="ARIMA(1,1,1)_7"
+aic3=Ajuste3$aic  
+
+Ajuste4 = arima( tsDiaria_DifEst ,   # Serie trás una diferencia estacional
+                   order = c(0,0,0),
+                 seasonal = list(order=c(1,0,0),period=7),
+                 include.mean = FALSE)
+A4= checkresiduals(Ajuste4, plot=FALSE)
+p.valor4=A4$p.value
+modelo4="ARIMA(1,1,0)_7"
+aic4=Ajuste4$aic
+```
+
+
+```{r }
+p.valor=c(p.valor1,p.valor2,p.valor3,p.valor4)
+aic=c(aic1,aic2,aic3,aic4)
+modelo=c(modelo1,modelo2,modelo3,modelo4)
+
+comparacion_moodelos = cbind.data.frame(modelo,aic,p.valor)
+rownames(comparacion_moodelos)=c("Modelo 1","Modelo 2","Modelo 3","Modelo 4")
+comparacion_moodelos %>% 
+  kable(booktabs=TRUE,col.names = c("MODELO","AIC","p-valor")) %>% 
+  kable_styling(latex_options = c("striped" ,"HOLD_position") ) %>% 
+  footnote(general = "El p-valor corresponde al test de Ljung-Box" )
+```
+
+
+
+
+
+
+
+
+
+
+
+#

@@ -76,12 +76,13 @@ knitr::opts_chunk$set(fig.path = 'figurasR/',
 
 # Modelos estadísticos clásicos 
 
-A continuación se exponen los modelos estadísticos clásicos de cara a predecir la demanda de los productos. Esta varaible depende de varios factores, como el período del año, el precio del producto, el precio de los productos competidores o los gustos de cada consumidor, entre otros. Se trata de una variable cuantitativa discreta, ya que el número de productos que se venden será un valor entero no negativo $y=0,1,\dots$.
+A continuación se exponen modelos estadísticos clásicos de cara a predecir la demanda de los productos. Los modelos que se van a revisar son los siguientes: MLG ( modelo de Regresión Lineal Generalizado, Modelo de Regresión de Poisson y Modelo de Regresión de Binomial Negativa) y series temporales
+La variable objetivo depende de varios factores: el período del año, el precio del producto, el precio de los productos competidores o los gustos de cada consumidor, entre otros. Se trata de una variable cuantitativa discreta, ya que el número de productos que se venden será un valor entero no negativo $y=0,1,\dots$.
 
 
-## Modelo de Regresión Lineal General
+## Modelo de Regresión Lineal Generalizado
 
-El objetivo es encontrar un modelo estadístico que describa la situación real de ventas de productos a través de un Modelo Lineal General (MLG), donde una variable de interés (variable objetivo) pueda ser descrita por un conjunto de variables explicativas (variables independientes). 
+El objetivo es encontrar un modelo estadístico que describa la situación real de ventas de productos a través de un Modelo Lineal (MLG), donde una variable de interés (variable objetivo) pueda ser descrita por un conjunto de variables explicativas (variables independientes). 
 
 Para ello, debemos estimar los parámetros que caracterizan al modelo, es decir, medir el efecto de cada variable explicativa sobre la variable objetivo, y con este fin, es necesario definir una serie de hipótesis del modelo de regresión lineal general:
 
@@ -162,7 +163,7 @@ En problemas reales, pueden existir varias funciones link, por lo que se elegir�
 \]
 
 
-### Estimación de parámetros
+#### Estimación de parámetros
 
 Tras la construcción de los modelos, se estiman los parámetros desconocidos del predictor lineal, $\beta=(\beta_o,\beta_1,\dots,\beta_p)'$ por $\hat\beta=(\hat\beta_o,\hat\beta_1,\dots,\hat\beta_p)'$ y el valor del parámetro de dispersión $\phi$ por $\hat\phi$. Posteriormente, se valora la precisión de las estimaciones con el objetivo de seleccionar un modelo óptimo.
 
@@ -279,11 +280,11 @@ g(\mu_i)= \theta(\mu_i) = ln \Big( \dfrac{\alpha \mu_i}{1+ \alpha\mu_i}   \Big) 
 
 Aplicaremos este modelo de predicción para tratar de identificar los patrones de la demanda anterior a lo largo del tiempo y luego proyectar (predecir) los patrones en el futuro.
 
-Se define una serie temporal como una sucesión de datos ordenados en el tiempo que corresponden a una misma variable. Los datos son suelen ser tomados en intervalos regulares de tiempo.
+Se define una serie temporal como una sucesión de datos ordenados en el tiempo que corresponden a una misma variable. Los datos suelen ser tomados en intervalos regulares de tiempo.
 
 Nuestro objetivo dentro del análisis de series temporales será identificar el proceso estocástico que ha sido capaz de generar la serie de estudio.
 
-(No se si añadirlo) Se dice proceso estocástico a una colección o familia de variables aleatorias $\{X_t, \text{ con } t \in T \}$ que siguen la misma ley de distribución y están relacionadas entre sí, pudiendo por este motivo, describir la información de estas variables en términos de medias, variaciones y covarianzas.
+Se dice proceso estocástico a una colección o familia de variables aleatorias $\{X_t, \text{ con } t \in T \}$ que siguen la misma ley de distribución y están relacionadas entre sí, pudiendo por este motivo, describir la información de estas variables en términos de medias, variaciones y covarianzas.
 
 A continuación encontramos las cuatro etapas en un análisis descriptivo de series temporales para elegir un modelo que se adecue a nuestros datos:
 

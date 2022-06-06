@@ -64,14 +64,15 @@
 \contentsline {subsubsection}{\numberline {5.2.3.2}Representaciones gr\IeC {\'a}ficas}{51}{subsubsection.5.2.3.2}% 
 \contentsline {paragraph}{\numberline {5.2.3.2.1}Variable precio}{54}{paragraph.5.2.3.2.1}% 
 \contentsline {subsubsection}{\numberline {5.2.3.3}Grado de asociaci\IeC {\'o}n de las variables}{55}{subsubsection.5.2.3.3}% 
-\contentsline {section}{\numberline {5.3}Modelos estad\IeC {\'\i }sticos cl\IeC {\'a}sicos}{56}{section.5.3}% 
-\contentsline {subsection}{\numberline {5.3.1}Modelo de Regresi\IeC {\'o}n Lineal General}{56}{subsection.5.3.1}% 
-\contentsline {subsection}{\numberline {5.3.2}An\IeC {\'a}lisis de Series Temporales}{56}{subsection.5.3.2}% 
-\contentsline {subsubsection}{\numberline {5.3.2.1}Creaci\IeC {\'o}n ST y representaci\IeC {\'o}n de los datos}{56}{subsubsection.5.3.2.1}% 
-\contentsline {subsubsection}{\numberline {5.3.2.2}Transformaci\IeC {\'o}n de BoxCox para estabilizar la varianza}{57}{subsubsection.5.3.2.2}% 
-\contentsline {subsubsection}{\numberline {5.3.2.3}Transformaciones para estabilizar la media}{58}{subsubsection.5.3.2.3}% 
-\contentsline {subsubsection}{\numberline {5.3.2.4}Contraste de estacionariedad}{60}{subsubsection.5.3.2.4}% 
-\contentsline {subsubsection}{\numberline {5.3.2.5}Identificaci\IeC {\'o}n de la estructura ARIMA de la serie}{60}{subsubsection.5.3.2.5}% 
-\contentsline {subsubsection}{\numberline {5.3.2.6}Estimaci\IeC {\'o}n de par\IeC {\'a}metros y diagn\IeC {\'o}stico del modelo}{62}{subsubsection.5.3.2.6}% 
+\contentsline {subsection}{\numberline {5.2.4}Modelos estad\IeC {\'\i }sticos cl\IeC {\'a}sicos}{56}{subsection.5.2.4}% 
+\contentsline {subsubsection}{\numberline {5.2.4.1}Modelo de Regresi\IeC {\'o}n de Poisson}{56}{subsubsection.5.2.4.1}% 
+\contentsline {subsubsection}{\numberline {5.2.4.2}An\IeC {\'a}lisis de Series Temporales}{56}{subsubsection.5.2.4.2}% 
+\contentsline {paragraph}{\numberline {5.2.4.2.1}Creaci\IeC {\'o}n ST y representaci\IeC {\'o}n de los datos}{56}{paragraph.5.2.4.2.1}% 
+\contentsline {paragraph}{\numberline {5.2.4.2.2}Transformaci\IeC {\'o}n de BoxCox para estabilizar la varianza}{57}{paragraph.5.2.4.2.2}% 
+\contentsline {paragraph}{\numberline {5.2.4.2.3}Transformaciones para estabilizar la media}{58}{paragraph.5.2.4.2.3}% 
+\contentsline {paragraph}{\numberline {5.2.4.2.4}Contraste de estacionariedad}{60}{paragraph.5.2.4.2.4}% 
+\contentsline {paragraph}{\numberline {5.2.4.2.5}Identificaci\IeC {\'o}n de la estructura ARIMA de la serie}{60}{paragraph.5.2.4.2.5}% 
+\contentsline {paragraph}{\numberline {5.2.4.2.6}Estimaci\IeC {\'o}n de par\IeC {\'a}metros y diagn\IeC {\'o}stico del modelo}{62}{paragraph.5.2.4.2.6}% 
+\contentsline {subsection}{\numberline {5.2.5}T\IeC {\'e}cnicas de aprendizaje autom\IeC {\'a}tico}{65}{subsection.5.2.5}% 
 \contentsline {chapter}{Conclusiones}{66}{section*.19}% 
 \contentsline {chapter}{Bibliograf\IeC {\'\i }a}{67}{section*.19}% 

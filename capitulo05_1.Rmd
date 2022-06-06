@@ -277,7 +277,7 @@ Después de haber visto los aspectos más destacables de nuestros datos, procede
 ### Aplicación del algoritmo a priori
 
 
-Este algoritmo ya fué descrito en el desarrollo teórico, y nos permitirá generar una serie de reglas de asociación. Como hemos mencionado a lo largo de la descripción de este apartado práctico, el paquete *arules* también implementa el algoritmo *Apripri* para identificar itemsets frecuentes y descubre reglas de asociación con la función *apriori*, donde indicaremos una serie de parámetros: soporte, confianza, tamaño mínimo o máximo y el tipo de asociación requerida (target)
+Este algoritmo ya fué descrito en el desarrollo teórico, y nos permitirá generar una serie de reglas de asociación. Como hemos mencionado a lo largo de la descripción de este apartado práctico, el paquete *arules* también implementa el algoritmo *Apriori* para identificar itemsets frecuentes y descubre reglas de asociación con la función *apriori*, donde indicaremos una serie de parámetros: soporte, confianza, tamaño mínimo o máximo y el tipo de asociación requerida (target)
 
 
 
@@ -600,7 +600,6 @@ También se ha observado que hay ciertos productos que ocupan un volumen de vent
 
 El algoritmo nos ha mostrado reglas para aquellos productos que se más se venden. Observando los valores obtenidos del parámetro *lift*, podemos afirmar que estas reglas son todas bastante robustas, es decir, las reglas no se deben a la aleatoriedad o al azar, sino que se trata de un patrón de comportamiento de ventas real.
 
-debo poner algo más
 
 
 

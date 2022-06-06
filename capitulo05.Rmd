@@ -94,8 +94,13 @@ Los datos que se han utilizado corresponden a una muestra de una base de datos a
 
 
 
+
+
 ```{r child = 'capitulo05_2.Rmd'}
 ```
+
+
+
 
 
 ```{r child = 'capitulo05_3.Rmd'}
