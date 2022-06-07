@@ -84,16 +84,16 @@ Los datos contienen información correspondiente a ventas de dos productos láct
 
 En este conjunto de datos inicial encontramos las siguientes variables:
 
-- **ID_TICKET**: Variable numérica que identifica unívocamente a cada ticket de venta.
-- **LINEA_TICLET**: Variable numérica con la línea correspondiente del ticket.
-- **FECHA**: Fecha en que se realizó la venta.
-- **CODIGO**: Identificador del producto
-- **CANTIDAD**: Número de items vendidos de un determinado producto
-- **PRECIO**: Precio base del artículo libre de impuestos, euros.
-- **PRECIO CON IMPUESTOS**: Precio de venta del artículo, en  euros.
-- **DESCUENTO**:  Descuento aplicado.
-- **IMPORTE**: Importe de la compra libre de impuestos, en euros.
-- **IMPORTE CON IMPUESTOS**: Importe a pagar por el comprador, en euros.
+- **Id de ticket**: Variable numérica que identifica unívocamente a cada ticket de venta.
+- **Línea de ticket**: Variable numérica con la línea correspondiente del ticket.
+- **Fecha**: Fecha en que se realizó la venta.
+- **Código**: Identificador del producto
+- **Cantidad**: Número de items vendidos de un determinado producto
+- **Precio**: Precio base del artículo libre de impuestos, euros.
+- **Precio con impuestos**: Precio de venta del artículo, en  euros.
+- **Descuento**:  Descuento aplicado.
+- **Importe**: Importe de la compra libre de impuestos, en euros.
+- **Importe con impuestos**: Importe a pagar por el comprador, en euros.
 
 
 
@@ -247,7 +247,7 @@ datset = dataset[,c(3,16,1,2,4:15)]
 #### Datasets de entrada de modelos 
 
 
-La variable objetivo es el volumen de ventas diario, por lo que necesitamos transformar el conjunto de datos inicial en uno que tenga una variable *ventas* con el volumen total de ventas diario. Obtendremos un datset con el volumen total, otro con el volumen de ventas diario del producto 20445 y un tercer conjunto de datos con el volumen de ventas del producto 22336, para así poder modelar el volumen de ventas en cada ocasión.
+La variable objetivo es el volumen de ventas diario, por lo que necesitamos transformar el conjunto de datos inicial en uno que tenga una variable *ventas* con el número total de items que se venden diariamente. Hemos obtendremos tres conjuntos de datos: Uno con el volumen total, otro con el volumen de ventas diario del producto sin calcio y un tercer conjunto para el producto con calcio. De esta forma, podremos modelar el volumen de ventas en cada ocasión y posteriormente hacer comparaciones de la suma de las predicciones de los productos por separado con la predicción de la venta de la suma de ambos productos.
 
 ```{r }
 VolVentas_FECHA = dataset %>%
@@ -338,11 +338,11 @@ VolVentas_SIN_CALCIO_FECHA$SEMANA_ANO<- factor(VolVentas_SIN_CALCIO_FECHA$SEMANA
 VolVentas_SIN_CALCIO_FECHA$DIA_SEMANA<- factor(VolVentas_SIN_CALCIO_FECHA$DIA_SEMANA)
 ```
 
-Los conjuntos de datos para el entrenamiento de modelos predictivos constan de las siguientes variables: fecha, precio medio con impuestos, descuento medio, importe medio con impuestos, año, mes, día, semana del año y día de la semana.
+Los conjuntos de datos para el entrenamiento de modelos predictivos constan de las siguientes variables: fecha, precio medio con impuestos, descuento medio, año, mes, día, semana del año y día de la semana.
 
 
 
-Para el modelo de Regresión de Poisson es necesario tener un conjunto de datos con variables *dummy* para el día de la semana y el mes del año, con la intención de representar la pertenencia de cada instancia a los distintos grupos. Posteriormente, es necesario factorizar estas nuevas variables, ya que es algo imprescindible para ejecutar el modelo.
+Para los modelos de Regresión es necesario tener un conjunto de datos con variables *dummy* para el día de la semana y el mes del año, con la intención de representar la pertenencia de cada instancia a los distintos grupos. Posteriormente, es necesario factorizar estas nuevas variables, ya que es algo imprescindible para ejecutar el modelo.
 
 Para la creación de variables *dummy*, definimos una función *crea_col_dummy*, que hace uso de la función mutate y spread. 
 
@@ -363,8 +363,12 @@ crea_col_dummy <- function(DataFrame, Columna) {
     spread(key = Columna, value = valor, fill = 0)
 }
 
-VolVentas_FECHA_poiss           = crea_col_dummy(VolVentas_FECHA_poiss           ,"DIA_SEMANA")
-VolVentas_CALCIO_FECHA_poiss    = crea_col_dummy(VolVentas_CALCIO_FECHA_poiss    ,"DIA_SEMANA")
+VolVentas_FECHA_poiss = 
+  crea_col_dummy(VolVentas_FECHA_poiss,"DIA_SEMANA")
+
+VolVentas_CALCIO_FECHA_poiss= 
+  crea_col_dummy(VolVentas_CALCIO_FECHA_poiss,"DIA_SEMANA")
+
 VolVentas_SIN_CALCIO_FECHA_poiss= crea_col_dummy(VolVentas_SIN_CALCIO_FECHA_poiss,"DIA_SEMANA")
 ```
 
@@ -377,9 +381,14 @@ colnames(VolVentas_SIN_CALCIO_FECHA_poiss)= c("FECHA" ,"VENTAS","NUM_TRANSACCION
 
 
 ```{r echo=TRUE}
-VolVentas_FECHA_poiss = crea_col_dummy(VolVentas_FECHA_poiss,"MES")
-VolVentas_CALCIO_FECHA_poiss= crea_col_dummy(VolVentas_CALCIO_FECHA_poiss,"MES")
-VolVentas_SIN_CALCIO_FECHA_poiss= crea_col_dummy(VolVentas_SIN_CALCIO_FECHA_poiss,"MES")
+VolVentas_FECHA_poiss = 
+  crea_col_dummy(VolVentas_FECHA_poiss,"MES")
+
+VolVentas_CALCIO_FECHA_poiss= 
+  crea_col_dummy(VolVentas_CALCIO_FECHA_poiss,"MES")
+
+VolVentas_SIN_CALCIO_FECHA_poiss=
+  crea_col_dummy(VolVentas_SIN_CALCIO_FECHA_poiss,"MES")
 ```
 
 
@@ -405,16 +414,14 @@ VolVentas_SIN_CALCIO_FECHA_poiss=mutate_at(VolVentas_SIN_CALCIO_FECHA_poiss, var
 Una vez tenemos los cuatro conjuntos de datos, tres con los correspondientes volúmenes de ventas diarios y el dataset inicial con el pre procesado necesario, procedemos a guardarlos en formato RData para poder acceder a ellos en cualquier momento que sea necesario.
 
 ```{r , echo=TRUE}
-#Guardamos el conjunto de datos final
-#save(dataset,file = "Datos/Dataset_Final.RData")
-#save(VolVentas_SIN_CALCIO_FECHA,file = "Datos/VENTAS_Dia_SCALCIO.RData")
-#save(VolVentas_CALCIO_FECHA,file = "Datos/VENTAS_Dia_CALCIO.RData")
-#save(VolVentas_FECHA,file = "Datos/VENTAS_Dia_TOTAL.RData")
-#
-#save(VolVentas_FECHA_poiss,file = "Datos/VENTAS_Dia_TOTAL_poiss.RData")
-#save(VolVentas_CALCIO_FECHA_poiss,file = "Datos/VENTAS_Dia_CALCIO_poiss.RData")
-#save(VolVentas_SIN_CALCIO_FECHA_poiss,file = "Datos/VENTAS_Dia_SCALCIO_poiss.RData")
+save(dataset,file = "Datos/Dataset_Final.RData")
+save(VolVentas_SIN_CALCIO_FECHA,file = "Datos/VENTAS_Dia_SCALCIO.RData")
+save(VolVentas_CALCIO_FECHA,file = "Datos/VENTAS_Dia_CALCIO.RData")
+save(VolVentas_FECHA,file = "Datos/VENTAS_Dia_TOTAL.RData")
 
+save(VolVentas_FECHA_poiss,file = "Datos/VENTAS_Dia_TOTAL_poiss.RData")
+save(VolVentas_CALCIO_FECHA_poiss,file = "Datos/VENTAS_Dia_CALCIO_poiss.RData")
+save(VolVentas_SIN_CALCIO_FECHA_poiss,file = "Datos/VENTAS_Dia_SCALCIO_poiss.RData")
 ```
 
 
@@ -737,7 +744,7 @@ par(mfrow=c(1,3))
 
 
 
-```{r}
+```{r , fig.height=3}
 VolVentas_FECHA=mutate_at(VolVentas_FECHA, vars("ANO","DIA","SEMANA_ANO","MES","DIA_SEMANA"  ), as.numeric)
 M = cor(VolVentas_FECHA[,-1])
 corrplot(M, method = "number",title = "Matriz de correlación",type = 'lower', diag = FALSE)

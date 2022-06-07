@@ -426,7 +426,7 @@ as(rules_conf, Class = "data.frame") %>%
 
 - Ordenación según soporte (frecuencia con que los objetos son comprados juntos):
 
-```{r , fig.height=4}
+```{r , fig.height=3}
 rules_confII <- sort (rulesII, by="support", decreasing=TRUE) 
 # 'high-confidence' rules.
 #inspect((rules_confII))
@@ -468,11 +468,9 @@ Si los valores de support y confidence están próximos a los ajustados, revisar
 
 Métricas:
 
-REPASAR ESTO
-
 -   Soporte:
 
-    -   Valor medio: 0.005335
+    -   Valor medio: 0.002564
 
     -   Valor mínimo: 0.002179
 
@@ -480,31 +478,33 @@ REPASAR ESTO
 
 -   Confianza:
 
-    -   Valor medio: 0.2209
+    -   Valor medio: 0.2377
 
     -   Valor máximo: 0.3125
 
-    -   Valor mínimo: 0.1558
+    -   Valor mínimo: 0.1844
 
 El valor de lift mide la importancia y robustez de una regla:
 
--   Valor medio: 8.970
+-   Lift:
 
--   Valor máximo: 12.438
-
--   Valor mínimo: 4.657
+    -   Valor medio: 9.726
+    
+    -   Valor máximo: 12.438
+    
+    -   Valor mínimo: 6.538
 
 Hemos obtenido unos valores de lift bastante altos, lo que indica que nuestras reglas son improtantes y robustas. Como ya estudiamos en la descripción teórica, este parámetro indica la fuerza de la asociación entre los productos de la parte de la izquierda (antecedentes) y los de la derecha. Cuanto mayor sea el valor de lift, mayor evidencia tendremos de que la regla no se deba a la aleatoriedad, sino que se trata de un patrón de comportamiento existente.
 
-
+La regla mas robusta que hemos encontrado es la siguiente: al comprar los productos 1033 y 1096, se comprará también el 1086. Esta transacción ha ocurrido un total de 30 veces (frecuencia del 0.38%). Su valor de lift es de 12.43, que es un valor bastante alto, indicando así que el producto 1086 (consecuente) está bastante vinculado a la compra conjunta de los productos 1033 y 1096 (antecedentes).
 
 ```{r}
-inspect( sort(rulesII, by = "lift", decreasing = TRUE)[1] ) %>% kable(booktabs=TRUE) 
+inspect( sort(rulesII, by = "lift", decreasing = TRUE)[1] ) 
 
 # inspect( sort(rulesII, by = "lift", decreasing = FALSE)[1] ) 
 ```
 
-La regla más robusta que hemos encontrado es que al comprar los productos 1033 y 1096, se comprará también el 1086. Esta transacción ha ocurrido un total de 30 veces (frecuencia del 0.38%). Su valor de lift es de 12.43, que es un valor bastante alto, indicando así que el producto 1086 (consecuente) está bastante vinculado a la compra conjunta de los productos 1033 y 1096 (antecedentes).
+
 
 La transacción que más veces se ha repetido ha sido:
 
@@ -545,7 +545,7 @@ quality(rulesII) <- cbind(quality(rulesII), Testfisher)
 Res_rulesII <- as(rulesII, Class = "data.frame") 
 Res_rulesII %>% as.tibble() %>% arrange(desc(confidence)) %>% head()
 ```
-**Conclusión**: Los *p-valores* son todos menores que $\alpha=0.05$, por lo que no existen evidencias significativas a favor de que las reglas obtenidas son fruto del azar, por lo que podemos afirmar que significativamente, las reglas de asociación obtenidas se deben a un comportamiento real de ventas.
+**Conclusión**: En la columna Testfisher se encuentran los *p-valores* del cotraste, y son todos menores que $\alpha=0.05$, por lo que no existen evidencias significativas a favor de que las reglas obtenidas son fruto del azar, por lo que podemos afirmar que significativamente, las reglas de asociación obtenidas se deben a un comportamiento real de ventas.
 
 #### Reglas maximales
 

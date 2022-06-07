@@ -33,8 +33,9 @@ output:
 ---
 
 
+
 ```{r , echo=FALSE}
-knitr::opts_chunk$set(echo = FALSE , warning = FALSE , message = FALSE )
+knitr::opts_chunk$set(echo = FALSE , warning = FALSE , message = FALSE,fig.pos = 'h',out.extra = '' )
 ```
 
 
@@ -55,6 +56,9 @@ library(hrbrthemes) # Temas
 library(TSA) # Series Temporales (B-C) (Not working)
 library(tseries) # Test de raíz unitaria
 library(forecast) # Diagnosis del modelo
+library(MASS) # BN
+library(AER)
+library(Metrics)
 
 ```
 
@@ -76,23 +80,7 @@ load(  "Datos/VENTAS_Dia_TOTAL_poiss.RData")
 
 
 
-
-
-
-##### Modelo de Regresión de Poisson
-
-
-Dado que la variable respuesta es discreta y de tipo conteo, se ha elegido este modelo en el que se asume que el volumen de ventas diario sigue una distribución de Poisson.
-
-\[Y \sim Po(\mu), \quad \mu=\text{Número medio de ventas diario}\]
-
-
-**Partición de los datos**:
-
-Se ha tomado una partición de 80% 20% para datos de entrenamiento y testeo, con el objetivo de entrenar el modelo para posteriormente estudiar su rendimiento.
-
-
-```{r}
+```{r }
 n=nrow(VolVentas_FECHA_poiss)
 indin= 1:n
 nent=ceiling(0.8*n) # número de registros de entrenamiento
@@ -100,10 +88,6 @@ ntest= n-nent # número de registros de testeo
 set.seed(100822)
 indient= sort(sample(indin,nent)) # índices de entrenamiento
 inditest= setdiff(indin,indient) # índices de testeo
-```
-
-
-```{r}
 
 Ventas_TOTAL_ENT_poiss = VolVentas_FECHA_poiss[indient,-c(3,6)]
 Ventas_TOTAL_TEST_poiss=VolVentas_FECHA_poiss[inditest,-c(3,6)]
@@ -131,8 +115,12 @@ Ventas_SIN_CALCIO_TEST=VolVentas_SIN_CALCIO_FECHA[inditest,-c(3,6)]
 
 
 
+##### Modelo de Regresión de Poisson
 
 
+Dado que la variable respuesta es discreta y de tipo conteo, se ha elegido este modelo en el que se asume que el volumen de ventas diario sigue una distribución de Poisson.
+
+\[Y \sim Po(\mu), \quad \mu=\text{Número medio de ventas diario}\]
 
 
 
@@ -165,7 +153,7 @@ summary(ModeloP_TOT_dummy)
 ```
 
 
-En la salida, podemos ver en la columna *estimate* la estimación de los coeficientes de regresión para las distintas variables, indicando, para las variables numérias, el cambio medio en el número de ventas que se produciría si aumentáramos en una unidad esa variable, y para las variables discretas, el cambio medio que provocaría en el número de ventas el que la variable tomara o no ese valor. También encontramos una columna para el error estándar, el valor del estadístico Z y el p-valor. 
+En la salida, podemos ver en la columna *estimate* la estimación de los coeficientes de regresión para las distintas variables, indicando, para las variables numérias, el cambio medio en el número de ventas que se produciría si aumentáramos en una unidad esa variable, y para las variables discretas, el cambio medio que provocaría en el número de ventas el que la variable tomara o no ese valor. También encontramos una columna para el error estándar, el valor del estadístico Z y el p-valor. Un p-valor menor que $\alpha = 0.05$ indicará que podemos considerar significativa esa variable de cara a predecir el volumen de ventas. Si por el contrario el p-valor es mayor que $\alpha$, concluiremos que dicha variable no influye en el volumen de ventasa.
 
 
 
@@ -184,16 +172,18 @@ ModeloP_TOT_factor= glm(VENTAS~PRECIO_MEDIO_IMPUESTOS+
                           DIA_SEMANA*MES+DESCUENTO_MEDIO,
                        family = poisson(link = "log"),
                        data=Ventas_TOTAL_ENT)
-summary(ModeloP_TOT_factor)
+#summary(ModeloP_TOT_factor)
 ```
 
 
 
-- La variable *descuento* puede considerarse significativa, y según la estimación del coeficiente $\hat\beta_{\text{descuento}}=0.030274>0$ podemos afirmar lo siguiente: manteniendo el resto de variables constantes, un aumento de la variable descuento en una unidad, hará que el volumen de ventas aumente en: $e^{0.030274}=$ `r round(exp(0.030274))` unidades.
+- La variable *descuento* puede considerarse significativa debido al p-valor $=1.9 * 10^{-14} < 0.05 = \alpha$
+y según la estimación del coeficiente $\hat\beta_{\text{descuento}}=0.030274>0$ podemos afirmar que un aumento de la variable descuento en una unidad,
+manteniendo el resto de variables constantes, hará que el volumen de ventas aumente en: $e^{0.030274}=$ `r round(exp(0.030274))` unidad.
 
-- En este caso, para la variable Sábado podemos decir que si el día de la semana es sábado y manteniendo constantes el resto de variables, el volumen de ventas disminuirá en  $e^{-0.296949}=$ `r round(exp(-0.296949))` unidad.
+- Si la venta se produce un Sábado, manteniendo constantes el resto de variables, el volumen de ventas disminuirá en  $e^{-0.296949}=$ `r round(exp(-0.296949))` unidad respecto a si se produjera otro día de la semana.
 
-- Para el mes de Octubre, y según este modelo, el volumen de ventas disminuirá, en media, manteniendo el resto de variables constante en $e^{-0.264921}=$ `r round(exp(-0.264921))` unidades si la compra se hace durante este mes.
+- Para el mes de Octubre el volumen de ventas disminuirá, en media en $e^{-0.264921}=$ `r round(exp(-0.264921))` unidad.
 
 - Además, la interacción entre las variables día de la semana y mes del año es significativa, indicando que la asociación que existe entre ambas varía en función de los distintos valores que toman.
 
@@ -201,25 +191,18 @@ summary(ModeloP_TOT_factor)
 
 Para seleccionar un modelo adecuado, se ha hecho uso del criterio de información de Akaike, eligiendo aquel que nos de el menor AIC. A continuación se exponen los correspondientes valores del AIC para ambos modelos:
 
-- Modelo con variables dummy: AIC=26371
-- Modelo con variables factorizadas: AIC=20696
+- Modelo con variables dummy: AIC= `r ModeloP_TOT_dummy$aic`
+- Modelo con variables factorizadas: AIC= `r ModeloP_TOT_factor$aic`
 
 
 El modelo seleccionado es el modelo para variables factorizadas, que nos da el menor valor del AIC, indicación de una mayor calidad del modelo estadístico.
 
 
-A continuación, procedemos a entrenar el modelo seleccionado en los datos de entrenamiento haciendo uso de la función *predict*
 
-```{r}
+A continuación, se procede a entrenar el modelo seleccionado para los datos de testeo haciendo uso de la función *predict*, mostrando las métricas que nos dan el rendimiento del modelo en forma de tabla.
+
+```{r ,fig.pos = 'h'}
 PRED_VOL_VENTAS_TOTAL=round(predict(ModeloP_TOT_factor, newdata = Ventas_TOTAL_TEST, type = "response"))
-```
-
-
-
-
-
-```{r}
-library(Metrics)
 RSQUARE = function(valorReal,Prediccion){cor(valorReal,Prediccion)^2}
 
 
@@ -237,7 +220,7 @@ RMSE=c(RMSE_Ent,RMSE_Test)
 ```
 
 
-A continuación mostramos una tabla con las métricas que nos dan el rendimiento del modelo
+
 
 
 
@@ -246,13 +229,26 @@ library(tidyverse)
 library(kableExtra)
 cbind.data.frame(DATOS,R2,RMSE) %>% 
   kable(booktabs=TRUE) %>% 
-  kableExtra::kable_styling(latex_options = "striped")
+  kableExtra::kable_styling(latex_options = c("striped","HOLD_position") )
 ```
 
 El modelo obtenido explica el `r round(100*R2_Ent,2)`% de la variabilidad total de los datos en el conjunto de entrenamiento, y el `r round(100*R2_Test,2)`% para los datos de testeo, no pudiendo considerar este como un buen modelo para explicar el volumen de ventas total.  El valor del error cuadrático medio indica que el modelo se va a equivocar de media, en `r round(RMSE[2])` ventas, que es un valor alto para el volumen de ventas que se está considerando, ya que hay días que se venden menos de 700 items.
 
 
+**Contraste de bondad de ajuste**
 
+Para comprobar si se trata o no de un buen modelo, realizamos el contraste de bondad de ajuste, donde se contrastan las siguientes hipótesis:
+
+\[
+\left\{
+\begin{array}{ll}
+H_{0}: &  \text{El ajuste lineal es bueno}\\
+H_{1}: & \text{El ajuste no es bueno}
+\end{array}
+\right.
+\]
+
+El p-valor del contraste: `r pchisq(ModeloP_TOT_factor$deviance, df=ModeloP_TOT_factor$df.residual, lower.tail=FALSE)` $< 0.05 = \alpha$ y por tanto, no existen evidencias significativas para afirmar que el modelo es adecuadao
 
 
 
@@ -279,35 +275,25 @@ ModeloP_CALCIO_factor=
 Para ambos modelos podemos afirmar:
 
 - La variable precio medio es altamente significativa, un aumento de esta variable en un euro indicará una leve disminución de las ventas 
-- Gran parte de las variables son significativas en el modelo
+- La mayoría de las variables introducidas son significativas al 95% en el modelo
 
 Además, para el modelo entrenado para el conjunto de datos con varaibles factorizadas, la interacción entre el día de la semana y el mes es significativa, indicando una variación de las ventas en función de las distintas combinaciones de valores de estas variables.
 
 
 De nuevo, el modelo seleccionado es el modelo para variables factorizadas, que nos da el menor valor del AIC, indicación de una mayor calidad del modelo estadístico.
 
-- $AIC_{dummies}=17366$
-- $AIC_{factorizacion}=13618$
+- $AIC_{dummies}=$ `r ModeloP_CALCIO_dummy$aic`
+- $AIC_{factorizacion}=$ `r ModeloP_CALCIO_factor$aic`
 
 
 
 
 
-Entrenamos el modelo seleccionado en los datos de entrenamiento haciendo uso de la función *predict*
+Entrenamos el modelo seleccionado en los datos de entrenamiento haciendo uso de la función *predict* y mostramos en forma de tabla las métricas obtenidas para el conjunto de entrenamiento y el de testeo:
 
-```{r}
+```{r , fig.pos = 'h'}
 PRED_VOL_VENTAS_CALCIO=predict(ModeloP_CALCIO_factor, newdata = Ventas_CALCIO_TEST, type = "response")
-```
 
-
-
-En el siguiente gráfico podemos ver una representación de los valores observados respecto de los valores ajustados.
-
-
-
-
-
-```{r}
 RMSE_Ent_C=rmse(Ventas_CALCIO_ENT$VENTAS,predict(ModeloP_CALCIO_factor, newdata = Ventas_CALCIO_ENT, type = "response"))
 R2_Ent_C=RSQUARE(Ventas_CALCIO_ENT$VENTAS,predict(ModeloP_CALCIO_factor, newdata = Ventas_CALCIO_ENT, type = "response"))
 
@@ -320,15 +306,18 @@ RMSE_C=c(RMSE_Ent_C,RMSE_Test_C)
 
 cbind.data.frame(DATOS_C,R2_C,RMSE_C) %>% 
   kable(booktabs=TRUE) %>% 
-  kableExtra::kable_styling(latex_options = "striped")
+  kableExtra::kable_styling(latex_options = c("striped","HOLD_position") )
 ```
 
 
 
 
 
-Volvemos a tener unos resultados pobres, el modelo es capaz de explicar el `r R2_C[2]`% de la variabilidad del volumen de ventas para los datos de testeo, a pesar de explicar el `r R2_C[1]`% de la la variabilidad para los datos de entrenamiento, es decir, el modelo ha "*aprendido*" los datos con los que ha entrenado pero no generaliza bien para nuevos datos.
+Volvemos a tener unos resultados pobres, el modelo es capaz de explicar el `r R2_C[2]*100`% de la variabilidad del volumen de ventas para los datos de testeo, a pesar de explicar el `r R2_C[1]*100`% de la la variabilidad para los datos de entrenamiento, es decir, el modelo ha "*aprendido*" los datos con los que ha entrenado pero no generaliza bien para nuevos datos.
 
+
+
+El p-valor del test de bondad de ajuste: `r pchisq(ModeloP_CALCIO_factor$deviance, df=ModeloP_CALCIO_factor$df.residual, lower.tail=FALSE)` $< 0.05 = \alpha$ .No existen evidencias significativas para afirmar que se trate de un modelo adecuadao.
 
 
 
@@ -366,25 +355,18 @@ Además, para el modelo entrenado para el conjunto de datos con varaibles factor
 
 De nuevo, el modelo seleccionado es el modelo para variables factorizadas, que nos da el menor valor del AIC, indicación de una mayor calidad del modelo estadístico.
 
-- $AIC_{dummies}=12738$
-- $AIC_{factorizacion}=10153$
+- $AIC_{dummies}=$ `r ModeloP_SIN_CALCIO_dummy$aic`
+- $AIC_{factorizacion}=$ `r ModeloP_SIN_CALCIO_factor$aic`
 
 
 
 
 
-Entrenamos el modelo seleccionado en los datos de entrenamiento haciendo uso de la función *predict*.
+Entrenamos el modelo seleccionado en los datos de testeo haciendo uso de la función *predict* y mostramos los resultados a modo de tabla:
 
-```{r}
+```{r , fig.pos = 'h'}
 PRED_VOL_VENTAS_SIN_CALCIO=predict(ModeloP_SIN_CALCIO_factor, newdata = Ventas_SIN_CALCIO_TEST, type = "response")
-```
 
-
-
-
-
-
-```{r}
 
 RMSE_Ent_SC=rmse(Ventas_SIN_CALCIO_ENT$VENTAS,predict(ModeloP_SIN_CALCIO_factor, newdata = Ventas_SIN_CALCIO_ENT, type = "response"))
 R2_Ent_SC=RSQUARE(Ventas_SIN_CALCIO_ENT$VENTAS,predict(ModeloP_SIN_CALCIO_factor, newdata = Ventas_SIN_CALCIO_ENT, type = "response"))
@@ -398,14 +380,330 @@ RMSE_SC=c(RMSE_Ent_SC,RMSE_Test_SC)
 
 cbind.data.frame(DATOS_SC,R2_SC,RMSE_SC) %>% 
   kable(booktabs=TRUE) %>% 
-  kableExtra::kable_styling(latex_options = "striped")
+  kableExtra::kable_styling(latex_options = c("stripedf","HOLD_position") )
 ```
 
 
 
-Volvemos a tener unos resultados no demasiado buenos. Este modelo no es capaz de explicar más que el `r R2_SC[2]`% de la variabilidad del volumen de ventas en los datos de testeo, a pesar de explicar el `r R2_SC[1]`% para los datos de entrenamiento. Los errores cuadráticos medios son muy elevados en comparación con el volumen de ventas que se está prediciendo.
+Volvemos a tener unos resultados no demasiado buenos. Este modelo no es capaz de explicar más que el `r R2_SC[2]*100`% de la variabilidad del volumen de ventas en los datos de testeo, a pesar de explicar el `r R2_SC[1]*100`% para los datos de entrenamiento. Los errores cuadráticos medios son muy elevados en comparación con el volumen de ventas que se está prediciendo.
 
 
+
+El p-valor del contraste de bondad de ajuste: `r pchisq(ModeloP_SIN_CALCIO_factor$deviance, df=ModeloP_SIN_CALCIO_factor$df.residual, lower.tail=FALSE)` $< 0.05 = \alpha$ . No existen evidencias significativas para afirmar que se trate de un modelo adecuadao.
+
+
+
+**Sobredispersión**
+
+
+Estos modelos se han desarrollando asumiendo que la distribución de las ventas diarias sigue una Poisson, caracterizándose esta distribución porque su esperanza y su varianza coinciden; pero esto no siempre ocurre trabajando con conjuntos de datos reales. Se dice entonces que el modelo presenta sobredispersión. Vamos a contrastar la presencia de sobredispersión en los modelos entrenados haciendo uso de la función *dispersiontest* de la librería *AER*-
+
+
+
+```{r}
+dispersiontest(ModeloP_TOT_factor)
+dispersiontest(ModeloP_CALCIO_factor)
+dispersiontest(ModeloP_SIN_CALCIO_factor)
+```
+
+
+Concluímos que todos los casos existe dispersión y junto con las conlusiones de los test de bondad de ajuste, podemos afirma que en este caso, el modelo de regresión de poisson no es adecuaado para modelar el volumen de ventas diario.
+
+
+
+
+
+
+##### Modelo de Regresión Binomial Negativa
+
+Ante el problema de la sobredispersión, trataremos de modelare las ventas diarias según un modelo de regresión binomial negativa. No podemos hace uso de la función **glm** del paquete base de R debido a que no tiene implementada la opción de esta distribución. Por ello, utilizaremos la función **glm.nb** de la librería *MASS*, que incluye la estimación del parámetro de dispersión $\theta$.
+Los conjuntos de datos son los mismos que los utilizados en los modelos de regresión de poisson, al igual que las variables explicativas:
+
+- Variables dummy/factorizadas del día de la semana y el mes del año
+- Precio medio con impuestos y descuento
+- Día de la semana
+- Mes del año
+
+
+
+###### Modelado
+
+
+
+
+**Ventas totales**
+
+
+```{r , echo=TRUE }
+
+ModeloBN_TOT_dummy = 
+  glm.nb(VENTAS~PRECIO_MEDIO_IMPUESTOS+DESCUENTO_MEDIO+
+              (LUNES+MARTES+MIERCOLES+JUEVES+VIERNES+SABADO+DOMINGO)+
+              (AGOSTO+SEPTIEMBRE+OCTUBRE+NOVIEMBRE+DICIEMBRE+ENERO),
+      data=Ventas_TOTAL_ENT_poiss)
+summary(ModeloBN_TOT_dummy)
+```
+
+
+Con la función *glm.nb*, obtenemos una salida parecida a la del modelo de regresión de poisson salvo por el parámetro de dispersión $\theta$, estimado mediante el método de la máxima verosimilitud, para el cual se obtiene un valor que no es el que aparece en la salida, sino su inversa: $\theta=$ `r 1/ModeloBN_TOT_dummy$theta`.
+
+También podemos ver la estimación de los coeficientes del modelo y el estadístico de desviación, que sigue una distribución chi-cuadrado de 130 grados de libertad y tiene un valor de 149.24. Haciendo uso de este estadístico podemos evaluar la sobredispersión de los datos de la siguiente forma:
+
+
+
+\[\dfrac{D}{gl} \implies \dfrac{149.24}{130}=1.148>1\], 
+
+La relación anterior nos indica sobredispersión en los datos.
+
+
+En este modelo, para un nivel de signifiación del 95%, los coeficientes estimados para las varaibles descuento y precio medio pueden suponerse nulos, siendo en ambos casos el p-valor correspondiente mayor que $\alpha=0.05$. Tampoco es significativo el mes del año, es decir, para este modelo, las única variable que influyen en el volumen de venta es el día de la semana.
+
+
+Vamos ahora a entrenar el modelo para las variables factorizadas:
+
+```{r , echo=TRUE}
+ModeloBN_TOT_factor= glm.nb(VENTAS~PRECIO_MEDIO_IMPUESTOS+
+                          DIA_SEMANA+MES+DESCUENTO_MEDIO,
+                       data=Ventas_TOTAL_ENT)
+summary(ModeloBN_TOT_factor)
+```
+
+La única variable significativa de este modelo es que el haber realizado la compra un Domingo. La estimación del coeficiente es: $\hat\beta_{\text{Domingo}}=-2.542272<0$ y podemos afirmar lo siguiente: ir a comprar un Domingo, hará que el volumen de ventas disminuya ligeramente.
+
+
+
+Para seleccionar un modelo adecuado, se ha hecho uso del criterio de información de Akaike, eligiendo aquel que nos de el menor AIC. A continuación se exponen los correspondientes valores del AIC para ambos modelos:
+
+- Modelo con variables dummy: AIC= `r ModeloBN_TOT_factor$aic`
+- Modelo con variables factorizadas: AIC= `r ModeloBN_TOT_dummy$aic`
+
+Ambos modelos tienen el mismo valor del AIC, pero seleccionamos el de las varaibles dummy, ya que hay mayor número de variables significas en el modelo.
+
+
+El siguiente pasao es entrenar el modelo seleccionado en los datos de testeo haciendo uso de la función *predict*. De nuevo, mostraremos el rendimiento de las métricas a modo de tabla:
+
+```{r , fig.pos = 'h'}
+PRED_VOL_VENTAS_TOTAL_BN=round(predict(ModeloBN_TOT_dummy, newdata = Ventas_TOTAL_TEST_poiss, type = "response"))
+
+
+RMSE_Ent=rmse(Ventas_TOTAL_ENT_poiss$VENTAS,
+              round(predict(ModeloBN_TOT_dummy, newdata = Ventas_TOTAL_ENT_poiss, type = "response")) ) 
+R2_Ent=RSQUARE(Ventas_TOTAL_ENT$VENTAS,
+            round(predict(ModeloBN_TOT_dummy, newdata = Ventas_TOTAL_ENT_poiss, type = "response")))
+
+RMSE_Test = rmse(Ventas_TOTAL_TEST_poiss$VENTAS,PRED_VOL_VENTAS_TOTAL_BN)
+R2_Test =RSQUARE(Ventas_TOTAL_TEST_poiss$VENTAS,PRED_VOL_VENTAS_TOTAL_BN)
+
+DATOS = c("Datos entrenamiento","Datos Test")
+R2=c(R2_Ent,R2_Test)
+RMSE=c(RMSE_Ent,RMSE_Test)
+
+cbind.data.frame(DATOS,R2,RMSE) %>% 
+  kable(booktabs=TRUE) %>% 
+  kableExtra::kable_styling(latex_options = c("striped","HOLD_position") )
+```
+
+El modelo obtenido explica el `r round(100*R2_Ent,2)`% de la variabilidad total de los datos en el conjunto de entrenamiento, y el `r round(100*R2_Test,2)`% para los datos de testeo.  El valor del error cuadrático medio indica que el modelo se va a equivocar de media, en `r round(RMSE[2])` ventas, que es un valor alto para el volumen de ventas que se está considerando, ya que hay días que se venden menos de 700 items.
+
+
+
+
+
+
+**Ventas de productos con calcio**
+
+
+```{r , echo=TRUE}
+ModeloBN_CALCIO_dummy = 
+  glm.nb(VENTAS~PRECIO_MEDIO_IMPUESTOS+
+             (LUNES+MARTES+MIERCOLES+JUEVES+VIERNES+SABADO+DOMINGO)+
+             (AGOSTO+SEPTIEMBRE+OCTUBRE+NOVIEMBRE+DICIEMBRE+ENERO),
+            data=Ventas_CALCIO_ENT_poiss)
+#summary(ModeloBN_CALCIO_dummy)
+
+
+ModeloBN_CALCIO_factor= 
+  glm(VENTAS~PRECIO_MEDIO_IMPUESTOS+DIA_SEMANA+MES,
+             data=Ventas_CALCIO_ENT)
+#summary(ModeloBN_CALCIO_factor)
+```
+
+- Para ambos modelos podemos afirmar que el mes del año no influye en el volumen de ventaas
+
+- En el modelo con variables factorizadas volvemos a comprobar que la única varaible significativa al 95%, y por tanto, la única cuyo coeficiente no es nulo es si la compra se ha realizado o no un Domingo.
+
+- Sobredispersión del modelo con variables dummies: $\dfrac{D}{gl} \implies \dfrac{150.50}{132}=1.14>1$. Existe sobredispersión.
+
+
+De nuevo, el modelo seleccionado es el modelo que utiliza variable dummies, que nos da el menor valor del AIC, indicación de una mayor calidad del modelo estadístico.
+
+- $AIC_{dummies}=$ `r ModeloBN_CALCIO_dummy$aic`
+- $AIC_{factorizacion}=$ `r ModeloBN_CALCIO_factor$aic`
+
+
+
+
+
+Entrenamos el modelo seleccionado en los datos de entrenamiento haciendo uso de la función *predict*
+
+```{r}
+PRED_VOL_VENTAS_CALCIO_BN=predict(ModeloBN_CALCIO_dummy, newdata = Ventas_CALCIO_TEST_poiss, type = "response")
+```
+
+
+
+En el siguiente gráfico podemos ver una representación de los valores observados respecto de los valores ajustados.
+
+
+
+
+
+```{r}
+RMSE_Ent_C=rmse(Ventas_CALCIO_ENT_poiss$VENTAS,predict(ModeloBN_CALCIO_dummy, newdata = Ventas_CALCIO_ENT_poiss, type = "response"))
+R2_Ent_C=RSQUARE(Ventas_CALCIO_ENT_poiss$VENTAS,predict(ModeloBN_CALCIO_dummy, newdata = Ventas_CALCIO_ENT_poiss, type = "response"))
+
+RMSE_Test_C = rmse(Ventas_CALCIO_TEST_poiss$VENTAS,PRED_VOL_VENTAS_CALCIO_BN)
+R2_Test_C =RSQUARE(Ventas_CALCIO_TEST_poiss$VENTAS,PRED_VOL_VENTAS_CALCIO_BN)
+
+DATOS_C = c("Datos entrenamiento","Datos Test")
+R2_C=c(R2_Ent_C,R2_Test_C)
+RMSE_C=c(RMSE_Ent_C,RMSE_Test_C)
+
+cbind.data.frame(DATOS_C,R2_C,RMSE_C) %>% 
+  kable(booktabs=TRUE) %>% 
+  kableExtra::kable_styling(latex_options = c("striped","HOLD_position") )
+```
+
+
+Este modelo es capaz de explicar el `r R2_C[2]`% de la variabilidad del volumen de ventas para los datos de testeo, a pesar de explicar el `r R2_C[1]`% de la la variabilidad para los datos de entrenamiento. A pesar de obtener estos resultados, el error cuadrático medio cometido es menor en los datos de testeo, pero aún bastante alto para el volumen de ventas diario de los productos con calcio.
+
+
+
+
+
+
+
+**Ventas de productos sin calcio**
+
+
+```{r , echo=TRUE}
+ModeloBN_SIN_CALCIO_dummy = 
+  glm.nb(VENTAS~PRECIO_MEDIO_IMPUESTOS+
+             (LUNES+MARTES+MIERCOLES+JUEVES+VIERNES+SABADO+DOMINGO)+
+             (AGOSTO+SEPTIEMBRE+OCTUBRE+NOVIEMBRE+DICIEMBRE+ENERO),
+     data=Ventas_SIN_CALCIO_ENT_poiss)
+# summary(ModeloBN_SIN_CALCIO_dummy)
+
+
+ModeloBN_SIN_CALCIO_factor= 
+  glm.nb(VENTAS~PRECIO_MEDIO_IMPUESTOS+DESCUENTO_MEDIO+
+        DIA_SEMANA+MES,
+      data=Ventas_SIN_CALCIO_ENT)
+# summary(ModeloBN_SIN_CALCIO_factor)
+```
+
+Se han obtenido resultados muy similares al resto:
+
+
+- Para ambos modelos podemos afirmar que el mes del año no influye en el volumen de ventaas
+
+- En este caso, para el modelo con variables factorizadas existen dos varaibles significativas que sea Domingo o Miércoles.
+
+- Sobredispersión del modelo: $\dfrac{D}{gl} \implies \dfrac{149.92}{132}=1.13>1$. Existe sobredispersión. Nota: estos grados de libertad son los del modelo con variables dummies, pero en el segundo modelo, el estadístico de desviación tiene 131 grados de libertad, y por tanto, el resultado es el mismo.
+
+
+
+El modelo seleccionado es el modelo que utiliza variable dummies, que nos da el menor valor del AIC, indicación de una mayor calidad del modelo estadístico.
+
+- $AIC_{dummies}=$ `r ModeloBN_SIN_CALCIO_dummy$aic`
+- $AIC_{factorizacion}=$ `r ModeloBN_SIN_CALCIO_factor$aic`
+
+
+
+
+
+
+Entrenamos el modelo seleccionado en los datos de entrenamiento haciendo uso de la función *predict*.
+
+```{r}
+PRED_VOL_VENTAS_SIN_CALCIO_BN=predict(ModeloBN_SIN_CALCIO_dummy, newdata = Ventas_SIN_CALCIO_TEST_poiss, type = "response")
+```
+
+
+
+
+
+
+```{r}
+
+RMSE_Ent_SC=rmse(Ventas_SIN_CALCIO_ENT_poiss$VENTAS,
+                 predict(ModeloBN_SIN_CALCIO_dummy, newdata = Ventas_SIN_CALCIO_ENT_poiss, type = "response"))
+
+R2_Ent_SC=RSQUARE(Ventas_SIN_CALCIO_ENT_poiss$VENTAS,
+                  predict(ModeloBN_SIN_CALCIO_dummy, newdata = Ventas_SIN_CALCIO_ENT_poiss, type = "response"))
+
+RMSE_Test_SC = rmse(Ventas_SIN_CALCIO_TEST_poiss$VENTAS,PRED_VOL_VENTAS_SIN_CALCIO_BN)
+R2_Test_SC =RSQUARE(Ventas_SIN_CALCIO_TEST_poiss$VENTAS,PRED_VOL_VENTAS_SIN_CALCIO_BN)
+
+DATOS_SC = c("Datos entrenamiento","Datos Test")
+R2_SC=c(R2_Ent_SC,R2_Test_SC)
+RMSE_SC=c(RMSE_Ent_SC,RMSE_Test_SC)
+
+cbind.data.frame(DATOS_SC,R2_SC,RMSE_SC) %>% 
+  kable(booktabs=TRUE) %>% 
+  kableExtra::kable_styling(latex_options = c("striped","HOLD_position") )
+```
+
+
+
+Este modelo no es capaz de explicar más que el `r R2_SC[2]`% de la variabilidad del volumen de ventas en los datos de testeo, explicando el `r R2_SC[1]`% de la variabilidad de ventas para los datos de entrenamiento. Los errores cuadráticos medios son muy elevados en comparación con el volumen de ventas que se está prediciendo.
+
+
+
+
+
+**Comparación de las predicciones**
+
+Mostramos un gráfico para comparar la predicción de ventas de la suma de productos con la suma de las predicciones de cada uno de los productos por separado:
+
+```{r}
+
+Fecha = Ventas_SIN_CALCIO_TEST_poiss$FECHA
+SumaPed = PRED_VOL_VENTAS_SIN_CALCIO_BN+PRED_VOL_VENTAS_CALCIO_BN
+PredSuma = PRED_VOL_VENTAS_TOTAL_BN
+
+
+Pred = c(SumaPed,PredSuma)
+Tipo =c(rep("Suma de la predicción",length(SumaPed)),rep("Predicción de la suma",length(PredSuma)))
+
+
+
+
+ggplot(cbind.data.frame(Pred,Tipo,Fecha) )+
+  geom_line(aes(x=Fecha, y = Pred, group=Tipo, colour=Tipo)  ) +
+  scale_x_date(date_labels = "%d %b %y",date_breaks = "15 days")+
+  labs(x="Día" , y = "Predicicón de ventas", caption = "Fuente: Elaboración propia con datos de ventas")+
+ theme_gray() +
+  theme(axis.text.x = element_text(angle = 45))+
+  ggtitle("Comparación del volumen de ventas")
+  
+
+
+```
+
+Se observa que la suma de las predicciones individuales de cada producto ofrece unos arroja unas ventas ligeramente superiores que en la predicción considerando las ventas de ambos productos.
+
+
+
+##### Conclusiones 
+
+
+
+- El modelo de regresión de Poisson no es adecuado para modelar el volumen de ventas diarias, debido a la gran sobredispersión existente en los datos
+- El mejor modelo de regresión Bonimial Negativa encontrado es para el volumen de ventas total, donde se consigue explicar un 37.73% de la variabilidad total de los datos. A pesar de ser el mejor, es un resultado bastante pobre.
+- El formato de los datos que nos ha proporcionado mejores modelos de regresión binomial es el de las variables dummies
+- Emplear un modelo de binomial negativa nos ha llevado a obtener mejores resultadaos, además de ser mas fiables y precisos que haciendo uso de la distribución de Poisson
+- Un posible motivo para no obtener buenos resultados es la limitación que existente en los datos, ya que únicamente tenemos datos de ventas para 181 días, y los modelos no consiguien "*aprender*" como es el comportamiento de venta en función de las diferentes variables temporales o el precio de venta de los productos.
 
 
 
@@ -505,7 +803,7 @@ plot(tsDiaSemanal_transf, main = "sqrt(Volumen total de venta diario)", xlab="Di
 
 Vamos a estudiar si el motivo de la no estacionalidad de los datos en media se debe a que se trata de un proceso integrado. Para ello, hacemos uso de la función de autocorrelación simple.
 
-```{r}
+```{r , fig.height=3}
 acf(tsDiaSemanal_transf, main="FAS de SQRT de Ventas diarias" , lag=50)
 ```
 
@@ -520,7 +818,7 @@ La FAS muestral decrece de lentamente en los retardos estacionales de período 7
 
 
 
-```{r echo=TRUE}
+```{r echo=TRUE, fig.height=3}
 tsDiaria_DifEst = diff(tsDiaSemanal_transf,lag=7,diff=1)
 acf(tsDiaria_DifEst, main="FAS de primera diferencia estacional", lag=50)
 ```
@@ -564,7 +862,7 @@ El p-valor del test= $0.01 < 0.05= \alpha$, y por tanto concluímos que no exist
 Trataremos de identificar la estructura ARIMA más adecuada para esta serie a través de la función de autocorrelación simple (FAC) y de la función de autocorrelación parcial (FAP). Determinar el modelo más adecuado consistirá en e identificar el orden de los procesos de medias móviles y autoregresivos de la componente estacional y la componente regular.
 
 
-```{r}
+```{r , fig.height=3}
 acf(tsDiaria_DifEst, main="FAS tras una diferencia estacional", lag=50)
 ```
 
@@ -576,7 +874,7 @@ acf(tsDiaria_DifEst, main="FAS tras una diferencia estacional", lag=50)
 Vamos a comprobar estos supuestos con la FAP.
 
 
-```{r}
+```{r , fig.height=3}
 
 pacf(tsDiaria_DifEst, main="FAP tras una diferencia estacional", lag=50)
 ```
@@ -742,4 +1040,9 @@ comparacion_moodelos %>%
 
 
 
-#
+
+
+
+
+
+
