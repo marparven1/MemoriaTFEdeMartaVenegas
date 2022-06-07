@@ -297,7 +297,6 @@ NUM_TRANSACCIONES_SC = as.data.frame(datset %>%
                                        dplyr::summarise(n()))$'n()'
 VolVentas_SIN_CALCIO_FECHA$NUM_TRANSACCIONES =NUM_TRANSACCIONES_SC
 VolVentas_SIN_CALCIO_FECHA=VolVentas_SIN_CALCIO_FECHA[,c(1,2,6,3:5)]
-
 ```
 
 
@@ -308,11 +307,11 @@ VolVentas_FECHA$MES         <- month(VolVentas_FECHA$FECHA)
 VolVentas_FECHA$DIA         <-   day(VolVentas_FECHA$FECHA) 
 VolVentas_FECHA$SEMANA_ANO <-   week(VolVentas_FECHA$FECHA) 
 VolVentas_FECHA$DIA_SEMANA <-   wday(VolVentas_FECHA$FECHA,week_start = 1 )
-VolVentas_FECHA$ANO <-       as.integer(VolVentas_FECHA$ANO)
-VolVentas_FECHA$MES <-       as.integer(VolVentas_FECHA$MES)
-VolVentas_FECHA$DIA <-       as.integer(VolVentas_FECHA$DIA)
-VolVentas_FECHA$SEMANA_ANO<- as.integer(VolVentas_FECHA$SEMANA_ANO)
-VolVentas_FECHA$DIA_SEMANA<- as.integer(VolVentas_FECHA$DIA_SEMANA) 
+VolVentas_FECHA$ANO <-       factor(VolVentas_FECHA$ANO)
+VolVentas_FECHA$MES <-       factor(VolVentas_FECHA$MES)
+VolVentas_FECHA$DIA <-       factor(VolVentas_FECHA$DIA)
+VolVentas_FECHA$SEMANA_ANO<- factor(VolVentas_FECHA$SEMANA_ANO)
+VolVentas_FECHA$DIA_SEMANA<- factor(VolVentas_FECHA$DIA_SEMANA) 
 
 # PROD CON CALCIO
 VolVentas_CALCIO_FECHA$ANO         <-  year(VolVentas_CALCIO_FECHA$FECHA) 
@@ -320,11 +319,11 @@ VolVentas_CALCIO_FECHA$MES         <- month(VolVentas_CALCIO_FECHA$FECHA)
 VolVentas_CALCIO_FECHA$DIA         <-   day(VolVentas_CALCIO_FECHA$FECHA) 
 VolVentas_CALCIO_FECHA$SEMANA_ANO <-   week(VolVentas_CALCIO_FECHA$FECHA) 
 VolVentas_CALCIO_FECHA$DIA_SEMANA <-   wday(VolVentas_CALCIO_FECHA$FECHA,week_start = 1 )
-VolVentas_CALCIO_FECHA$ANO <-       as.integer(VolVentas_CALCIO_FECHA$ANO)
-VolVentas_CALCIO_FECHA$MES <-       as.integer(VolVentas_CALCIO_FECHA$MES)
-VolVentas_CALCIO_FECHA$DIA <-       as.integer(VolVentas_CALCIO_FECHA$DIA)
-VolVentas_CALCIO_FECHA$SEMANA_ANO<- as.integer(VolVentas_CALCIO_FECHA$SEMANA_ANO)
-VolVentas_CALCIO_FECHA$DIA_SEMANA<- as.integer(VolVentas_CALCIO_FECHA$DIA_SEMANA)
+VolVentas_CALCIO_FECHA$ANO <-       factor(VolVentas_CALCIO_FECHA$ANO)
+VolVentas_CALCIO_FECHA$MES <-       factor(VolVentas_CALCIO_FECHA$MES)
+VolVentas_CALCIO_FECHA$DIA <-       factor(VolVentas_CALCIO_FECHA$DIA)
+VolVentas_CALCIO_FECHA$SEMANA_ANO<- factor(VolVentas_CALCIO_FECHA$SEMANA_ANO)
+VolVentas_CALCIO_FECHA$DIA_SEMANA<- factor(VolVentas_CALCIO_FECHA$DIA_SEMANA)
 
 # PROD SIN CALCIO
 VolVentas_SIN_CALCIO_FECHA$ANO         <-  year(VolVentas_SIN_CALCIO_FECHA$FECHA) 
@@ -332,14 +331,14 @@ VolVentas_SIN_CALCIO_FECHA$MES         <- month(VolVentas_SIN_CALCIO_FECHA$FECHA
 VolVentas_SIN_CALCIO_FECHA$DIA         <-   day(VolVentas_SIN_CALCIO_FECHA$FECHA) 
 VolVentas_SIN_CALCIO_FECHA$SEMANA_ANO <-   week(VolVentas_SIN_CALCIO_FECHA$FECHA) 
 VolVentas_SIN_CALCIO_FECHA$DIA_SEMANA <-   wday(VolVentas_SIN_CALCIO_FECHA$FECHA,week_start = 1 )
-VolVentas_SIN_CALCIO_FECHA$ANO <-       as.integer(VolVentas_SIN_CALCIO_FECHA$ANO)
-VolVentas_SIN_CALCIO_FECHA$MES <-       as.integer(VolVentas_SIN_CALCIO_FECHA$MES)
-VolVentas_SIN_CALCIO_FECHA$DIA <-       as.integer(VolVentas_SIN_CALCIO_FECHA$DIA)
-VolVentas_SIN_CALCIO_FECHA$SEMANA_ANO<- as.integer(VolVentas_SIN_CALCIO_FECHA$SEMANA_ANO)
-VolVentas_SIN_CALCIO_FECHA$DIA_SEMANA<- as.integer(VolVentas_SIN_CALCIO_FECHA$DIA_SEMANA)
+VolVentas_SIN_CALCIO_FECHA$ANO <-       factor(VolVentas_SIN_CALCIO_FECHA$ANO)
+VolVentas_SIN_CALCIO_FECHA$MES <-       factor(VolVentas_SIN_CALCIO_FECHA$MES)
+VolVentas_SIN_CALCIO_FECHA$DIA <-       factor(VolVentas_SIN_CALCIO_FECHA$DIA)
+VolVentas_SIN_CALCIO_FECHA$SEMANA_ANO<- factor(VolVentas_SIN_CALCIO_FECHA$SEMANA_ANO)
+VolVentas_SIN_CALCIO_FECHA$DIA_SEMANA<- factor(VolVentas_SIN_CALCIO_FECHA$DIA_SEMANA)
 ```
 
-Los conjuntos de datos para el entrenamiento de modelos de aprendizaje automático constan de las siguientes variables: fecha, ventas totales, número de transacciones, precio medio con impuestos, descuento medio, importe medio con impuestos, año, mes, día, semana del año y día de la semana.
+Los conjuntos de datos para el entrenamiento de modelos predictivos constan de las siguientes variables: fecha, precio medio con impuestos, descuento medio, importe medio con impuestos, año, mes, día, semana del año y día de la semana.
 
 
 
@@ -350,7 +349,7 @@ Para la creación de variables *dummy*, definimos una función *crea_col_dummy*,
 ```{r}
 VolVentas_FECHA_poiss           = VolVentas_FECHA
 VolVentas_CALCIO_FECHA_poiss    = VolVentas_CALCIO_FECHA
-VolVentas_SIN_CALCIO_FECHA_poiss=VolVentas_SIN_CALCIO_FECHA
+VolVentas_SIN_CALCIO_FECHA_poiss= VolVentas_SIN_CALCIO_FECHA
 ```
 
 
@@ -406,15 +405,15 @@ VolVentas_SIN_CALCIO_FECHA_poiss=mutate_at(VolVentas_SIN_CALCIO_FECHA_poiss, var
 Una vez tenemos los cuatro conjuntos de datos, tres con los correspondientes volúmenes de ventas diarios y el dataset inicial con el pre procesado necesario, procedemos a guardarlos en formato RData para poder acceder a ellos en cualquier momento que sea necesario.
 
 ```{r , echo=TRUE}
-# Guardamos el conjunto de datos final
-# save(dataset,file = "Datos/Dataset_Final.RData")
-# save(VolVentas_SIN_CALCIO_FECHA,file = "Datos/VENTAS_Dia_SCALCIO.RData")
-# save(VolVentas_CALCIO_FECHA,file = "Datos/VENTAS_Dia_CALCIO.RData")
-# save(VolVentas_FECHA,file = "Datos/VENTAS_Dia_TOTAL.RData")
-# 
-# save(VolVentas_FECHA_poiss,file = "Datos/VENTAS_Dia_TOTAL_poiss.RData")
-# save(VolVentas_CALCIO_FECHA_poiss,file = "Datos/VENTAS_Dia_CALCIO_poiss.RData")
-# save(VolVentas_SIN_CALCIO_FECHA_poiss,file = "Datos/VENTAS_Dia_SCALCIO_poiss.RData")
+#Guardamos el conjunto de datos final
+#save(dataset,file = "Datos/Dataset_Final.RData")
+#save(VolVentas_SIN_CALCIO_FECHA,file = "Datos/VENTAS_Dia_SCALCIO.RData")
+#save(VolVentas_CALCIO_FECHA,file = "Datos/VENTAS_Dia_CALCIO.RData")
+#save(VolVentas_FECHA,file = "Datos/VENTAS_Dia_TOTAL.RData")
+#
+#save(VolVentas_FECHA_poiss,file = "Datos/VENTAS_Dia_TOTAL_poiss.RData")
+#save(VolVentas_CALCIO_FECHA_poiss,file = "Datos/VENTAS_Dia_CALCIO_poiss.RData")
+#save(VolVentas_SIN_CALCIO_FECHA_poiss,file = "Datos/VENTAS_Dia_SCALCIO_poiss.RData")
 
 ```
 
@@ -739,6 +738,7 @@ par(mfrow=c(1,3))
 
 
 ```{r}
+VolVentas_FECHA=mutate_at(VolVentas_FECHA, vars("ANO","DIA","SEMANA_ANO","MES","DIA_SEMANA"  ), as.numeric)
 M = cor(VolVentas_FECHA[,-1])
 corrplot(M, method = "number",title = "Matriz de correlación",type = 'lower', diag = FALSE)
 ```

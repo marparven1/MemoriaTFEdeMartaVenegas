@@ -59,8 +59,11 @@ library(forecast) # Diagnosis del modelo
 
 ### Modelado
 
-A continuación, se expone la aplicación de los modelos predictivos estudiados con el objetivo de predecir la demanda de productos diaria a partir de las siguientes variables explicativas: número de transacciones, precio medio con impuestos, descuento medio, importe medio con impuestos, año, mes, día, semana del año y día de la semana.
+A continuación, se expone la aplicación de los modelos predictivos estudiados con el objetivo de predecir la demanda de productos diaria a partir de las siguientes variables explicativas: precio medio con impuestos, descuento medio, año, mes y día de la semana.
 Para los diferentes modelos entrenados, se recogerá su rendimiento para posteriormente compararlos y elegir el mejor modelo para predecir la demanda.
+
+
+
 
 #### Modelos estadísticos clásicos
 
