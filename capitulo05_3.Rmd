@@ -1,42 +1,51 @@
 ---
-author: "Nombre Completo Autor"
-date: "04/06/2022"
-header-includes: #allows you to add in your own Latex packages
-  - \usepackage{float} #use the 'float' package
-  - \floatplacement{figure}{H} #make every figure with caption = h
-documentclass: book
-forprint: true  # true: imprime a dos caras, false: libro digital
-fontsize: 12pt # 10pt,11pt
-geometry: margin = 2.5cm 
-bibliography: ["bib/library.bib", "bib/paquetes.bib"]
-# metodobib -> true: natbib (descomentar: citation_package: natbib) 
-#           -> false: pandoc (comentar: citation_package: natbib)
-metodobib: true
-#natbib: plainnat, abbrvnat, unsrtnat
-biblio-style: "plainnat"
-#Método 2 (pandoc): descomente una línea de las 2 siguientes en caso de usarlo
-csl: methods-in-ecology-and-evolution.csl      # no numera mejor en las citas
-#csl: acm-sig-proceedings-long-author-list.csl  # numera peor en las citas
-link-citations: yes
-output: 
-  pdf_document:
-    keep_tex: no
-    number_sections: yes
-    citation_package: natbib  # comentado usa: pandoc-citeproc
-    #toc: yes
-    fig_caption: yes
-    template: latex/templateMemoriaTFE.tex
-    includes:
-      #before_body: portadas/latex_paginatitulo_modTFE.tex
-      #in_header: latex/latex_preambulo.tex
-      #after_body: latex/latex_antes_enddoc.tex
+output: pdf_document
 ---
 
-```{r , echo=FALSE}
-knitr::opts_chunk$set(echo = FALSE , warning = FALSE , message = FALSE ,fig.pos = 'h',out.extra = '')
+
+```{r include=FALSE}
+knitr::opts_chunk$set(fig.path = 'figurasR/',
+                      echo = FALSE, warning = FALSE, message = FALSE,
+                      fig.pos="H",out.extra = '',fig.align="center",out.width="95%",
+                      cache=FALSE)
 ```
 
+
+
+
+<!-- \setcounter{chapter}{2} -->
+<!-- \setcounter{chapter}{2} escribir 2 para capítulo 3  -->
+<!-- \pagenumbering{arabic} -->
+
+\ifdefined\ifprincipal
+\else
+\setlength{\parindent}{1em}
+\pagestyle{fancy}
+\setcounter{tocdepth}{4}
+\tableofcontents
+<!-- \nocite{*} -->
+\fi
+
+\ifdefined\ifdoblecara
+\fancyhead{}{}
+\fancyhead[LE,RO]{\scriptsize\rightmark}
+\fancyfoot[LO,RE]{\scriptsize\slshape \leftmark}
+\fancyfoot[C]{}
+\fancyfoot[LE,RO]{\footnotesize\thepage}
+\else
+\fancyhead{}{}
+\fancyhead[RO]{\scriptsize\rightmark}
+\fancyfoot[LO]{\scriptsize\slshape \leftmark}
+\fancyfoot[C]{}
+\fancyfoot[RO]{\footnotesize\thepage}
+\fi
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+
+
 ```{r , message=FALSE , echo= FALSE}
+
 library(tidyverse)
 library(dplyr)
 library(kableExtra)
@@ -57,9 +66,26 @@ library(forecast) # Diagnosis del modelo
 
 
 
+
+```{r}
+load("Datos/VENTAS_Dia_CALCIO.RData")
+load("Datos/VENTAS_Dia_SCALCIO.RData")
+load("Datos/VENTAS_Dia_TOTAL.RData")
+```
+
+
 ### Modelado
 
 A continuación, se expone la aplicación de los modelos predictivos estudiados con el objetivo de predecir la demanda de productos diaria a partir de las siguientes variables explicativas: precio medio con impuestos, descuento medio, año, mes y día de la semana.
+
+Para cada algoritmo, se construirán tres modelos:
+
+- Predicción del volumen de total de ventas diario (producto con calcio y sin calcio)
+- Predicción del volumen de ventas diario para el producto con calcio
+- Predicción del volumen de ventas diario para el producto sin calcio
+
+Posteriormente, realizaremos una comparación de las predicciones de la suma de productos con la suma de las predicciones proporcionadas por cada modelo individual.
+
 Para los diferentes modelos entrenados, se recogerá su rendimiento para posteriormente compararlos y elegir el mejor modelo para predecir la demanda.
 
 
@@ -71,7 +97,7 @@ Para los diferentes modelos entrenados, se recogerá su rendimiento para posteri
 
 **Partición de los datos en los modelos de regresión**:
 
-Se ha tomado una partición de 80% 20% para datos de entrenamiento y testeo, con el objetivo de entrenar el modelo para posteriormente estudiar su rendimiento.
+Se ha tomado una partición de 80% 20% para datos de entrenamiento y testeo, con el objetivo de entrenar el modelo para posteriormente estudiar su rendimiento y capacidad de generalización.
 
 
 ```{r , echo=TRUE}
@@ -123,8 +149,31 @@ Ventas_SIN_CALCIO_TEST=VolVentas_SIN_CALCIO_FECHA[inditest,-c(3,6)]
 #### Técnicas de aprendizaje automático
 
 
+El objetivo del presente apartado es predecir el volumen de ventas haciendo uso de los siguientes algoritmos de regresión: máquinas de vector soporte (SVM), KNN y árboles de decisión, en particular XGBoost.
+Todos estos algoritmos serán aplicados haciendo uso de la función *train* de la librería *caret*. El principal objetivo de usar la misma función para todos los modelos es poder comparar el rendimiento de éstos y seleccionar el mejor algoritmo para predecir el volumen de ventas.
 
-```{r child = 'A_Automatico.Rmd'}
+
+Para el desarrollo de los modelos, haremos uso de los conjuntos de datos de `r nrow(VolVentas_CALCIO_FECHA)` filas generados en el apartado de pre-procesado y limpieza de los datos, siendo las variables predictoras las siguientes mostradas a continuación:
+
+- Precio medio con impuestos
+- Descuento medio aplicado
+- Año
+- Mes del año
+- Día de la semana
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r child = 'Modelado_A_Automatico.Rmd'}
 ```
 
 

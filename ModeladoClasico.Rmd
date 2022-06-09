@@ -1,43 +1,49 @@
 ---
-author: "Nombre Completo Autor"
-date: "27/10/2017"
-header-includes: #allows you to add in your own Latex packages
-  - \usepackage{float} #use the 'float' package
-  - \floatplacement{figure}{H} #make every figure with caption = h
-documentclass: book
-forprint: true  # true: imprime a dos caras, false: libro digital
-fontsize: 12pt # 10pt,11pt
-geometry: margin = 2.5cm 
-bibliography: ["bib/library.bib", "bib/paquetes.bib"]
-# metodobib -> true: natbib (descomentar: citation_package: natbib) 
-#           -> false: pandoc (comentar: citation_package: natbib)
-metodobib: true
-#natbib: plainnat, abbrvnat, unsrtnat
-biblio-style: "plainnat"
-#Método 2 (pandoc): descomente una línea de las 2 siguientes en caso de usarlo
-csl: methods-in-ecology-and-evolution.csl      # no numera mejor en las citas
-#csl: acm-sig-proceedings-long-author-list.csl  # numera peor en las citas
-link-citations: yes
-output: 
-  pdf_document:
-    keep_tex: no
-    number_sections: yes
-    citation_package: natbib  # comentado usa: pandoc-citeproc
-    #toc: yes
-    fig_caption: yes
-    template: latex/templateMemoriaTFE.tex
-    includes:
-      #before_body: portadas/latex_paginatitulo_modTFE.tex
-      #in_header: latex/latex_preambulo.tex
-      #after_body: latex/latex_antes_enddoc.tex
+output: pdf_document
 ---
 
 
 
-```{r , echo=FALSE}
-knitr::opts_chunk$set(echo = FALSE , warning = FALSE , message = FALSE,fig.pos = 'h',out.extra = '' )
+
+```{r include=FALSE}
+knitr::opts_chunk$set(fig.path = 'figurasR/',
+                      echo = FALSE, warning = FALSE, message = FALSE,
+                      fig.pos="H",out.extra = '',fig.align="center",out.width="95%",
+                      cache=FALSE)
+
 ```
 
+
+
+
+<!-- \setcounter{chapter}{2} -->
+<!-- \setcounter{chapter}{2} escribir 2 para capítulo 3  -->
+<!-- \pagenumbering{arabic} -->
+
+\ifdefined\ifprincipal
+\else
+\setlength{\parindent}{1em}
+\pagestyle{fancy}
+\setcounter{tocdepth}{4}
+\tableofcontents
+<!-- \nocite{*} -->
+\fi
+
+\ifdefined\ifdoblecara
+\fancyhead{}{}
+\fancyhead[LE,RO]{\scriptsize\rightmark}
+\fancyfoot[LO,RE]{\scriptsize\slshape \leftmark}
+\fancyfoot[C]{}
+\fancyfoot[LE,RO]{\footnotesize\thepage}
+\else
+\fancyhead{}{}
+\fancyhead[RO]{\scriptsize\rightmark}
+\fancyfoot[LO]{\scriptsize\slshape \leftmark}
+\fancyfoot[C]{}
+\fancyfoot[RO]{\footnotesize\thepage}
+\fi
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
 
 
 ```{r , message=FALSE , echo= FALSE}
@@ -142,7 +148,7 @@ Las variables explicativas son las siguientes:
 **Ventas totales**
 
 
-```{r , echo=TRUE }
+```{r , echo=TRUE   ,  out.width = '70%'}
 ModeloP_TOT_dummy = 
   glm(VENTAS~PRECIO_MEDIO_IMPUESTOS*DESCUENTO_MEDIO+
               (LUNES+MARTES+MIERCOLES+JUEVES+VIERNES+SABADO+DOMINGO)+
@@ -151,6 +157,8 @@ ModeloP_TOT_dummy =
       data=Ventas_TOTAL_ENT_poiss)
 summary(ModeloP_TOT_dummy)
 ```
+
+
 
 
 En la salida, podemos ver en la columna *estimate* la estimación de los coeficientes de regresión para las distintas variables, indicando, para las variables numérias, el cambio medio en el número de ventas que se produciría si aumentáramos en una unidad esa variable, y para las variables discretas, el cambio medio que provocaría en el número de ventas el que la variable tomara o no ese valor. También encontramos una columna para el error estándar, el valor del estadístico Z y el p-valor. Un p-valor menor que $\alpha = 0.05$ indicará que podemos considerar significativa esa variable de cara a predecir el volumen de ventas. Si por el contrario el p-valor es mayor que $\alpha$, concluiremos que dicha variable no influye en el volumen de ventasa.
@@ -232,7 +240,7 @@ cbind.data.frame(DATOS,R2,RMSE) %>%
   kableExtra::kable_styling(latex_options = c("striped","HOLD_position") )
 ```
 
-El modelo obtenido explica el `r round(100*R2_Ent,2)`% de la variabilidad total de los datos en el conjunto de entrenamiento, y el `r round(100*R2_Test,2)`% para los datos de testeo, no pudiendo considerar este como un buen modelo para explicar el volumen de ventas total.  El valor del error cuadrático medio indica que el modelo se va a equivocar de media, en `r round(RMSE[2])` ventas, que es un valor alto para el volumen de ventas que se está considerando, ya que hay días que se venden menos de 700 items.
+El modelo obtenido explica el `r round(100*R2_Ent,2)`% de la variabilidad total de los datos en el conjunto de entrenamiento y el `r round(100*R2_Test,2)`% para los datos de testeo, no pudiendo considerar este como un buen modelo para explicar el volumen de ventas total.  El valor del error cuadrático medio indica que el modelo se va a equivocar de media, en `r round(RMSE[2])` ventas, que es un valor alto para el volumen de ventas que se está considerando, ya que hay días que se venden menos de 700 items. El modelo no consigue generalizar correctamente.
 
 
 **Contraste de bondad de ajuste**
@@ -498,9 +506,10 @@ DATOS = c("Datos entrenamiento","Datos Test")
 R2=c(R2_Ent,R2_Test)
 RMSE=c(RMSE_Ent,RMSE_Test)
 
-cbind.data.frame(DATOS,R2,RMSE) %>% 
-  kable(booktabs=TRUE) %>% 
+Tabla1=cbind.data.frame(DATOS,R2,RMSE) %>% 
+  kable(booktabs=TRUE, col.names = c("Datos","R2","RMSE")) %>% 
   kableExtra::kable_styling(latex_options = c("striped","HOLD_position") )
+Tabla1
 ```
 
 El modelo obtenido explica el `r round(100*R2_Ent,2)`% de la variabilidad total de los datos en el conjunto de entrenamiento, y el `r round(100*R2_Test,2)`% para los datos de testeo.  El valor del error cuadrático medio indica que el modelo se va a equivocar de media, en `r round(RMSE[2])` ventas, que es un valor alto para el volumen de ventas que se está considerando, ya que hay días que se venden menos de 700 items.
@@ -569,9 +578,10 @@ DATOS_C = c("Datos entrenamiento","Datos Test")
 R2_C=c(R2_Ent_C,R2_Test_C)
 RMSE_C=c(RMSE_Ent_C,RMSE_Test_C)
 
-cbind.data.frame(DATOS_C,R2_C,RMSE_C) %>% 
-  kable(booktabs=TRUE) %>% 
+Tabla2= cbind.data.frame(DATOS_C,R2_C,RMSE_C) %>% 
+  kable(booktabs=TRUE, col.names = c("Datos","R2","RMSE")) %>% 
   kableExtra::kable_styling(latex_options = c("striped","HOLD_position") )
+Tabla2
 ```
 
 
@@ -649,24 +659,52 @@ DATOS_SC = c("Datos entrenamiento","Datos Test")
 R2_SC=c(R2_Ent_SC,R2_Test_SC)
 RMSE_SC=c(RMSE_Ent_SC,RMSE_Test_SC)
 
-cbind.data.frame(DATOS_SC,R2_SC,RMSE_SC) %>% 
-  kable(booktabs=TRUE) %>% 
+Tabla3= cbind.data.frame(DATOS_SC,R2_SC,RMSE_SC) %>% 
+  kable(booktabs=TRUE, col.names = c("Datos","R2","RMSE")) %>% 
   kableExtra::kable_styling(latex_options = c("striped","HOLD_position") )
+Tabla3
 ```
 
 
 
-Este modelo no es capaz de explicar más que el `r R2_SC[2]`% de la variabilidad del volumen de ventas en los datos de testeo, explicando el `r R2_SC[1]`% de la variabilidad de ventas para los datos de entrenamiento. Los errores cuadráticos medios son muy elevados en comparación con el volumen de ventas que se está prediciendo.
+Este modelo no es capaz de explicar más que el `r R2_SC[2]*100`% de la variabilidad del volumen de ventas en los datos de testeo, explicando el `r R2_SC[1]*100`% de la variabilidad de ventas para los datos de entrenamiento. Los errores cuadráticos medios son muy elevados en comparación con el volumen de ventas que se está prediciendo.
 
 
 
+**Comparación de las métricas obtenidas**
+
+A continuación, mostramos una comparación del rendimiento de los diferentes modelos:
+
+
+```{r}
+
+T1=cbind.data.frame(DATOS,R2,RMSE) 
+T2=cbind.data.frame(DATOS_C,R2_C,RMSE_C) 
+T3=cbind.data.frame(DATOS_SC,R2_SC,RMSE_SC)  
+
+colnames(T1) = c("Datos","R2","RMSE")
+colnames(T2) = c("Datos","R2","RMSE")
+colnames(T3) = c("Datos","R2","RMSE")
+
+rbind(T1,T2,T3) %>% 
+  kable(booktabs=TRUE) %>% 
+  kable_styling(latex_options = c("striped","hold_position")) %>% 
+  pack_rows("Suma de productos", 1, 2, latex_gap_space = "1em") %>% 
+    pack_rows("Producto con calcio", 3, 4, latex_gap_space = "1em") %>% 
+    pack_rows("Producto sin calcio", 5, 6, latex_gap_space = "1em")
+
+
+```
+
+
+Todos los modelos tienen un rendimiento similar y una capacidad de generalización similar.
 
 
 **Comparación de las predicciones**
 
 Mostramos un gráfico para comparar la predicción de ventas de la suma de productos con la suma de las predicciones de cada uno de los productos por separado:
 
-```{r}
+```{r , fig.height=4}
 
 Fecha = Ventas_SIN_CALCIO_TEST_poiss$FECHA
 SumaPed = PRED_VOL_VENTAS_SIN_CALCIO_BN+PRED_VOL_VENTAS_CALCIO_BN
@@ -682,13 +720,12 @@ Tipo =c(rep("Suma de la predicción",length(SumaPed)),rep("Predicción de la sum
 ggplot(cbind.data.frame(Pred,Tipo,Fecha) )+
   geom_line(aes(x=Fecha, y = Pred, group=Tipo, colour=Tipo)  ) +
   scale_x_date(date_labels = "%d %b %y",date_breaks = "15 days")+
+  scale_y_continuous(breaks=seq(0,3000,by=500))+
   labs(x="Día" , y = "Predicicón de ventas", caption = "Fuente: Elaboración propia con datos de ventas")+
  theme_gray() +
   theme(axis.text.x = element_text(angle = 45))+
   ggtitle("Comparación del volumen de ventas")
   
-
-
 ```
 
 Se observa que la suma de las predicciones individuales de cada producto ofrece unos arroja unas ventas ligeramente superiores que en la predicción considerando las ventas de ambos productos.
@@ -803,7 +840,7 @@ plot(tsDiaSemanal_transf, main = "sqrt(Volumen total de venta diario)", xlab="Di
 
 Vamos a estudiar si el motivo de la no estacionalidad de los datos en media se debe a que se trata de un proceso integrado. Para ello, hacemos uso de la función de autocorrelación simple.
 
-```{r , fig.height=3}
+```{r , fig.height=4}
 acf(tsDiaSemanal_transf, main="FAS de SQRT de Ventas diarias" , lag=50)
 ```
 
@@ -818,7 +855,7 @@ La FAS muestral decrece de lentamente en los retardos estacionales de período 7
 
 
 
-```{r echo=TRUE, fig.height=3}
+```{r echo=TRUE, fig.height=4}
 tsDiaria_DifEst = diff(tsDiaSemanal_transf,lag=7,diff=1)
 acf(tsDiaria_DifEst, main="FAS de primera diferencia estacional", lag=50)
 ```
@@ -862,7 +899,7 @@ El p-valor del test= $0.01 < 0.05= \alpha$, y por tanto concluímos que no exist
 Trataremos de identificar la estructura ARIMA más adecuada para esta serie a través de la función de autocorrelación simple (FAC) y de la función de autocorrelación parcial (FAP). Determinar el modelo más adecuado consistirá en e identificar el orden de los procesos de medias móviles y autoregresivos de la componente estacional y la componente regular.
 
 
-```{r , fig.height=3}
+```{r , fig.height=4}
 acf(tsDiaria_DifEst, main="FAS tras una diferencia estacional", lag=50)
 ```
 
@@ -874,7 +911,7 @@ acf(tsDiaria_DifEst, main="FAS tras una diferencia estacional", lag=50)
 Vamos a comprobar estos supuestos con la FAP.
 
 
-```{r , fig.height=3}
+```{r , fig.height=4}
 
 pacf(tsDiaria_DifEst, main="FAP tras una diferencia estacional", lag=50)
 ```

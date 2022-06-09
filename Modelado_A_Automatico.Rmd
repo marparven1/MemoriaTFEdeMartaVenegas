@@ -1,0 +1,1095 @@
+---
+output: pdf_document
+---
+
+
+```{r include=FALSE}
+knitr::opts_chunk$set(fig.path = 'figurasR/',
+                      echo = FALSE, warning = FALSE, message = FALSE,
+                      fig.pos="H",fig.align="center",out.width="95%",
+                      cache=FALSE)
+
+```
+
+
+
+
+
+<!-- \setcounter{chapter}{2} -->
+<!-- \setcounter{chapter}{2} escribir 2 para capítulo 3  -->
+<!-- \pagenumbering{arabic} -->
+
+\ifdefined\ifprincipal
+\else
+\setlength{\parindent}{1em}
+\pagestyle{fancy}
+\setcounter{tocdepth}{4}
+\tableofcontents
+<!-- \nocite{*} -->
+\fi
+
+\ifdefined\ifdoblecara
+\fancyhead{}{}
+\fancyhead[LE,RO]{\scriptsize\rightmark}
+\fancyfoot[LO,RE]{\scriptsize\slshape \leftmark}
+\fancyfoot[C]{}
+\fancyfoot[LE,RO]{\footnotesize\thepage}
+\else
+\fancyhead{}{}
+\fancyhead[RO]{\scriptsize\rightmark}
+\fancyfoot[LO]{\scriptsize\slshape \leftmark}
+\fancyfoot[C]{}
+\fancyfoot[RO]{\footnotesize\thepage}
+\fi
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+
+
+```{r}
+library(caret)
+library(dplyr)
+library(tidyverse)
+library(kableExtra)
+```
+
+```{r}
+load("Datos/VENTAS_Dia_CALCIO.RData")
+load("Datos/VENTAS_Dia_SCALCIO.RData")
+load("Datos/VENTAS_Dia_TOTAL.RData")
+```
+
+
+
+```{r}
+VolVentas_FECHA$MES=c(
+ifelse(VolVentas_FECHA$MES == 1 , "Enero",
+       ifelse(
+          VolVentas_FECHA$MES == 8 , "Agosto",
+       ifelse(
+         VolVentas_FECHA$MES == 9 , "Septiembre",
+         ifelse( VolVentas_FECHA$MES == 10 , "Octubre",
+                 ifelse(
+                    VolVentas_FECHA$MES == 11 , "Noviembre",
+                    ifelse(VolVentas_FECHA$MES == 12 , "Diciembre"," " ))))))
+)
+
+VolVentas_CALCIO_FECHA$MES=c(
+ifelse(VolVentas_CALCIO_FECHA$MES == 1 , "Enero",
+       ifelse(
+          VolVentas_CALCIO_FECHA$MES == 8 , "Agosto",
+       ifelse(
+         VolVentas_CALCIO_FECHA$MES == 9 , "Septiembre",
+         ifelse( VolVentas_CALCIO_FECHA$MES == 10 , "Octubre",
+                 ifelse(
+                    VolVentas_CALCIO_FECHA$MES == 11 , "Noviembre",
+                    ifelse(VolVentas_CALCIO_FECHA$MES == 12 , "Diciembre"," " ))))))
+)
+
+VolVentas_SIN_CALCIO_FECHA$MES=c(
+ifelse(VolVentas_SIN_CALCIO_FECHA$MES == 1 , "Enero",
+       ifelse(
+          VolVentas_SIN_CALCIO_FECHA$MES == 8 , "Agosto",
+       ifelse(
+         VolVentas_SIN_CALCIO_FECHA$MES == 9 , "Septiembre",
+         ifelse( VolVentas_SIN_CALCIO_FECHA$MES == 10 , "Octubre",
+                 ifelse(
+                    VolVentas_SIN_CALCIO_FECHA$MES == 11 , "Noviembre",
+                    ifelse(VolVentas_SIN_CALCIO_FECHA$MES == 12 , "Diciembre"," " ))))))
+)
+
+
+
+
+VolVentas_CALCIO_FECHA$DIA_SEMANA=c(
+                  ifelse(VolVentas_CALCIO_FECHA$DIA_SEMANA == 1 , "Lunes",
+                  ifelse(VolVentas_CALCIO_FECHA$DIA_SEMANA == 2 , "Martes",
+                  ifelse(VolVentas_CALCIO_FECHA$DIA_SEMANA== 3 , "Miércoles",
+                  ifelse(VolVentas_CALCIO_FECHA$DIA_SEMANA == 4 , "Jueves",
+                  ifelse(VolVentas_CALCIO_FECHA$DIA_SEMANA == 5 , "Viernes",
+                  ifelse(VolVentas_CALCIO_FECHA$DIA_SEMANA == 6 , "Sábado",
+                  ifelse(VolVentas_CALCIO_FECHA$DIA_SEMANA == 7 , "Domingo",""))))))))
+
+VolVentas_FECHA$DIA_SEMANA=c(
+                  ifelse(VolVentas_FECHA$DIA_SEMANA == 1 , "Lunes",
+                  ifelse(VolVentas_FECHA$DIA_SEMANA == 2 , "Martes",
+                  ifelse(VolVentas_FECHA$DIA_SEMANA== 3 , "Miércoles",
+                  ifelse(VolVentas_FECHA$DIA_SEMANA == 4 , "Jueves",
+                  ifelse(VolVentas_FECHA$DIA_SEMANA == 5 , "Viernes",
+                  ifelse(VolVentas_FECHA$DIA_SEMANA == 6 , "Sábado",
+                  ifelse(VolVentas_FECHA$DIA_SEMANA == 7 , "Domingo",""))))))))
+
+VolVentas_SIN_CALCIO_FECHA$DIA_SEMANA=c(
+                  ifelse(VolVentas_SIN_CALCIO_FECHA$DIA_SEMANA == 1 , "Lunes",
+                  ifelse(VolVentas_SIN_CALCIO_FECHA$DIA_SEMANA == 2 , "Martes",
+                  ifelse(VolVentas_SIN_CALCIO_FECHA$DIA_SEMANA== 3 , "Miércoles",
+                  ifelse(VolVentas_SIN_CALCIO_FECHA$DIA_SEMANA == 4 , "Jueves",
+                  ifelse(VolVentas_SIN_CALCIO_FECHA$DIA_SEMANA == 5 , "Viernes",
+                  ifelse(VolVentas_SIN_CALCIO_FECHA$DIA_SEMANA == 6 , "Sábado",
+                  ifelse(VolVentas_SIN_CALCIO_FECHA$DIA_SEMANA == 7 , "Domingo",""))))))))
+
+```
+
+
+```{r}
+VolumenVentas_TOTAL= VolVentas_FECHA[,-c(3,6,9,10)]
+VolumenVentas_CALCIO= VolVentas_CALCIO_FECHA[,-c(3,6,9,10)]
+VolumenVentas_SIN_CALCIO= VolVentas_SIN_CALCIO_FECHA[,-c(3,6,9,10)]
+```
+
+
+
+Nota: Para la replicación de los resultados, haremos uso de la función *trainControl*, donde emplearemos validación cruzada con 5 grupos y tres repeticiones. No utilizamos 10 grupos en la validación como es lo usual debido al pequeño número de registros que tenemos.
+
+
+```{r , echo=TRUE}
+# Para todos los modelos
+fitControl <- trainControl(method = "repeatedcv",
+                           number = 5, repeats = 3,
+                           verboseIter =FALSE )
+```
+
+
+
+De cara a utilizar optimizar el rendimiento de los algoritmos de regresión, haremos uso de la instrucción *preProcess* de la función *train* para escalar nuestras variables y que estén todas en la misma escala, con el objetivo de obtener mejores métricas y que los modelo minimicen el error al predecir las ventas.
+
+
+Al hacer la división de los datos para entrenar los modelos, se ha optado por no utilizar un conjunto de datos de validación ya que únicamente tenemos `r nrow(VolumenVentas_TOTAL)` registros y tener datos para validad los modelos supondría tener aún menos registros para entrenarlos, y por tanto, se obtendrían métricas menos precisas.
+
+
+##### Predicción del volumen total de ventas
+
+**División de los datos en entrenamiento y testeo**
+
+Se toma una partición de 80% 20% para los datos de entrenamiento y testeo:
+
+
+```{r echo=TRUE}
+set.seed(17)
+indices <- 
+  createDataPartition(VolumenVentas_TOTAL$VENTAS, p = .8, list = FALSE)
+
+# Datos de entrenamiento
+DatosEntreamiento_Total <- VolumenVentas_TOTAL[indices,]
+# Datos de testeo
+DatosTesteo_Total<-VolumenVentas_TOTAL[-indices,]
+```
+
+
+
+###### Algoritmo 1: Máquina de vector soporte (SVM)
+
+**Hiperparámetros del algoritmo**
+
+
+- Validación cruzada con 5 grupos y tres repeticiones
+- Parámetro de costo, C: malla de valores entre 1 y 3. Este parámetro penaliza al modelo por cometer errores. Cuanto mayor sea su valor, menos probable es que el algoritmo realice una predicción errónea.
+
+**Modelado**
+
+
+```{r , echo=TRUE}
+# Malla para hiperparámetros
+SVMGrid <-  expand.grid(C = seq(1,3, length = 20))
+
+set.seed(17)
+modeloSVM_T <- train(VENTAS~., 
+                data = DatosEntreamiento_Total[,-1], 
+                method = "svmLinear", 
+                trControl=fitControl, 
+                preProcess=c("center","scale"),
+                tuneGrid = SVMGrid)
+```
+
+
+**Resultados**
+
+El modelo tiene un costo *C* = `r modeloSVM_T$bestTune[1,1]` y nos ofrece las siguientes métricas:
+
+
+```{r}
+modeloSVM_T$results[modeloSVM_T$results[,1]==modeloSVM_T$bestTune[1,1],] %>% 
+  kableExtra::kable(booktabs=TRUE , caption = "Métricas del mejor modelo") %>% 
+  kableExtra::kable_styling(latex_options = "HOLD_position")
+
+
+
+```
+
+
+**Métricas del remuestreo:**
+
+```{r}
+modeloSVM_T$resample %>%  
+  kableExtra::kable(booktabs=TRUE , caption = "Métricas en el remuestreo",longtable = T) %>% 
+    kableExtra::kable_styling(latex_options = c("HOLD_position","striped","repeat_header") )
+```
+
+
+Observando los resultados, llegamos lo siguiente:
+
+- El modelo consigue explicar un `r round(100*modeloSVM_T$results[modeloSVM_T$results[,1]==modeloSVM_T$bestTune[1,1],][,3],2)` % de la variabilidad total del volumen de ventas para los datos de entrenamiento
+- El error cuadrático medio es de `r round(modeloSVM_T$results[modeloSVM_T$results[,1]==modeloSVM_T$bestTune[1,1],][,2],0)` unidades
+- Respecto al remuestreo en la validación cruzada, vemos que las métricas tienen mucha variabilidad, en algunas ocasiones se obtiene un $R^2$ por encima de 0.9 y en otras de 0.3. Ocurre lo mismo para el error cuadrático medio y el error medio absoluto, indicando que el modelo no es muy robusto y por tanto, las predicciones serán poco fiables.
+
+En el gráfico mostrado a continuación, se puede observar la variabilidad del error cuadrático medio en función del valor de costo:
+
+
+```{r , fig.height=3}
+plot(modeloSVM_T, main="Variabilidad del RMSE")
+```
+
+
+
+
+
+###### Algoritmo 2: K-Nearest Neighbor Regression (KNN)
+
+**Hiperparámetros del algoritmo**
+
+
+- Validación cruzada con 5 grupos y tres repeticiones
+- Número de vecinos, k: malla para 3,5,7 y 9
+
+**Modelado**
+
+
+```{r , echo=TRUE}
+# Malla para hiperparámetros
+KNNGrid <-  expand.grid(k = seq(3,9, by=2))
+
+set.seed(17)
+modeloKNN_T <- train(VENTAS~., 
+                data = DatosEntreamiento_Total[,-1], 
+                method = "knn", 
+                trControl=fitControl, 
+                preProcess=c("center","scale"),
+                tuneGrid = KNNGrid)
+```
+
+
+**Resultados**
+
+El con *K* = `r modeloKNN_T$bestTune[1,1]` vecinos es el que nos proporciona mejores métricas:
+
+
+```{r}
+modeloKNN_T$results[modeloKNN_T$results[,1]==modeloKNN_T$bestTune[1,1],] %>% 
+  kableExtra::kable(booktabs=TRUE , caption = "Métricas del mejor modelo") %>% 
+    kableExtra::kable_styling(latex_options = "HOLD_position")
+```
+
+
+**Métricas del remuestreo**
+
+```{r}
+modeloKNN_T$resample %>% 
+    kableExtra::kable(booktabs=TRUE , caption = "Métricas en el remuestreo",longtable = T) %>% 
+    kableExtra::kable_styling(latex_options = c("HOLD_position","striped","repeat_header") )
+```
+
+
+Observando los resultados, llegamos lo siguiente:
+
+- El modelo consigue explicar un `r round(100*modeloKNN_T$results[modeloKNN_T$results[,1]==modeloKNN_T$bestTune[1,1],][,3],2)` % de la variabilidad total del volumen de ventas para los datos de entrenamiento
+- El error cuadrático medio es de `r round(modeloSVM_T$results[modeloSVM_T$results[,1]==modeloSVM_T$bestTune[1,1],][,2],0)` unidades
+- Respecto al remuestreo en la validación cruzada, observamos que las métricas varían menos, pero en general son bastante pobres, llegando a obtener un $R^2$ mayor que 0.5 en varias ocasiones. 
+
+
+
+
+
+
+
+###### Algoritmo 3: Extreme Gradient Boosting (XGBoost)
+
+**Hiperparámetros del algoritmo**
+
+
+- Validación cruzada con 5 grupos y tres repeticiones
+- Número de pruebas de hiperparametrización (tune length): 5
+
+**Modelado**
+
+
+```{r , echo=TRUE}
+set.seed(17)
+modeloXGB_T <- train(VENTAS~., 
+                data = DatosEntreamiento_Total[,-1], 
+                method = "xgbTree",
+                trControl=fitControl, 
+                preProcess=c("center","scale"),
+                tuneLength=5,
+                verbosity=0)
+```
+
+
+**Resultados**
+
+
+A continuación mostramos la configuración del mejor modelo y las métricas obtenidas:
+
+
+
+```{r}
+modeloXGB_T$results[modeloXGB_T$results[,7]==modeloXGB_T$bestTune[1,1] & modeloXGB_T$results[,2]==modeloXGB_T$bestTune[1,2] & modeloXGB_T$results[,1]==modeloXGB_T$bestTune[1,3] & modeloXGB_T$results[,4]==modeloXGB_T$bestTune[1,5] & modeloXGB_T$results[,4]==modeloXGB_T$bestTune[1,5] & modeloXGB_T$results[,5]==modeloXGB_T$bestTune[1,6] & modeloXGB_T$results[,6]==modeloXGB_T$bestTune[1,7] ,] %>% 
+  kableExtra::kable(booktabs=TRUE , caption = "Métricas del mejor modelo") %>% 
+    kableExtra::kable_styling(latex_options = c("HOLD_position","scale_down","striped"))
+```
+
+
+**Métricas del remuestreo:**
+
+```{r}
+modeloXGB_T$resample  %>% 
+   kableExtra::kable(booktabs=TRUE , caption = "Métricas en el remuestreo",longtable = T) %>% 
+    kableExtra::kable_styling(latex_options = c("HOLD_position","striped","repeat_header") )
+```
+
+
+Con estos resultados:
+
+- El mejor modelo consigue explicar un `r round(100*modeloXGB_T$results[modeloXGB_T$results[,7]==modeloXGB_T$bestTune[1,1] & modeloXGB_T$results[,2]==modeloXGB_T$bestTune[1,2] & modeloXGB_T$results[,1]==modeloXGB_T$bestTune[1,3] & modeloXGB_T$results[,4]==modeloXGB_T$bestTune[1,5] & modeloXGB_T$results[,4]==modeloXGB_T$bestTune[1,5] & modeloXGB_T$results[,5]==modeloXGB_T$bestTune[1,6] & modeloXGB_T$results[,6]==modeloXGB_T$bestTune[1,7] ,][,9],2)` % de la variabilidad total del volumen de ventas para los datos de entrenamiento
+- El error cuadrático medio es de `r round(modeloXGB_T$results[modeloXGB_T$results[,7]==modeloXGB_T$bestTune[1,1] & modeloXGB_T$results[,2]==modeloXGB_T$bestTune[1,2] & modeloXGB_T$results[,1]==modeloXGB_T$bestTune[1,3] & modeloXGB_T$results[,4]==modeloXGB_T$bestTune[1,5] & modeloXGB_T$results[,4]==modeloXGB_T$bestTune[1,5] & modeloXGB_T$results[,5]==modeloXGB_T$bestTune[1,6] & modeloXGB_T$results[,6]==modeloXGB_T$bestTune[1,7] ,][,8],0)` unidades
+- Respecto al remuestreo en la validación cruzada, vuelve a ocurrir como con el primer modelo, existe mucha variabilidad en las métricas. En ocasiones el modelo predice muy bien el volumen de ventas y en otros casos lo hace bastante mal. El coeficiente de determinación varía entre un valor de `r modeloXGB_T$resample[,2] %>% min()` y `r modeloXGB_T$resample[,2] %>% max()`, por lo que las predicciones no tienen ninguna fiabilidad.
+
+
+
+
+
+
+###### Prueba de los modelos en los datos de testeo y elección del modelo final
+
+
+
+
+
+
+
+Configuramos los tres modelos con los mejores hiperparámetros y mostramos a continuación una tabla con el coeficiente de determinación y el error cuadrático medio de los tres modelos para poder seleccionar un modelo óptimo que aplicar a los datos de testeo:
+
+```{r}
+# SVM
+SVMGrid_Final <-  expand.grid(C =modeloSVM_T$bestTune[1,1] )
+set.seed(17)
+Mejor_modeloSVM_T <- train(VENTAS~., 
+                data = DatosEntreamiento_Total[,-1], 
+                method = "svmLinear", 
+                trControl=fitControl, 
+                preProcess=c("center","scale"),
+                tuneGrid = SVMGrid_Final)
+
+# KNN
+KNNGrid_Final <-  expand.grid(k = modeloKNN_T$bestTune[1,1])
+set.seed(17)
+Mejor_modeloKNN_T <- train(VENTAS~., 
+                data = DatosEntreamiento_Total[,-1], 
+                method = "knn", 
+                trControl=fitControl, 
+                preProcess=c("center","scale"),
+                tuneGrid = KNNGrid_Final)
+
+# XGBoost
+XGBGrid <-  expand.grid( nrounds= modeloXGB_T$bestTune[1,1],
+                         max_depth= modeloXGB_T$bestTune[1,2],
+                         eta= modeloXGB_T$bestTune[1,3],
+                         gamma=modeloXGB_T$bestTune[1,4] ,
+                         colsample_bytree=modeloXGB_T$bestTune[1,5] ,
+                         min_child_weight = modeloXGB_T$bestTune[1,6],
+                         subsample=modeloXGB_T$bestTune[1,7])
+set.seed(17)
+Mejor_modeloXGB_T <- train(VENTAS~., 
+                data = DatosEntreamiento_Total[,-1], 
+                method = "xgbTree",
+                trControl=fitControl, 
+                preProcess=c("center","scale"),
+                tuneGrid=XGBGrid,
+                verbosity=0)
+
+cbind.data.frame(Modelo=c("SVM","KNN","XGBoost"),
+  RMSE=c(Mejor_modeloSVM_T$results[,2],Mejor_modeloKNN_T$results[,2],Mejor_modeloXGB_T$results[,10]),
+R2=c(Mejor_modeloSVM_T$results[,3],Mejor_modeloKNN_T$results[,3],Mejor_modeloXGB_T$results[,9]) ) %>% 
+  kableExtra::kable(booktabs=TRUE) %>% 
+  kableExtra::kable_styling(latex_options = c("striped","HOLD_position" ) )
+
+```
+
+
+Observando la tabla, el modelo seleccionado para predecir el volumen total de ventas en los datos de testeo es el modelo XGBoost, ya que a pesar de tener un valor peor del coeficiente de determinación, es un modelo más robusto que el resto y por tanto las métricas serán más fiables y además tiene menor valor del RMSE.
+
+
+**Predicción del volumen total de ventas para el conjunto de datos test**
+
+
+
+```{r}
+PrediccionTotal = predict(Mejor_modeloXGB_T, newdata = DatosTesteo_Total)
+PrediccionTotal=round(PrediccionTotal)
+cbind.data.frame(DatosTesteo_Total$FECHA,PrediccionTotal,DatosTesteo_Total$VENTAS,abs(PrediccionTotal-DatosTesteo_Total$VENTAS)) %>% 
+  kable(booktabs=TRUE,caption = "XGBoost", longtable=TRUE,col.names = c("Fecha","Predicción","Valor real","Error absoluto en la predicción")) %>%
+  kable_styling(latex_options = c("striped","HOLD_position","repeat_header" ) )
+
+```
+
+
+Nota: se ha obtenido en una ocasión una predicción de ventas negativa.
+
+
+```{r}
+( PostResXGB <-  postResample(PrediccionTotal,DatosTesteo_Total$VENTAS ) ) 
+```
+
+
+El modelo *extreme gradient boosting* explica un `r round(PostResXGB[2]*100,2)`% de la variabilidad total del volumen de ventas en los datos de testeo. Esta métrica ha empeorado, indicando que el modelo no ha sabido generalizar bien con datos nuevos. El RMSE tiene un valor demasiado alto para el volumen de ventas diario.
+
+
+
+##### Predicción del volumen de ventas del producto con calcio
+
+
+
+**División de los datos en entrenamiento y testeo**
+
+ Tomamos una partición de 80% 20% para los datos de entrenamiento y testeo:
+
+
+```{r echo=TRUE}
+set.seed(17)
+indices <- 
+  createDataPartition(VolumenVentas_CALCIO$VENTAS, p = .8, list = FALSE)
+
+# Datos de entrenamiento
+DatosEntreamiento_Calcio <- VolumenVentas_CALCIO[indices,]
+# Datos de testeo
+DatosTesteo_Calcio<-VolumenVentas_CALCIO[-indices,]
+```
+
+
+
+###### Algoritmo 1: Máquina de vector soporte (SVM)
+
+**Hiperparámetros del algoritmo**
+
+
+- Validación cruzada con 5 grupos y tres repeticiones
+- Parámetro de costo, C: malla de valores entre 1 y 3. Este parámetro penaliza al modelo por cometer errores. Cuanto mayor sea su valor, menos probable es que el algoritmo realice una predicción errónea.
+
+**Modelado**
+
+
+```{r , echo=TRUE}
+# Malla para hiperparámetros
+# SVMGrid <-  expand.grid(C = seq(1,3, length = 20))
+
+set.seed(17)
+modeloSVM_C <- train(VENTAS~., 
+                data = DatosEntreamiento_Calcio[,-1], 
+                method = "svmLinear", 
+                trControl=fitControl, 
+                preProcess=c("center","scale"),
+                tuneGrid = SVMGrid)
+
+```
+
+
+**Resultados**
+
+El modelo con un costo *C* = `r modeloSVM_C$bestTune[1,1]` es el que proporciona mejores métricas:
+
+
+```{r}
+modeloSVM_C$results[modeloSVM_C$results[,1]==modeloSVM_C$bestTune[1,1],] %>% 
+  kableExtra::kable(booktabs=TRUE , caption = "Métricas del mejor modelo") %>% 
+    kableExtra::kable_styling(latex_options = "HOLD_position")
+```
+
+
+**Métricas del remuestreo:**
+
+```{r}
+modeloSVM_C$resample %>% 
+  kableExtra::kable(booktabs=TRUE , caption = "Métricas en el remuestreo",longtable = T) %>% 
+    kableExtra::kable_styling(latex_options = c("HOLD_position","striped","repeat_header") )
+```
+
+
+Observando los resultados, llegamos lo siguiente:
+
+- El modelo consigue explicar un `r round(100*modeloSVM_C$results[modeloSVM_C$results[,1]==modeloSVM_C$bestTune[1,1],][,3],2)` % de la variabilidad total del volumen de ventas para los datos de entrenamiento, siendo por tanto el mejor modelo obtenido hasta el momento
+- El error cuadrático medio es de `r round(modeloSVM_C$results[modeloSVM_C$results[,1]==modeloSVM_C$bestTune[1,1],][,2],0)` unidades
+- Respecto al remuestreo en la validación cruzada, la variabilidad no es tan evidente como para los otros modelos, pero si es considerable.
+
+En el gráfico mostrado a continuación, se muestra la variabilidad del error cuadrático medio en función del valor de costo:
+
+
+```{r , fig.height=3}
+plot(modeloSVM_C, main="Variabilidad del RMSE")
+```
+
+
+Del gráfico podemos concluir que a medida que el costo es mayor, el error cuadrático medio disminuye considerable.
+
+
+###### Algoritmo 2: K-Nearest Neighbor Regression (KNN)
+
+**Hiperparámetros del algoritmo**
+
+
+- Validación cruzada con 5 grupos y tres repeticiones
+- Número de vecinos, k: malla para 3,5,7 y 9
+
+**Modelado**
+
+
+```{r , echo=TRUE}
+# Malla para hiperparámetros
+# KNNGrid <-  expand.grid(k = seq(3,9, by=2))
+
+set.seed(17)
+modeloKNN_C <- train(VENTAS~., 
+                data = DatosEntreamiento_Calcio[,-1], 
+                method = "knn", 
+                trControl=fitControl, 
+                preProcess=c("center","scale"),
+                tuneGrid = KNNGrid)
+
+```
+
+
+**Resultados**
+
+El modelo que nos ofrece mejores métricas utiliza 3 vecinos, *K* = `r modeloKNN_C$bestTune[1,1]`:
+
+
+
+
+```{r}
+modeloKNN_C$results[modeloKNN_C$results[,1]==modeloKNN_C$bestTune[1,1],] %>% 
+  kableExtra::kable(booktabs=TRUE , caption = "Métricas del mejor modelo") %>% 
+    kableExtra::kable_styling(latex_options = "HOLD_position")
+```
+
+
+**Métricas del remuestreo:**
+
+```{r}
+modeloKNN_C$resample%>% 
+   kableExtra::kable(booktabs=TRUE , caption = "Métricas en el remuestreo",longtable = T) %>% 
+    kableExtra::kable_styling(latex_options = c("HOLD_position","striped","repeat_header") )
+```
+
+
+Observando los resultados, llegamos lo siguiente:
+
+- El mejor modelo consigue explicar un `r round(100*modeloKNN_C$results[modeloKNN_C$results[,1]==modeloKNN_C$bestTune[1,1],][,3],2)` % de la variabilidad total del volumen de ventas para los datos de entrenamiento
+- El error cuadrático medio del mejor modelo es de `r round(modeloSVM_C$results[modeloSVM_C$results[,1]==modeloSVM_C$bestTune[1,1],][,2],0)` unidades
+- Respecto al remuestreo en la validación cruzada, observamos que las métricas no presentan una gran variabilidad, pero son bastante pobres, llegando a obtener un $R^2$ = 0.47 en una ocasión, aunque también se obtienen valores menores que 0.1 en bastantes repeticiones.
+
+
+
+
+
+
+
+###### Algoritmo 3: Extreme Gradient Boosting (XGBoost)
+
+**Hiperparámetros del algoritmo**
+
+
+- Validación cruzada con 5 grupos y tres repeticiones
+- Número de pruebas de hiperparametrización (tune length): 5
+
+**Modelado**
+
+
+```{r , echo=TRUE}
+set.seed(17)
+modeloXGB_C <- train(VENTAS~., 
+                data = DatosEntreamiento_Calcio[,-1], 
+                method = "xgbTree",
+                trControl=fitControl, 
+                preProcess=c("center","scale"),
+                tuneLength=5,
+                verbosity=0)
+```
+
+
+**Resultados**
+
+A continuación mostramos la configuración del mejor modelo y las métricas obtenidas:
+
+
+
+
+
+
+```{r}
+modeloXGB_C$results[modeloXGB_C$results[,7]==modeloXGB_C$bestTune[1,1] & modeloXGB_C$results[,2]==modeloXGB_C$bestTune[1,2] & modeloXGB_C$results[,1]==modeloXGB_C$bestTune[1,3] & modeloXGB_C$results[,4]==modeloXGB_C$bestTune[1,5] & modeloXGB_C$results[,4]==modeloXGB_C$bestTune[1,5] & modeloXGB_C$results[,5]==modeloXGB_C$bestTune[1,6] & modeloXGB_C$results[,6]==modeloXGB_C$bestTune[1,7] ,] %>% 
+  kableExtra::kable(booktabs=TRUE , caption = "Métricas del mejor modelo") %>% 
+    kableExtra::kable_styling(latex_options = c("HOLD_position","scale_down","striped"))
+```
+
+
+**Métricas del remuestreo:**
+
+```{r}
+modeloXGB_C$resample%>% 
+  kableExtra::kable(booktabs=TRUE , caption = "Métricas en el remuestreo",longtable = T) %>% 
+    kableExtra::kable_styling(latex_options = c("HOLD_position","striped","repeat_header") )
+```
+
+
+Observando los resultados, llegamos lo siguiente:
+
+- El mejor modelo consigue explicar un `r round(100*modeloXGB_C$results[modeloXGB_C$results[,7]==modeloXGB_C$bestTune[1,1] & modeloXGB_C$results[,2]==modeloXGB_C$bestTune[1,2] & modeloXGB_C$results[,1]==modeloXGB_C$bestTune[1,3] & modeloXGB_C$results[,4]==modeloXGB_C$bestTune[1,5] & modeloXGB_C$results[,4]==modeloXGB_C$bestTune[1,5] & modeloXGB_C$results[,5]==modeloXGB_C$bestTune[1,6] & modeloXGB_C$results[,6]==modeloXGB_C$bestTune[1,7] ,][,9],2)` % de la variabilidad total del volumen de ventas para los datos de entrenamiento
+- El error cuadrático medio es de `r round(modeloXGB_C$results[modeloXGB_C$results[,7]==modeloXGB_C$bestTune[1,1] & modeloXGB_C$results[,2]==modeloXGB_C$bestTune[1,2] & modeloXGB_C$results[,1]==modeloXGB_C$bestTune[1,3] & modeloXGB_C$results[,4]==modeloXGB_C$bestTune[1,5] & modeloXGB_C$results[,4]==modeloXGB_C$bestTune[1,5] & modeloXGB_C$results[,5]==modeloXGB_C$bestTune[1,6] & modeloXGB_C$results[,6]==modeloXGB_C$bestTune[1,7] ,][,8],0)` unidades
+- Respecto al remuestreo en la validación cruzada, se trata de un modelo bastante robusto con métricas que no oscilan tanto como en los demás modelos. El coeficiente de determinación varía entre un valor de `r modeloXGB_C$resample[,2] %>% min()` y `r modeloXGB_C$resample[,2] %>% max()`, por lo que las predicciones serán más fiables que en el resto de modelos.
+
+
+
+
+
+
+###### Prueba de los modelos en los datos de testeo y elección del modelo final
+
+
+
+
+
+
+
+Configuramos los tres modelos con los mejores hiperparámetros y mostramos a continuación una tabla con el coeficiente de determinación y el error cuadrático medio de los tres modelos para poder seleccionar un modelo óptimo que aplicar a los datos de testeo:
+
+```{r}
+# SVM
+SVMGrid_Final_C <-  expand.grid(C =modeloSVM_C$bestTune[1,1] )
+set.seed(17)
+Mejor_modeloSVM_C <- train(VENTAS~., 
+                data = DatosEntreamiento_Calcio[,-1], 
+                method = "svmLinear", 
+                trControl=fitControl, 
+                preProcess=c("center","scale"),
+                tuneGrid = SVMGrid_Final_C)
+
+# KNN
+KNNGrid_Final_C <-  expand.grid(k = modeloKNN_C$bestTune[1,1])
+set.seed(17)
+Mejor_modeloKNN_C <- train(VENTAS~., 
+                data = DatosEntreamiento_Calcio[,-1],
+                method = "knn", 
+                trControl=fitControl, 
+                preProcess=c("center","scale"),
+                tuneGrid = KNNGrid_Final_C)
+
+# XGBoost
+XGBGrid_C <-  expand.grid( nrounds= modeloXGB_C$bestTune[1,1],
+                         max_depth= modeloXGB_C$bestTune[1,2],
+                         eta= modeloXGB_C$bestTune[1,3],
+                         gamma=modeloXGB_C$bestTune[1,4] ,
+                         colsample_bytree=modeloXGB_C$bestTune[1,5] ,
+                         min_child_weight = modeloXGB_C$bestTune[1,6],
+                         subsample=modeloXGB_C$bestTune[1,7])
+set.seed(17)
+Mejor_modeloXGB_C <- train(VENTAS~., 
+                data = DatosEntreamiento_Calcio[,-1], 
+                method = "xgbTree",
+                trControl=fitControl, 
+                preProcess=c("center","scale"),
+                tuneGrid=XGBGrid_C,
+                verbosity=0)
+
+cbind.data.frame(Modelo=c("SVM","KNN","XGBoost"),
+  RMSE=c(Mejor_modeloSVM_C$results[,2],Mejor_modeloKNN_C$results[,2],Mejor_modeloXGB_C$results[,10]),
+R2=c(Mejor_modeloSVM_C$results[,3],Mejor_modeloKNN_C$results[,3],Mejor_modeloXGB_C$results[,9]) ) %>% 
+  kableExtra::kable(booktabs=TRUE) %>% 
+  kableExtra::kable_styling(latex_options = c("striped","HOLD_position" ) )
+
+```
+
+
+Observando la tabla, el modelo seleccionado para predecir el volumen de ventas para el producto con calcio en los datos de testeo es de nuevo el arbol de regresión XGBoost, ya que ambas métricas se obtienen mejores resultados.
+
+
+
+
+**Predicción del volumen total de ventas para el conjunto de datos test**
+
+
+
+```{r}
+PrediccionCalcio = predict(Mejor_modeloXGB_C, newdata = DatosTesteo_Calcio)
+PrediccionCalcio=round(PrediccionCalcio)
+cbind.data.frame(DatosTesteo_Calcio$FECHA,PrediccionCalcio,DatosTesteo_Calcio$VENTAS,abs(PrediccionCalcio-DatosTesteo_Calcio$VENTAS)) %>% 
+  kable(booktabs=TRUE,longtable=T,caption = "SVM", col.names = c("Fecha","Predicción","Valor real","Error absoluto en la predicción")) %>%
+  kable_styling(latex_options = c("striped","HOLD_position","repeat_header" ) )
+
+```
+
+
+Nota: se ha obtenido en una ocasión una predicción de ventas negativa.
+
+
+
+
+```{r}
+
+
+( PostResXGB_C <-  postResample(PrediccionCalcio,DatosTesteo_Calcio$VENTAS ) ) 
+```
+
+
+El modelo *XGBoost* explica un `r round(PostResXGB_C[2]*100,2)`% de la variabilidad total del volumen de ventas en los datos de testeo. Esta métrica ha empeorado considerablemente con respecto al entrenamiento en los datos de testeo, indicando que el modelo no ha sabido generalizar bien con datos nuevos. El RMSE tiene un valor demasiado alto para el volumen de ventas diario.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+##### Predicción del volumen de ventas del producto sin calcio
+
+
+
+
+
+**División de los datos en entrenamiento y testeo**
+
+Se ha tomado una partición de 80% 20% para los datos de entrenamiento y testeo:
+
+
+```{r echo=TRUE}
+set.seed(17)
+indices <- 
+  createDataPartition(VolumenVentas_SIN_CALCIO$VENTAS, p = .8, list = FALSE)
+
+# Datos de entrenamiento
+DatosEntreamiento_SinCalcio <- VolumenVentas_SIN_CALCIO[indices,]
+# Datos de testeo
+DatosTesteo_SinCalcio<-VolumenVentas_SIN_CALCIO[-indices,]
+```
+
+
+
+###### Algoritmo 1: Máquina de vector soporte (SVM)
+
+**Hiperparámetros del algoritmo**
+
+
+- Validación cruzada con 5 grupos y tres repeticiones
+- Parámetro de costo, C: malla de valores entre 1 y 3. Este parámetro penaliza al modelo por cometer errores. Cuanto mayor sea su valor, menos probable es que el algoritmo realice una predicción errónea.
+
+**Modelado**
+
+
+```{r , echo=TRUE}
+# Malla para hiperparámetros
+# SVMGrid <-  expand.grid(C = seq(1,3, length = 20))
+
+set.seed(17)
+modeloSVM_SC <- train(VENTAS~., 
+                data = DatosEntreamiento_SinCalcio[,-1], 
+                method = "svmLinear", 
+                trControl=fitControl, 
+                preProcess=c("center","scale"),
+                tuneGrid = SVMGrid)
+```
+
+
+**Resultados**
+
+El modelo que nos ofrece mejores métricas tiene un costo, *C* = `r modeloSVM_SC$bestTune[1,1]`:
+
+
+```{r}
+modeloSVM_SC$results[modeloSVM_SC$results[,1]==modeloSVM_SC$bestTune[1,1],] %>% 
+  kableExtra::kable(booktabs=TRUE , caption = "Métricas del mejor modelo") %>% 
+    kableExtra::kable_styling(latex_options = "HOLD_position")
+```
+
+
+**Métricas del remuestreo:**
+
+```{r}
+modeloSVM_SC$resample%>% 
+  kableExtra::kable(booktabs=TRUE , caption = "Métricas en el remuestreo",longtable = T) %>% 
+    kableExtra::kable_styling(latex_options = c("HOLD_position","striped","repeat_header") )
+```
+
+
+Observando los resultados, llegamos lo siguiente:
+
+- El modelo consigue explicar un `r round(100*modeloSVM_SC$results[modeloSVM_SC$results[,1]==modeloSVM_SC$bestTune[1,1],][,3],2)` % de la variabilidad total del volumen de ventas para los datos de entrenamiento
+- El error cuadrático medio es de `r round(modeloSVM_SC$results[modeloSVM_SC$results[,1]==modeloSVM_SC$bestTune[1,1],][,2],0)` unidades
+- Respecto al remuestreo en la validación cruzada, la variabilidad no es tan evidente como para los otros modelos, pero si es considerable.
+
+En el gráfico mostrado a continuación, se muestra la variabilidad del error cuadrático medio en función del valor de costo:
+
+
+```{r , fig.height=3}
+plot(modeloSVM_SC, main="Variabilidad del RMSE")
+```
+
+
+
+
+
+###### Algoritmo 2: K-Nearest Neighbor Regression (KNN)
+
+**Hiperparámetros del algoritmo**
+
+
+- Validación cruzada con 5 grupos y tres repeticiones
+- Número de vecinos, k: malla para 3,5,7 y 9
+
+**Modelado**
+
+
+```{r , echo=TRUE}
+# Malla para hiperparámetros
+# KNNGrid <-  expand.grid(k = seq(3,9, by=2))
+
+set.seed(17)
+modeloKNN_SC <- train(VENTAS~., 
+                data = DatosEntreamiento_SinCalcio[,-1], 
+                method = "knn", 
+                trControl=fitControl, 
+                preProcess=c("center","scale"),
+                tuneGrid = KNNGrid)
+```
+
+
+**Resultados**
+
+El modelo que nos ofrece mejores métricas utiliza 3 vecinos, *K* = `r modeloKNN_SC$bestTune[1,1]`:
+
+
+
+
+```{r}
+modeloKNN_SC$results[modeloKNN_SC$results[,1]==modeloKNN_SC$bestTune[1,1],] %>% 
+  kableExtra::kable(booktabs=TRUE , caption = "Métricas del mejor modelo") %>% 
+    kableExtra::kable_styling(latex_options = "HOLD_position")
+```
+
+
+**Métricas del remuestreo:**
+
+```{r}
+modeloKNN_SC$resample%>% 
+   kableExtra::kable(booktabs=TRUE , caption = "Métricas en el remuestreo",longtable = T) %>% 
+    kableExtra::kable_styling(latex_options = c("HOLD_position","striped","repeat_header") )
+```
+
+
+Observando los resultados, llegamos lo siguiente:
+
+- El mejor modelo consigue explicar un `r round(100*modeloKNN_SC$results[modeloKNN_SC$results[,1]==modeloKNN_SC$bestTune[1,1],][,3],2)` % de la variabilidad total del volumen de ventas para los datos de entrenamiento
+- El error cuadrático medio del mejor modelo es de `r round(modeloKNN_SC$results[modeloKNN_SC$results[,1]==modeloKNN_SC$bestTune[1,1],][,1],0)` unidades
+- Respecto al remuestreo en la validación cruzada, observamos que las métricas no presentan una gran variabilidad, pero son bastante pobres, llegando a obtener un $R^2$ mayor que 0.60 en una ocasión, aunque también se obtienen valores menores que 0.1 en bastantes iteracciones.
+
+
+
+
+
+
+
+###### Algoritmo 3: Extreme Gradient Boosting (XGBoost)
+
+**Hiperparámetros del algoritmo**
+
+
+- Validación cruzada con 5 grupos y tres repeticiones
+- Número de pruebas de hiperparametrización (tune length): 5
+
+**Modelado**
+
+
+```{r , echo=TRUE}
+set.seed(17)
+modeloXGB_SC <- train(VENTAS~., 
+                data = DatosEntreamiento_SinCalcio[,-1], 
+                method = "xgbTree",
+                trControl=fitControl, 
+                preProcess=c("center","scale"),
+                tuneLength=5,
+                verbosity=0)
+```
+
+
+**Resultados**
+
+A continuación mostramos la configuración del mejor modelo y las métricas obtenidas:
+
+
+
+
+```{r}
+modeloXGB_SC$results[modeloXGB_SC$results[,7]==modeloXGB_SC$bestTune[1,1] & modeloXGB_SC$results[,2]==modeloXGB_SC$bestTune[1,2] & modeloXGB_SC$results[,1]==modeloXGB_SC$bestTune[1,3] & modeloXGB_SC$results[,4]==modeloXGB_SC$bestTune[1,5] & modeloXGB_SC$results[,4]==modeloXGB_SC$bestTune[1,5] & modeloXGB_SC$results[,5]==modeloXGB_SC$bestTune[1,6] & modeloXGB_SC$results[,6]==modeloXGB_SC$bestTune[1,7] ,] %>% 
+  kableExtra::kable(booktabs=TRUE , caption = "Métricas del mejor modelo") %>% 
+    kableExtra::kable_styling(latex_options = c("HOLD_position","scale_down","striped"))
+```
+
+
+**Métricas del remuestreo:**
+
+```{r}
+modeloXGB_SC$resample%>% 
+ kableExtra::kable(booktabs=TRUE , caption = "Métricas en el remuestreo",longtable = T) %>% 
+    kableExtra::kable_styling(latex_options = c("HOLD_position","striped","repeat_header") )
+```
+
+
+Observando los resultados, llegamos lo siguiente:
+
+- El mejor modelo consigue explicar un `r round(100*modeloXGB_SC$results[modeloXGB_SC$results[,7]==modeloXGB_SC$bestTune[1,1] & modeloXGB_SC$results[,2]==modeloXGB_SC$bestTune[1,2] & modeloXGB_SC$results[,1]==modeloXGB_SC$bestTune[1,3] & modeloXGB_SC$results[,4]==modeloXGB_SC$bestTune[1,5] & modeloXGB_SC$results[,4]==modeloXGB_SC$bestTune[1,5] & modeloXGB_SC$results[,5]==modeloXGB_SC$bestTune[1,6] & modeloXGB_SC$results[,6]==modeloXGB_SC$bestTune[1,7] ,][,9],2)` % de la variabilidad total del volumen de ventas para los datos de entrenamiento
+- El error cuadrático medio es de `r round(modeloXGB_SC$results[modeloXGB_SC$results[,7]==modeloXGB_SC$bestTune[1,1] & modeloXGB_SC$results[,2]==modeloXGB_SC$bestTune[1,2] & modeloXGB_SC$results[,1]==modeloXGB_SC$bestTune[1,3] & modeloXGB_SC$results[,4]==modeloXGB_SC$bestTune[1,5] & modeloXGB_SC$results[,4]==modeloXGB_SC$bestTune[1,5] & modeloXGB_SC$results[,5]==modeloXGB_SC$bestTune[1,6] & modeloXGB_SC$results[,6]==modeloXGB_SC$bestTune[1,7] ,][,8],0)` unidades
+- Respecto al remuestreo en la validación cruzada, se trata de un modelo robusto, ya que las métricas no oscilan tanto como en el resto de modelos. El coeficiente de determinación varía entre un valor de `r modeloXGB_SC$resample[,2] %>% min()` y `r modeloXGB_SC$resample[,2] %>% max()` por lo que las predicciones serán algo más robustas, a pesar de no tener un valor de $R^2$ especialmente elevado.
+
+
+
+
+
+
+###### Prueba de los modelos en los datos de testeo y elección del modelo final
+
+
+
+
+
+
+
+Configuramos los tres modelos con los mejores hiperparámetros y mostramos a continuación una tabla con el coeficiente de determinación y el error cuadrático medio de los tres modelos para poder seleccionar un modelo óptimo que aplicar a los datos de testeo:
+
+```{r}
+# SVM
+SVMGrid_Final_SC <-  expand.grid(C =modeloSVM_SC$bestTune[1,1] )
+set.seed(17)
+Mejor_modeloSVM_SC <- train(VENTAS~., 
+                data = DatosEntreamiento_SinCalcio[,-1], 
+                method = "svmLinear", 
+                trControl=fitControl, 
+                preProcess=c("center","scale"),
+                tuneGrid = SVMGrid_Final_SC)
+
+# KNN
+KNNGrid_Final_SC <-  expand.grid(k = modeloKNN_SC$bestTune[1,1])
+set.seed(17)
+Mejor_modeloKNN_SC <- train(VENTAS~., 
+                data = DatosEntreamiento_SinCalcio[,-1], 
+                method = "knn", 
+                trControl=fitControl, 
+                preProcess=c("center","scale"),
+                tuneGrid = KNNGrid_Final_SC)
+
+# XGBoost
+XGBGrid_SC <-  expand.grid( nrounds= modeloXGB_SC$bestTune[1,1],
+                         max_depth= modeloXGB_SC$bestTune[1,2],
+                         eta= modeloXGB_SC$bestTune[1,3],
+                         gamma=modeloXGB_SC$bestTune[1,4] ,
+                         colsample_bytree=modeloXGB_SC$bestTune[1,5] ,
+                         min_child_weight = modeloXGB_SC$bestTune[1,6],
+                         subsample=modeloXGB_SC$bestTune[1,7])
+set.seed(17)
+Mejor_modeloXGB_SC <- train(VENTAS~., 
+                data = DatosEntreamiento_SinCalcio[,-1], 
+                method = "xgbTree",
+                trControl=fitControl, 
+                preProcess=c("center","scale"),
+                tuneGrid=XGBGrid_SC,
+                verbosity=0)
+
+cbind.data.frame(Modelo=c("SVM","KNN","XGBoost"),
+  RMSE=c(Mejor_modeloSVM_SC$results[,2],Mejor_modeloKNN_SC$results[,2],Mejor_modeloXGB_SC$results[,10]),
+R2=c(Mejor_modeloSVM_SC$results[,3],Mejor_modeloKNN_SC$results[,3],Mejor_modeloXGB_SC$results[,9]) ) %>% 
+  kableExtra::kable(booktabs=TRUE) %>% 
+  kableExtra::kable_styling(latex_options = c("striped","HOLD_position" ) )
+
+```
+
+
+Observando la tabla, el modelo seleccionado para predecir el volumen de ventas para el producto con sin calcio en los datos de testeo es el modelo XGBoost, ya que a pesar de obtener un valor del coeficiente de correlación ligeramente peor, se trata de un modelo más robusto, y por tanto las métricas serán más fiables. Además, el valor del RMSE es mejor.
+
+
+
+
+
+
+**Predicción del volumen total de ventas para el conjunto de datos test**
+
+
+
+```{r}
+PrediccionSinCalcio = predict(Mejor_modeloSVM_SC, newdata = DatosTesteo_SinCalcio)
+PrediccionSinCalcio=round(PrediccionSinCalcio)
+cbind.data.frame(DatosTesteo_SinCalcio$FECHA,PrediccionSinCalcio,DatosTesteo_SinCalcio$VENTAS,abs(PrediccionSinCalcio-DatosTesteo_SinCalcio$VENTAS)) %>% 
+  kable(booktabs=TRUE,caption = "XGBoost",longtable=TRUE, col.names = c("Fecha","Predicción","Valor real","Error absoluto en la predicción")) %>%
+  kable_styling(latex_options = c("striped","HOLD_position","repeat_header" ) )
+
+```
+
+
+Nota: se ha obtenido en dos ocasiones una  predicción de ventas negativa.
+
+
+```{r}
+PostResXGB_SC<- postResample(PrediccionSinCalcio,DatosTesteo_SinCalcio$VENTAS)
+```
+
+
+
+El modelo *XGBOost* explica un `r round(PostResXGB_SC[2]*100,2)`% de la variabilidad total del volumen de ventas en los datos de testeo. El resultado obtenido es bastante óptimo y el es el mejor de todo el modelado. El modelo ha sabido generalizar bastante bien con datos nuevos. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+##### Comparación de resultados del modelado 
+
+
+En la tabla mostrada a continuación se observan las métricas obtenidas trás entrenar los modelos en los correspondientes datasets de testeo:
+
+
+
+
+
+```{r}
+cbind(Modelo= c("Suma de productos","Producto con calcio","Producto sin calcio"),
+      rbind(
+round(postResample(PrediccionTotal,DatosTesteo_Total$VENTAS ),3),
+round(postResample(PrediccionCalcio,DatosTesteo_Calcio$VENTAS ),3),
+round(postResample(PrediccionSinCalcio,DatosTesteo_SinCalcio$VENTAS ) ,3) )) %>% 
+  kable(booktabs=TRUE, caption = "Algoritmo XGBoost") %>% 
+    kable_styling(latex_options = c("striped","hold_position")) 
+```
+
+
+Con gran diferencia, el algoritmo que mejor ha sabido generalizar ha sido el correspondiente al producto sin calcio, que explica más del 80% de la variabilidad total del volumen de ventas, lo cual es buen buen resultado.
+Para el resto de modelos, no se han obtenido buenas métricas, ya que en ningún caso llegamos a explicar ni el 40% de la variabilidad total. Los valores de RMSE también evidencian que el modelo no es bueno, ya que son valores muy altos en comparación con el volumen total de ventas diario correspondiente.
+
+
+
+
+Nota: No se ha comprarado la predicción de la suma con la suma de las predicciones debido a que para la partición de los datos, se hace uso de la función *createDataPartition*, que tiene un argumento p donde se introduce la proporción del total de datos que se dedicarán a entrenar el modelo. Esta función crea particiones balanceadas de los datos, por lo que los índices que son generados difieren para los diferentes conjuntos de datos. Como la proporción de venta y el comportamiento de ésta no es el mismo para cada producto individual y en la suma de ventas, los índices no son los mismos. Es este el motivo por el cual únicamente evaluamos el rendimiento y la capacidad de generalización de los tres modelos por separado.
+
+

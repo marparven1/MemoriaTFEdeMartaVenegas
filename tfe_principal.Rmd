@@ -54,7 +54,7 @@ knitr::opts_chunk$set(fig.path = 'figurasR/',
                       echo = TRUE, warning = FALSE, message = FALSE,
                       fig.pos="H",fig.align="center",out.width="95%",
                       cache=FALSE) # 
-knitr::write_bib(c("knitr","rmarkdown","dplyr","ggplot2","kableExtra"),
+knitr::write_bib(c("knitr","rmarkdown","dplyr","ggplot2","kableExtra","caret"),
                  file="bib/paquetes.bib", width = 60)
 
 # library(bookdown)
@@ -173,6 +173,7 @@ knitr::write_bib(c("knitr","rmarkdown","dplyr","ggplot2","kableExtra"),
 ```{r child = 'capitulo04.Rmd'}
 ```
 
+
 \FloatBarrier
 
 ```{r child = 'capitulo05.Rmd'}
@@ -259,7 +260,7 @@ install.packages(c("ggplot2","kableExtra","dplyr"))
 <!-- Si "metodobib: false", modificar el "nocite:" del inicio de este fichero  -->
 
 <!-- \nocite{*} -->
-\nocite{Luque2017,Luque2019<!--,RStudio,R-base,R-knitr,R-rmarkdown,R-dplyr,R-ggplot2-->,DataMiningIntro_TFG,WikiIntroWalmart,MestaTFG,CampoTFG,DefSectorRetail,MBA_TFG,MBAII_TFG,MLG_AlcaideTFG,MLG_UC3M,ST_Apuntes, ST_Art,PEREZ-MARTINEZ2021_CV,IntroFeatureSelection, EDA,SVM_CampoTFG, SVM_SVR, ECII_AP, KNN_R_TFG,XGBoost_TFG,XGBoost_Casal,XGBoost_CasalII,XGBoostAlgorithm}
+\nocite{Luque2017,Luque2019,DataMiningIntro_TFG,WikiIntroWalmart,MestaTFG,CampoTFG,DefSectorRetail,MBA_TFG,MBAII_TFG,MLG_AlcaideTFG,MLG_UC3M,ST_Apuntes, ST_Art,PEREZ-MARTINEZ2021_CV,IntroFeatureSelection, EDA,SVM_CampoTFG, SVM_SVR, ECII_AP, KNN_R_TFG,XGBoost_TFG,XGBoost_Casal,XGBoost_CasalII,XGBoostAlgorithm}
 
 <!--Arb_TFG-->
 <!--SVM_SVR-->

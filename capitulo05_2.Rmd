@@ -1,41 +1,48 @@
 ---
-author: "Nombre Completo Autor"
-date: "27/10/2017"
-header-includes: #allows you to add in your own Latex packages
-  - \usepackage{float} #use the 'float' package
-  - \floatplacement{figure}{H} #make every figure with caption = h
-documentclass: book
-forprint: true  # true: imprime a dos caras, false: libro digital
-fontsize: 12pt # 10pt,11pt
-geometry: margin = 2.5cm 
-bibliography: ["bib/library.bib", "bib/paquetes.bib"]
-# metodobib -> true: natbib (descomentar: citation_package: natbib) 
-#           -> false: pandoc (comentar: citation_package: natbib)
-metodobib: true
-#natbib: plainnat, abbrvnat, unsrtnat
-biblio-style: "plainnat"
-#Método 2 (pandoc): descomente una línea de las 2 siguientes en caso de usarlo
-csl: methods-in-ecology-and-evolution.csl      # no numera mejor en las citas
-#csl: acm-sig-proceedings-long-author-list.csl  # numera peor en las citas
-link-citations: yes
-output: 
-  pdf_document:
-    keep_tex: no
-    number_sections: yes
-    citation_package: natbib  # comentado usa: pandoc-citeproc
-    #toc: yes
-    fig_caption: yes
-    template: latex/templateMemoriaTFE.tex
-    includes:
-      #before_body: portadas/latex_paginatitulo_modTFE.tex
-      #in_header: latex/latex_preambulo.tex
-      #after_body: latex/latex_antes_enddoc.tex
+output: pdf_document
 ---
 
 
-```{r , echo=FALSE}
-knitr::opts_chunk$set(echo = FALSE , warning = FALSE , message = FALSE )
+
+```{r include=FALSE}
+knitr::opts_chunk$set(fig.path = 'figurasR/',
+                      echo = FALSE, warning = FALSE, message = FALSE,
+                      fig.pos="H",fig.align="center",out.width="95%",
+                      cache=FALSE)
+
 ```
+
+
+<!-- \setcounter{chapter}{2} -->
+<!-- \setcounter{chapter}{2} escribir 2 para capítulo 3  -->
+<!-- \pagenumbering{arabic} -->
+
+\ifdefined\ifprincipal
+\else
+\setlength{\parindent}{1em}
+\pagestyle{fancy}
+\setcounter{tocdepth}{4}
+\tableofcontents
+<!-- \nocite{*} -->
+\fi
+
+\ifdefined\ifdoblecara
+\fancyhead{}{}
+\fancyhead[LE,RO]{\scriptsize\rightmark}
+\fancyfoot[LO,RE]{\scriptsize\slshape \leftmark}
+\fancyfoot[C]{}
+\fancyfoot[LE,RO]{\footnotesize\thepage}
+\else
+\fancyhead{}{}
+\fancyhead[RO]{\scriptsize\rightmark}
+\fancyfoot[LO]{\scriptsize\slshape \leftmark}
+\fancyfoot[C]{}
+\fancyfoot[RO]{\footnotesize\thepage}
+\fi
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+
 
 ```{r , message=FALSE , echo= FALSE}
 library(tidyverse)
@@ -63,8 +70,8 @@ library(TSA) # Series Temporales (B-C)
 Este apartado lo dedicaremos a realizar un proceso de ciencia de datos completo, teniendo en cuenta los siguientes objetivos:
 
 - Analizar los datos proporcionados para conocer como varían las ventas de productos lácteos con el tiempo
-- Demostrar que existe la posibilidad de construir buenos modelos para predecir el volumen futuro de venta de productos a partir de los datos.
-- Desarrollo de modelos para predecir ventas.
+- Demostrar que existe la posibilidad de construir buenos modelos para predecir el volumen futuro de venta de productos a partir de los datos
+- Desarrollo de modelos para predecir ventas
 
 
 
@@ -79,7 +86,7 @@ load("Datos/datosTFGMarta.RData")
 
 
 
-Los datos contienen información correspondiente a ventas de dos productos lácteos (con y sin calcio) durante un período de 5 meses, desde el 1 de Septiembre de 2020 hasta el 30 de Enero de 2021, obteniéndose un total de 140025 observaciones y se estructuran de la siguiente forma: Cada fila corresponde a la línea de un ticket y hace referencia a la venta de un artículo en particular.
+Los datos contienen información correspondiente a ventas de dos productos lácteos (uno con y sin calcio) durante un período de 5 meses, desde el 1 de Septiembre de 2020 hasta el 30 de Enero de 2021, obteniéndose un total de 140025 observaciones y se estructuran de la siguiente forma: Cada fila corresponde a la línea de un ticket y hace referencia a la venta de un artículo en particular.
 
 
 En este conjunto de datos inicial encontramos las siguientes variables:
@@ -87,8 +94,8 @@ En este conjunto de datos inicial encontramos las siguientes variables:
 - **Id de ticket**: Variable numérica que identifica unívocamente a cada ticket de venta.
 - **Línea de ticket**: Variable numérica con la línea correspondiente del ticket.
 - **Fecha**: Fecha en que se realizó la venta.
-- **Código**: Identificador del producto
-- **Cantidad**: Número de items vendidos de un determinado producto
+- **Código**: Identificador del producto.
+- **Cantidad**: Número de items vendidos de un determinado producto.
 - **Precio**: Precio base del artículo libre de impuestos, euros.
 - **Precio con impuestos**: Precio de venta del artículo, en  euros.
 - **Descuento**:  Descuento aplicado.
@@ -157,9 +164,9 @@ DatosCompletos <- merge(FechasCompletas, dataset, by = "FECHA", all.x = TRUE)
 Miss_values <- which(is.na(DatosCompletos$ID_TICKET) == TRUE)
 ```
 
-Con registros faltantes nos referimos a que falten las ventas correspondientes a algún día concreto dentro del período que estamos considerando, 1/09/2020-30/01/2022.
+Con registros faltantes nos referimos a que falten las ventas correspondientes a algún día concreto dentro del período de estudio, 1/09/2020-30/01/2022.
 
-Existe un total de `r length(Miss_values)` valores faltantes, que corresponden a un `r round( (length(Miss_values)/nrow(dataset))*100 , 5 )`% del total de datos. Se trata de un porcentaje ínfimo del total. En otras condiciones, procederíamos a imputar estos valores, sin embargo, estos días no estaban contemplados en el conjunto de datos inicial debido a que corresponden a festivos: `r DatosCompletos[Miss_values[1],1]`, el día de Navidad y `r DatosCompletos[Miss_values[2],1]`, año nuevo. Por este motivo, podemos continuar con nuestro análisis haciendo uso del conjunto de datos inicial.
+Existen un total de `r length(Miss_values)` valores faltantes, que corresponden a un `r round( (length(Miss_values)/nrow(dataset))*100 , 5 )`% del total de datos. Se trata de un porcentaje ínfimo del total. En otras condiciones, procederíamos a imputar estos valores, sin embargo, estos días no estaban contemplados en el conjunto de datos inicial debido a que corresponden a festivos: `r DatosCompletos[Miss_values[1],1]`, el día de Navidad y `r DatosCompletos[Miss_values[2],1]`, año nuevo. Por tanto, el motivo de la falta de datos es el cierre del establecimiento y por ello, podemos continuar con nuestro análisis haciendo uso del conjunto de datos inicial.
 
 
 
@@ -182,18 +189,18 @@ Estudiamos valores atípicos para las variables *precio con impuestos*, *cantida
 # fig
 
 par(mfrow=c(1,2))
-boxplot(dataset[,c(4,9)], main="Cantidad e importe (impuestos)")
+boxplot(dataset[,c(5,9)], main="Cantidad e importe (impuestos)")
 boxplot(dataset[,6],main="Precio (impuestos)")
 par(mfrow=c(1,1))
 ```
 
-Para la variable precio con impuestos, un importe menor de 1.31€ se podría considerar un valor extremo, existiendo dos valores atípicos entre los datos con unos precios de venta de 79 y 76 céntimos.
-Para la variable cantidad, se considerará un valor atípico la compra de 14 o más artículos. Para la variable importe con impuestos, una compra de más de 18.07€ podemos considerarla como una compra con un valor extremo.
+Para la variable precio con impuestos, un importe menor de 1.2€ se podría considerar un valor extremo, existiendo dos valores atípicos entre los datos con unos precios de venta de 79 y 76 céntimos.
+Para la variable cantidad, se considerará un valor atípico la compra de 14 o más artículos. Por último, respecto a la variable importe con impuestos, una compra de más de 18.07€ podemos considerarla como una compra con un valor extremo.
 
 
 #### Creación de variables
 
-
+**Variables temporales**
 
 Se ha considerado oportuno la extracción de la siguiente información como nuevas variables temporales: día de la semana, semana del año, mes y año de cada instancia a partir de la variable *fecha* y haciendo uso de la librería lubridate. De esta forma, se podrá hacer un análisis del comportamiento de ventas teniendo en cuenta distintas granularidades tratando de entender cómo afecta la temporalidad a la venta de productos.
 
@@ -229,6 +236,8 @@ dataset$DIA_SEMANA<- as.integer(dataset$DIA_SEMANA)
 ```
 
 
+**Tipo de producto**
+
 
 Además de las variables temporales, vamos a añadir una nueva variable: *TIPO*, que representa el tipo de producto lácteo, siendo esta una variable categórica que toma dos posibles valores: *Con calcio* o *sin calcio*. El producto que no lleva calcio es aquel con identificador 20445
 
@@ -247,7 +256,7 @@ datset = dataset[,c(3,16,1,2,4:15)]
 #### Datasets de entrada de modelos 
 
 
-La variable objetivo es el volumen de ventas diario, por lo que necesitamos transformar el conjunto de datos inicial en uno que tenga una variable *ventas* con el número total de items que se venden diariamente. Hemos obtendremos tres conjuntos de datos: Uno con el volumen total, otro con el volumen de ventas diario del producto sin calcio y un tercer conjunto para el producto con calcio. De esta forma, podremos modelar el volumen de ventas en cada ocasión y posteriormente hacer comparaciones de la suma de las predicciones de los productos por separado con la predicción de la venta de la suma de ambos productos.
+La variable objetivo es el volumen de ventas diario, por lo que necesitamos transformar el conjunto de datos inicial en uno que tenga una variable *ventas* con el número total de items que se venden diariamente. De esta forma, obtendremos tres conjuntos de datos: Uno con el volumen diario total, otro con el volumen de ventas diario del producto sin calcio y un tercer conjunto para el producto con calcio. De esta forma, podremos modelar el volumen de ventas en cada ocasión y posteriormente hacer comparaciones de la suma de las predicciones de los productos por separado con la predicción de la venta de la suma de ambos productos.
 
 ```{r }
 VolVentas_FECHA = dataset %>%
@@ -338,11 +347,13 @@ VolVentas_SIN_CALCIO_FECHA$SEMANA_ANO<- factor(VolVentas_SIN_CALCIO_FECHA$SEMANA
 VolVentas_SIN_CALCIO_FECHA$DIA_SEMANA<- factor(VolVentas_SIN_CALCIO_FECHA$DIA_SEMANA)
 ```
 
+
+
 Los conjuntos de datos para el entrenamiento de modelos predictivos constan de las siguientes variables: fecha, precio medio con impuestos, descuento medio, año, mes, día, semana del año y día de la semana.
 
 
 
-Para los modelos de Regresión es necesario tener un conjunto de datos con variables *dummy* para el día de la semana y el mes del año, con la intención de representar la pertenencia de cada instancia a los distintos grupos. Posteriormente, es necesario factorizar estas nuevas variables, ya que es algo imprescindible para ejecutar el modelo.
+Para los modelos de Regresión Lineal es necesario tener un conjunto de datos con variables *dummy* para el día de la semana y el mes del año, con la intención de representar la pertenencia de cada instancia a los distintos grupos. Posteriormente, es necesario factorizar estas nuevas variables, ya que es algo imprescindible para ejecutar el modelo.
 
 Para la creación de variables *dummy*, definimos una función *crea_col_dummy*, que hace uso de la función mutate y spread. 
 
@@ -369,7 +380,8 @@ VolVentas_FECHA_poiss =
 VolVentas_CALCIO_FECHA_poiss= 
   crea_col_dummy(VolVentas_CALCIO_FECHA_poiss,"DIA_SEMANA")
 
-VolVentas_SIN_CALCIO_FECHA_poiss= crea_col_dummy(VolVentas_SIN_CALCIO_FECHA_poiss,"DIA_SEMANA")
+VolVentas_SIN_CALCIO_FECHA_poiss= crea_col_dummy(VolVentas_SIN_CALCIO_FECHA_poiss,
+                                                 "DIA_SEMANA")
 ```
 
 
@@ -689,7 +701,14 @@ Observando el gráfico, vemos que el Sábado es el día de la semana donde el n�
 
 
 
-El precio medio de venta del producto que no lleva calcio es de `r (dataset %>%group_by(ID_TICKET) %>% filter( CODIGO == 20445))$PRECIO  %>% mean() %>% round(2)`€, mientras que para el artículo con calcio es algo superior: `r (dataset %>%group_by(ID_TICKET) %>% filter( CODIGO == 22336))$PRECIO  %>% mean() %>% round(2)`€. Sin embargo, el precio de éstos ha variado a lo largo del tiempo, y con el estudio de esta variable, vamos a tratar de averiguar si esta variación se debe a la época del año o al número de artículos comprado, ya que podría haber promociones para tratar de impulsar las ventas donde los precios pudieran verse afectados. 
+El precio medio de venta del producto que no lleva calcio es de `r (dataset %>%group_by(ID_TICKET) %>% filter( CODIGO == 20445))$PRECIO  %>% mean() %>% round(2)`€, habiendo variado entre los `r (dataset %>%group_by(ID_TICKET) %>% filter( CODIGO == 20445))$PRECIO  %>% min()` y los `r (dataset %>%group_by(ID_TICKET) %>% filter( CODIGO == 20445))$PRECIO  %>% max() %>% round(2)` €.
+
+
+Para el artículo con calcio el precio medio es algo superior: `r (dataset %>%group_by(ID_TICKET) %>% filter( CODIGO == 22336))$PRECIO  %>% mean() %>% round(2)`€, con un precio mínimo de `r (dataset %>%group_by(ID_TICKET) %>% filter( CODIGO == 22336))$PRECIO  %>% min() %>% round(2)` € y un máximo de `r (dataset %>%group_by(ID_TICKET) %>% filter( CODIGO == 22336))$PRECIO  %>% max() %>% round(2)` euros.
+
+
+
+Vamos a estudiar esta variable, tratando de averiguar si esta variación se debe a la época del año o al número de artículos comprado, ya que podría haber promociones para tratar de impulsar las ventas donde los precios pudieran verse afectados. 
 
 Los precios de los productos varían debido a descuentos aplicados a todos los artículos de una misma compra en función del importe de la misma, por ejemplo, si se superan los 50€, se hará un 10% de descuento, y por tanto, habremos pagado menos por cada artículo. Sin embargo, la variable descuento, se aplica a cada artículo de manera individual, por ejemplo, en la transacción con identificador 22551535 se vendieron 6 unidades del producto 22336 por un precio de 1.49€ (impuestos incluidos) cada unidad, lo que supone un total de 8.94€ por las 6 unidades, pero se ha aplicado un descuento del 5.03%.
 
@@ -742,12 +761,13 @@ par(mfrow=c(1,3))
 
 #### Grado de asociación de las variables
 
+En la matriz de correlación mostrada a continuación podemos ver el grado de asociación de las diferentes variables entre sí y con la variable objetivo, *ventas*.
 
 
 ```{r , fig.height=3}
 VolVentas_FECHA=mutate_at(VolVentas_FECHA, vars("ANO","DIA","SEMANA_ANO","MES","DIA_SEMANA"  ), as.numeric)
 M = cor(VolVentas_FECHA[,-1])
-corrplot(M, method = "number",title = "Matriz de correlación",type = 'lower', diag = FALSE)
+corrplot(M, method = "number",type = 'lower', diag = FALSE)
 ```
 
 

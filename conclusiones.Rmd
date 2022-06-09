@@ -3,4 +3,30 @@ output: pdf_document
 ---
 
 
-Conclusiones de mi trabajo
+
+Por último, en este apartado de conclusiones trataremos de exponer las conclusiones más relevantes del estudio.
+
+
+
+Respecto al análisis de cesta de la compra, se ha conseguido obtener una serie de reglas que muestran los patrones de ventas de productos. 
+
+
+Cabe destacar, que la mayoría de ventas consta de uno o dos producto, es decir, no es usual la venta de gran cantidad de productos diferentes en la misma transacción. Otro aspecto a señalar es que se ha detectado un patrón de venta bastante frecuente: el que consta de la venta de los productos 1033 y 1096 de manera conjunta.
+
+Se trata de ventas bastante robustas, ya que los valores del parámetro *lift* son bastante altos, obteniendo en cinco ocasiones un valor de lift por encima de 10.8. Estos resultados indican que las reglas no se deben a la aleatoriedad, sino que es un patrón de comportamiento de ventas real.
+
+
+En el modelado, se ha encontrado una limitación que ha sido clave a la hora de poder entrenar los modelos, la poca cantidad de datos que teníamos. Por este motivo, no se ha podido generar un conjunto de datos para la validación de los modelos, sino que se han generado únicamente conjuntos de entrenamiento y testeo. Esta limitación también ha provocado que los modelos no sean capaces de *aprender* de manera óptima y por este motivo, no han generalizado bien al aplicarlos en los conjuntos de datos de testeo.
+
+Además, tampoco se ha podido estudiar la serie temporal de manera mensual o anual, ya que no teníamos datos suficientes.
+
+
+En general, los modelos obtenidos no consiguen predecir el volumen de ventas con una precisión que podamos considerar aceptable, ya que en el remuestreo observamos que los modelos tampoco eran del todo robustos y presentaban cierta variabilidad. Sin embargo, esto no ha ocurrido de cara a predecir el volumen de ventas diario del producto sin calcio, ya que para este modelo si se han conseguido unas buenas métricas, y por tanto, podemos considerarlo un buen modelo. Al trabajar con datos reales, esto es algo que se podía esperar, ya que modelar el comportamiento humano (ventas de productos) no siempre es fácil, ya que se ve afectado por muchos factores, no únicamente precio, día o época del año.
+
+
+
+Como posibilidad de mejora, se podría realizar el mismo estudio dentro de unos meses, ya que de esta forma se tendrían mas datos para entrenar y validar los modelos. También podríamos recoger más variables de entrada que pudieran ser de utilidad, como por ejemplo la hora de la venta, las condiciones meteorológicas de las ventas o el lugar donde se ha realizado la transacción, ya que esto arrojaría cierta información adicional que nos podría servir para entender el comportamiento de venta.
+
+
+
+
