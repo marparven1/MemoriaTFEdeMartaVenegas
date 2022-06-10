@@ -2,6 +2,11 @@
 output: pdf_document
 ---
 
-Resumen...
 
-Aquí comienza mi resumen, que lo haré al final del estudio
+En el presente trabajo fin de grado, titulado *Modelización de ventas en el sector retail* se hace una revisión de diferentes modelos estadísticos y algoritmos de aprendizaje automático con el principal objetivo de aplicarlos a un conjunto de datos real para predecir el volumen de ventas de dos productos lácteos. 
+
+Para llegar a la fase del modelado, es necesario de realizar un proceso de ciencia de datos completo, que comprende desde el pre-procesado y depuración de los datos, hasta un análisis exploratorio para entender como varían las ventas en función del tiempo.
+
+También se ha incluído una revisión teórica con la correspondiente aplicación práctica de la técnica del análisis de cesta de la compra, aplicado como sistema de recomendación por numerosas empresas a través de internet.
+
+En definitiva, lo que se busca es comprender y modelar el comportamiento de compra del consumidor, para poder así tomar decisiones de negocio que puedan contribuir, por ejemplo, al aumento de la facturación anual y del margen de beneficios.

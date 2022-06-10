@@ -3,6 +3,13 @@ output: pdf_document
 ---
 
 
-Escrito colocado al comienzo de una obra en el que se hacen comentarios sobre la obra o su autor, o se introduce en su lectura; a menudo está realizado por una persona distinta del autor.
 
-También se podrían incluir aquí los agradecimientos.
+
+
+
+Este proyecto despertó gran interés en mi desde su inicio, ya que el campo del análisis de datos es aquel hacia el que quiero orientar mi trayectoria profesional.
+
+
+Me gustaría dedicar estas páginas especialmente a mi madre, María Jesús, a mi abuela Eme, a mi hermana Carlota y a todos los que han estado conmigo estos años, por su confianza en mí, su paciencia y por estar ahí siempre. También quería agradecer a mi tutor su ayuda y orientación en el desarrollo de este trabajo. No quería olvidarme de otros dos grandes profesores, Teresa y Antonio, que desde los primeros cursos hicieron que me apasionara lo que he estudiado.
+
+

@@ -1,8 +1,5 @@
 ---
 documentclass: book
-header-includes: #allows you to add in your own Latex packages
-- \usepackage{float} #use the 'float' package
-- \floatplacement{figure}{H} #make every figure with caption = h
 principal: true
 forprint: true  # true: imprime a dos caras, false: libro digital
 fontsize: 12pt # 10pt,11pt
@@ -10,12 +7,12 @@ geometry: margin = 2.5cm
 bibliography: ["bib/library.bib", "bib/paquetes.bib"]
 # metodobib -> true: natbib (descomentar: citation_package: natbib) 
 #           -> false: pandoc (comentar: citation_package: natbib)
-metodobib: true 
+metodobib: true
 #natbib: plainnat, abbrvnat, unsrtnat
 biblio-style: "plainnat"
 #Método 2 (pandoc): descomente una línea de las 2 siguientes en caso de usarlo
-# csl: methods-in-ecology-and-evolution.csl      # no numera mejor en las citas
-csl: acm-sig-proceedings-long-author-list.csl  # numera peor en las citas
+csl: methods-in-ecology-and-evolution.csl      # no numera mejor en las citas
+#csl: acm-sig-proceedings-long-author-list.csl  # numera peor en las citas
 link-citations: yes
 output: 
   pdf_document:
@@ -26,8 +23,8 @@ output:
     fig_caption: yes
     template: latex/templateMemoriaTFE.tex
     includes:
-#     before_body:  portadas/latex_paginatitulo_modTFE.tex
-       before_body: portadas/latex_paginatitulo_modTFGE.tex
+#    before_body: portadas/latex_paginatitulo_modTFE.tex
+      before_body: portadas/latex_paginatitulo_modTFGE.tex
 #      before_body: portadas/latex_paginatitulo_modTFGM.tex
 #      before_body: portadas/latex_paginatitulo_modTFDGME.tex
 #      before_body: portadas/latex_paginatitulo_modTFMDS.tex
@@ -59,7 +56,6 @@ knitr::write_bib(c("knitr","rmarkdown","dplyr","ggplot2","kableExtra","caret"),
 
 # library(bookdown)
 ```
-
 
 
 
@@ -110,8 +106,19 @@ knitr::write_bib(c("knitr","rmarkdown","dplyr","ggplot2","kableExtra","caret"),
 
 
 
+\clearpage
+\section*{Introduccion}
+\addcontentsline{toc}{chapter}{Introducción}
 
-\clearpage   
+
+
+```{r child = 'introduccion.Rmd'}
+```
+
+
+
+
+\cleardoublepage   
 \listoffigures
 \addcontentsline{toc}{section}{Índice de Figuras}
 
@@ -119,11 +126,9 @@ knitr::write_bib(c("knitr","rmarkdown","dplyr","ggplot2","kableExtra","caret"),
 
 \listoftables
 <!-- \addcontentsline{toc}{section}{Índice de Cuadros} -->
-<!--\addcontentsline{toc}{section}{Índice de Tablas}
+\addcontentsline{toc}{section}{Índice de Tablas}
 
 \cleardoublepage   
-
--->
 
 \pagenumbering{arabic}
 
@@ -141,19 +146,6 @@ knitr::write_bib(c("knitr","rmarkdown","dplyr","ggplot2","kableExtra","caret"),
 
 \renewcommand{\headrulewidth}{0.4pt}
 \renewcommand{\footrulewidth}{0.4pt}
-
-
-
-\clearpage
-\section*{Introducción}
-\addcontentsline{toc}{chapter}{Introducción}
-
-
-
-```{r child = 'introduccion.Rmd'}
-```
-
-
 
 ```{r child = 'capitulo01.Rmd'}
 ```
@@ -174,32 +166,8 @@ knitr::write_bib(c("knitr","rmarkdown","dplyr","ggplot2","kableExtra","caret"),
 ```
 
 
-\FloatBarrier
-
-```{r child = 'capitulo05.Rmd'}
-```
-
-
-
-
-\FloatBarrier
-
-
-
-
-
-\clearpage
-\section*{Conclusiones}
-\addcontentsline{toc}{chapter}{Conclusiones}
-
-
-
-```{r child = 'conclusiones.Rmd'}
-```
-
-
 <!-- 
-Descomentarlo para incluir el capítulo ejemplos el cual contiene utilidades de ejemplo
+Descomentarlo para incluir el capítulo 5 el cual contiene utilidades de ejemplo
 para copiar y pegar.
 Atención: necesitará la instalación de algunos paquetes R 
 que puede no tener instalados. Son:
@@ -207,34 +175,29 @@ install.packages(c("ggplot2","kableExtra","dplyr"))
 -->
 
 
-<!-- \FloatBarrier -->
+\FloatBarrier
 
-<!-- ```{r child = 'ejemplos.Rmd'} -->
-<!-- ``` -->
+```{r child = 'capitulo05.Rmd'}
+
+```
 
 
 
 
 \FloatBarrier
 
+\appendix
 
-<!-- \appendix -->
-
-<!-- ```{r child = 'apendice01.Rmd'}``` -->
-
-
-<!-- ```{r child = 'apendice02.Rmd'}``` -->
+```{r child = 'apendice01.Rmd'}
+```
 
 
 
-<!--\FloatBarrier-->
 
 
 
+\FloatBarrier
 \cleardoublepage
-
-
-
 
 \ifdefined\ifdoblecara
   \fancyhead[LE,RO]{}
@@ -261,9 +224,5 @@ install.packages(c("ggplot2","kableExtra","dplyr"))
 
 <!-- \nocite{*} -->
 \nocite{Luque2017,Luque2019,DataMiningIntro_TFG,WikiIntroWalmart,MestaTFG,CampoTFG,DefSectorRetail,MBA_TFG,MBAII_TFG,MLG_AlcaideTFG,MLG_UC3M,ST_Apuntes, ST_Art,PEREZ-MARTINEZ2021_CV,IntroFeatureSelection, EDA,SVM_CampoTFG, SVM_SVR, ECII_AP, KNN_R_TFG,XGBoost_TFG,XGBoost_Casal,XGBoost_CasalII,XGBoostAlgorithm}
-
-<!--Arb_TFG-->
-<!--SVM_SVR-->
-
 
 \fi 

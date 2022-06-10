@@ -2,4 +2,14 @@
 output: pdf_document
 ---
 
-Abstract...
+
+The current essay presents a review of some statistical modeling tools as well as machine learning algorithms in order to develop predictive models with the purpose of predicting daily sales. The article examines a particular market in the retail industry, the market for dairy products in supermarkets.
+
+In order to develop these models, it is necessary to complete an entire data science process from pre-processing and data cleaning to an exploratory data analysis in order to understand how sales vary over time.
+
+
+This study also develops a theoretical review with the corresponding practical application of a process called  *market basket analysis*, the search for meaningful associations in customer purchase behavior. This technique is applied as a recommendation system by numerous companies through the internet.
+
+In essence, what is sought is to understand and model consumer's purchasing behavior, in order to be able to make business decisions that can contribute, to an increase in annual turnover and profit margins.
+
+

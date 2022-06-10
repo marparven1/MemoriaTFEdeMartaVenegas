@@ -70,9 +70,16 @@ knitr::opts_chunk$set(fig.path = 'figurasR/',
 \renewcommand{\headrulewidth}{0.4pt}
 \renewcommand{\footrulewidth}{0.4pt}
 
-# Apéndice: Título del Apéndice
+# Apéndice: App shiny
 
 
-## Primera sección
+Para la exposición del trabajo se ha desarrollado una aplicación web interactiva haciendo uso del paquete de R **Shiny**.  Una aplicación Shiny es simplemente un directorio que contiene un script R llamado app.R que se compone de un objeto de interfaz de usuario y una función de servidor.
+
+Se optó por esta opción debido a la amplia gama de opciones que ofrece,  diseñando desde cero la propia aplicación, pudiendo insertar gráficos, tablas dinámicas y documentos interactivos. Además, se puede mejorar aún más el rendimiendo con acciones JavaScript así como la interfaz de usuario con HTML y el estilo añadiendo código CSS.
+
+
+La aplicación desarrollada consta de una página inicial y diferentes paneles con las distintas secciones del trabajo, relacionadas con la aplicación práctica para un conjunto datos reales de las técnicas revisadas de forma teórica. Desde la app es fácil navegar por los distintos paneles a través de una barra de navegación.
+
+
 
 
