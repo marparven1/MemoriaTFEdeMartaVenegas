@@ -319,8 +319,7 @@ modeloXGB_T <- train(VENTAS~.,
                 method = "xgbTree",
                 trControl=fitControl, 
                 preProcess=c("center","scale"),
-                tuneLength=5,
-                verbosity=0)
+                tuneLength=5, verbosity=0)
 ```
 
 

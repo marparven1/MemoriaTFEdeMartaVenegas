@@ -13,6 +13,13 @@ knitr::opts_chunk$set(fig.path = 'figurasR/',
 ```
 
 
+
+
+
+
+
+
+
 <!-- \setcounter{chapter}{2} -->
 <!-- \setcounter{chapter}{2} escribir 2 para capítulo 3  -->
 <!-- \pagenumbering{arabic} -->
@@ -60,6 +67,9 @@ library(hrbrthemes) # Temas
 library(corrplot)
 library(TSA) # Series Temporales (B-C)
 ```
+
+
+
 
 
 
@@ -123,9 +133,10 @@ dataset<-as.data.frame(datos) # Datos como DF
 ```
 
 
-```{r , echo=TRUE}
+```{r , echo=TRUE  , size="footnotesize"}
 dataset %>% str() # Estructura de los datos trás reformateo
 ```
+
 
 
 #### Duplicados
@@ -149,7 +160,7 @@ Al estar trabajando con fechas, es muy importante comprobar la uniformidad en lo
 
 
 ```{r , missing values ,  echo=TRUE}
-# Construcción de un cjto de datos con todas las fechas entre la primera fecha
+# Construcción de datos con todas las fechas entre la primera fecha
 #  y la última de los datos que tenemos
 FechasCompletas <- seq(min(dataset$FECHA), max(dataset$FECHA), by = "day")
 
@@ -158,7 +169,8 @@ FechasCompletas  <- data.frame(FECHA = FechasCompletas )
 
 # Merge al conjunto de fechas completas y al cjto inicial para añadir NA 
 # a aquellos valores faltantes
-DatosCompletos <- merge(FechasCompletas, dataset, by = "FECHA", all.x = TRUE)
+DatosCompletos <- merge(FechasCompletas, dataset, by = "FECHA",
+                        all.x = TRUE)
 
 # Valores faltantes en el conjunto de datos completo
 Miss_values <- which(is.na(DatosCompletos$ID_TICKET) == TRUE)
@@ -210,7 +222,7 @@ Se ha considerado oportuno la extracción de la siguiente información como nuev
 dataset$ANO         <-  year(dataset$FECHA) # Extracción del año
 dataset$MES         <- month(dataset$FECHA) # Extracción del mes
 dataset$DIA         <-   day(dataset$FECHA) # Extracción del día
-dataset$SEMANA_ANO <-   week(dataset$FECHA) # Extracción de la semana del año
+dataset$SEMANA_ANO <-   week(dataset$FECHA) # Extracción semana del año
 dataset$DIA_SEMANA <-   wday(dataset$FECHA,week_start = 1 )
 ```
 
@@ -380,7 +392,8 @@ VolVentas_FECHA_poiss =
 VolVentas_CALCIO_FECHA_poiss= 
   crea_col_dummy(VolVentas_CALCIO_FECHA_poiss,"DIA_SEMANA")
 
-VolVentas_SIN_CALCIO_FECHA_poiss= crea_col_dummy(VolVentas_SIN_CALCIO_FECHA_poiss,
+VolVentas_SIN_CALCIO_FECHA_poiss= 
+  crea_col_dummy(VolVentas_SIN_CALCIO_FECHA_poiss,
                                                  "DIA_SEMANA")
 ```
 
@@ -431,9 +444,12 @@ save(VolVentas_SIN_CALCIO_FECHA,file = "Datos/VENTAS_Dia_SCALCIO.RData")
 save(VolVentas_CALCIO_FECHA,file = "Datos/VENTAS_Dia_CALCIO.RData")
 save(VolVentas_FECHA,file = "Datos/VENTAS_Dia_TOTAL.RData")
 
-save(VolVentas_FECHA_poiss,file = "Datos/VENTAS_Dia_TOTAL_poiss.RData")
-save(VolVentas_CALCIO_FECHA_poiss,file = "Datos/VENTAS_Dia_CALCIO_poiss.RData")
-save(VolVentas_SIN_CALCIO_FECHA_poiss,file = "Datos/VENTAS_Dia_SCALCIO_poiss.RData")
+save(VolVentas_FECHA_poiss,
+     file = "Datos/VENTAS_Dia_TOTAL_poiss.RData")
+save(VolVentas_CALCIO_FECHA_poiss,
+     file = "Datos/VENTAS_Dia_CALCIO_poiss.RData")
+save(VolVentas_SIN_CALCIO_FECHA_poiss,
+     file = "Datos/VENTAS_Dia_SCALCIO_poiss.RData")
 ```
 
 
@@ -461,7 +477,7 @@ Como tenemos datos correspondientes a ventas, trataremos de responder a las sigu
 
 
 
-```{r ,echo=TRUE}
+```{r ,echo=TRUE, size="footnotesize"}
 VolVentas_FECHA[,c(1:6)] %>% summary()  # Resumen de los datos
 ```
 

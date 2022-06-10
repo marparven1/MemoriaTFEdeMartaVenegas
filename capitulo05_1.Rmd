@@ -14,6 +14,11 @@ knitr::opts_chunk$set(fig.path = 'figurasR/',
 ```
 
 
+
+
+
+
+
 <!-- \setcounter{chapter}{2} -->
 <!-- \setcounter{chapter}{2} escribir 2 para capítulo 3  -->
 <!-- \pagenumbering{arabic} -->
@@ -164,7 +169,11 @@ Por último, después de haber transformado nuestros datos, guardamos la columna
 ### Análisis de ventas
 
 
-```{r}
+
+
+
+
+```{r , size="footnotesize"}
 cestas <- DatosBasket1$Items %>%as_tibble() %>% dplyr::rename("Items" = value)
 write.csv(cestas,"Datos/muestraTickets.csv", quote = FALSE, row.names = FALSE)
 ```
@@ -296,7 +305,7 @@ Este algoritmo ya fué descrito en el desarrollo teórico, y nos permitirá gene
 
 En primer lugar, vamos a extraer itemsets formados por al menos dos items que hayan sido comprado almenos 30 veces.
 
-```{r}
+```{r , size="footnotesize"}
 soporte_min <-30/dim(TransBasket)[1]
 Itemsets <- apriori(data=TransBasket,
                  parameter = list(
@@ -351,7 +360,7 @@ La mayoría de veces, un total de 96, estos dos items han sido comprados exclusi
 
 A continuación vamos a crear reglas de asociación de la misma forma que hemos identificado los itemsets, pero indicando un valor mínimo para el parámetro *confianza*, en este caso, del 50%. Vamos a imponer la obtención de reglas cuyos itemsets hayan sido comprado almenos 20 veces.
 
-```{r}
+```{r  , size="footnotesize"}
 soporte_minII <-20/dim(TransBasket)[1]
 rules <- apriori(TransBasket,
         parameter = list(
@@ -384,7 +393,7 @@ Para ello, vamos a modificar las reglas, bajando el valor de la confianza y obli
 
 Veamos las nuevas reglas de asociación:
 
-```{r}
+```{r  , size="footnotesize"}
 soporte_minII <-15/dim(TransBasket)[1]
 rulesII <- apriori (data=TransBasket, 
                        parameter=list (supp=soporte_minII,
@@ -572,10 +581,10 @@ reglas_maximales
 
 Existen 7 reglas maximales:
 
-```{r , fig.pos='!H'}
+```{r  , size="footnotesize"}
 inspect(reglas_maximales)[,1:3] %>% 
   kable(booktabs=TRUE) %>% 
-  kable_styling(latex_options = "striped")
+  kable_styling(latex_options = c("striped","HOLD_position" ) )
 ```
 
 

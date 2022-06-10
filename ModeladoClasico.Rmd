@@ -16,6 +16,10 @@ knitr::opts_chunk$set(fig.path = 'figurasR/',
 
 
 
+```{r, include=FALSE}
+def.chunk.hook <- knitr::knit_hooks$get("chunk") knitr::knit_hooks$set(chunk = function(x, options) { x <- def.chunk.hook(x, options) ifelse(options$size != "normalsize", paste0("\n \\", options$size,"\n\n", x, "\n\n \\normalsize"), x) }) 
+```
+
 <!-- \setcounter{chapter}{2} -->
 <!-- \setcounter{chapter}{2} escribir 2 para capítulo 3  -->
 <!-- \pagenumbering{arabic} -->
@@ -148,7 +152,7 @@ Las variables explicativas son las siguientes:
 **Ventas totales**
 
 
-```{r , echo=TRUE   ,  out.width = '70%'}
+```{r , echo=TRUE  , size="footnotesize"}
 ModeloP_TOT_dummy = 
   glm(VENTAS~PRECIO_MEDIO_IMPUESTOS*DESCUENTO_MEDIO+
               (LUNES+MARTES+MIERCOLES+JUEVES+VIERNES+SABADO+DOMINGO)+
@@ -442,7 +446,7 @@ Los conjuntos de datos son los mismos que los utilizados en los modelos de regre
 **Ventas totales**
 
 
-```{r , echo=TRUE }
+```{r , echo=TRUE , size="footnotesize" }
 
 ModeloBN_TOT_dummy = 
   glm.nb(VENTAS~PRECIO_MEDIO_IMPUESTOS+DESCUENTO_MEDIO+
@@ -469,7 +473,7 @@ En este modelo, para un nivel de signifiación del 95%, los coeficientes estimad
 
 Vamos ahora a entrenar el modelo para las variables factorizadas:
 
-```{r , echo=TRUE}
+```{r , echo=TRUE , size="footnotesize"}
 ModeloBN_TOT_factor= glm.nb(VENTAS~PRECIO_MEDIO_IMPUESTOS+
                           DIA_SEMANA+MES+DESCUENTO_MEDIO,
                        data=Ventas_TOTAL_ENT)
@@ -939,7 +943,7 @@ Una vez hemos obtenido un modelo, se han estimado sus parámetros con la funció
 
 
 ```{r , echo=TRUE}
-Ajuste1 = arima( tsDiaria_DifEst ,   # Serie trás una diferencia estacional
+Ajuste1 = arima( tsDiaria_DifEst ,# Serie trás una diferencia estacional
                  seasonal = list(order=c(0,0,1),period=7 ))
 Ajuste1
 ```
@@ -954,9 +958,10 @@ confint(Ajuste1) # Intervalo de confianza
 
 
 
-```{r , echo=TRUE}
-Ajuste1_1 = arima( tsDiaria_DifEst ,   # Serie trás una diferencia estacional
-                   order = c(0,0,0),seasonal = list(order=c(0,0,1),period=7), 
+```{r , echo=TRUE , size="footnotesize"}
+Ajuste1_1 = arima( tsDiaria_DifEst , 
+                   order = c(0,0,0),
+                   seasonal = list(order=c(0,0,1),period=7), 
                  include.mean = FALSE # Eliminamos la media
                  )
 Ajuste1_1
