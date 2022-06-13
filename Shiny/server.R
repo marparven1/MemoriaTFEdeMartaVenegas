@@ -18,10 +18,7 @@ library( tidyr    )
 
 
 
-source("R/ui.R")
-source("R/server.R")
+# Define server logic required to draw a histogram ----
+server <- function(input, output) {
 
-shinyApp(ui = ui,server=server)
-
-
-
+}

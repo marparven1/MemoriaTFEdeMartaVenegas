@@ -1,4 +1,10 @@
 
+library(shiny)
+library(leaflet)
+library(plotly)
+library(shinyjs)
+library(shinyBS)
+
 
 
 
@@ -8,21 +14,23 @@
 # Define UI for app that draws a histogram ----
 ui <- fluidPage(
   
-  
   # Tema
   theme = shinytheme("simplex"),
   # Estilo CSS
   tags$head(
-    tags$link(rel = "stylesheet", type = "text/css", href = "css/Home.css")
+  #  tags$link(rel = "stylesheet", type = "text/css", href = "www/css/Home.css")
+    
+    
+  
+    
   ),
-  
-  
+
   
   #### NavBarPane ####
   navbarPage( "TFG", 
               selected = icon("home"), collapsible = TRUE, fluid = TRUE, 
               tabPanel( icon("home"),
-                        includeHTML("html/Home.Rhtml")
+                        includeHTML("Home.Rhtml")
                         #,
                         #includeHTML("html/footer.html")
               ),
