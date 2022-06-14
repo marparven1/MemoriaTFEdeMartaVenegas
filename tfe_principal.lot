@@ -5,27 +5,27 @@
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \contentsline {table}{\numberline {5.1}{\ignorespaces Productos m\IeC {\'a}s frecuentes\relax }}{32}{table.5.1}% 
-\contentsline {table}{\numberline {5.2}{\ignorespaces Importe medio de venta y precio por producto.\relax }}{49}{table.caption.16}% 
-\contentsline {table}{\numberline {5.3}{\ignorespaces M\IeC {\'e}tricas del mejor modelo\relax }}{76}{table.caption.26}% 
-\contentsline {table}{\numberline {5.4}{\ignorespaces M\IeC {\'e}tricas en el remuestreo\relax }}{76}{table.5.4}% 
-\contentsline {table}{\numberline {5.5}{\ignorespaces M\IeC {\'e}tricas del mejor modelo\relax }}{78}{table.caption.27}% 
-\contentsline {table}{\numberline {5.6}{\ignorespaces M\IeC {\'e}tricas en el remuestreo\relax }}{78}{table.5.6}% 
-\contentsline {table}{\numberline {5.7}{\ignorespaces M\IeC {\'e}tricas del mejor modelo\relax }}{79}{table.caption.28}% 
-\contentsline {table}{\numberline {5.8}{\ignorespaces M\IeC {\'e}tricas en el remuestreo\relax }}{79}{table.5.8}% 
-\contentsline {table}{\numberline {5.9}{\ignorespaces XGBoost\relax }}{80}{table.5.9}% 
-\contentsline {table}{\numberline {5.10}{\ignorespaces M\IeC {\'e}tricas del mejor modelo\relax }}{82}{table.caption.30}% 
-\contentsline {table}{\numberline {5.11}{\ignorespaces M\IeC {\'e}tricas en el remuestreo\relax }}{82}{table.5.11}% 
-\contentsline {table}{\numberline {5.12}{\ignorespaces M\IeC {\'e}tricas del mejor modelo\relax }}{84}{table.caption.31}% 
-\contentsline {table}{\numberline {5.13}{\ignorespaces M\IeC {\'e}tricas en el remuestreo\relax }}{84}{table.5.13}% 
-\contentsline {table}{\numberline {5.14}{\ignorespaces M\IeC {\'e}tricas del mejor modelo\relax }}{85}{table.caption.32}% 
-\contentsline {table}{\numberline {5.15}{\ignorespaces M\IeC {\'e}tricas en el remuestreo\relax }}{85}{table.5.15}% 
-\contentsline {table}{\numberline {5.16}{\ignorespaces SVM\relax }}{86}{table.5.16}% 
-\contentsline {table}{\numberline {5.17}{\ignorespaces M\IeC {\'e}tricas del mejor modelo\relax }}{88}{table.caption.34}% 
-\contentsline {table}{\numberline {5.18}{\ignorespaces M\IeC {\'e}tricas en el remuestreo\relax }}{88}{table.5.18}% 
-\contentsline {table}{\numberline {5.19}{\ignorespaces M\IeC {\'e}tricas del mejor modelo\relax }}{90}{table.caption.35}% 
-\contentsline {table}{\numberline {5.20}{\ignorespaces M\IeC {\'e}tricas en el remuestreo\relax }}{90}{table.5.20}% 
-\contentsline {table}{\numberline {5.21}{\ignorespaces M\IeC {\'e}tricas del mejor modelo\relax }}{91}{table.caption.36}% 
-\contentsline {table}{\numberline {5.22}{\ignorespaces M\IeC {\'e}tricas en el remuestreo\relax }}{91}{table.5.22}% 
-\contentsline {table}{\numberline {5.23}{\ignorespaces XGBoost\relax }}{92}{table.5.23}% 
-\contentsline {table}{\numberline {5.24}{\ignorespaces Algoritmo XGBoost\relax }}{93}{table.caption.38}% 
+\contentsline {table}{\numberline {5.2}{\ignorespaces Importe medio de venta y precio por producto.\relax }}{50}{table.caption.16}% 
+\contentsline {table}{\numberline {5.3}{\ignorespaces M\IeC {\'e}tricas del mejor modelo\relax }}{77}{table.caption.26}% 
+\contentsline {table}{\numberline {5.4}{\ignorespaces M\IeC {\'e}tricas en el remuestreo\relax }}{78}{table.caption.27}% 
+\contentsline {table}{\numberline {5.5}{\ignorespaces M\IeC {\'e}tricas del mejor modelo\relax }}{79}{table.caption.28}% 
+\contentsline {table}{\numberline {5.6}{\ignorespaces M\IeC {\'e}tricas en el remuestreo\relax }}{79}{table.5.6}% 
+\contentsline {table}{\numberline {5.7}{\ignorespaces M\IeC {\'e}tricas del mejor modelo\relax }}{80}{table.caption.29}% 
+\contentsline {table}{\numberline {5.8}{\ignorespaces M\IeC {\'e}tricas en el remuestreo\relax }}{80}{table.5.8}% 
+\contentsline {table}{\numberline {5.9}{\ignorespaces M\IeC {\'a}quina de vector soporte\relax }}{82}{table.5.9}% 
+\contentsline {table}{\numberline {5.10}{\ignorespaces M\IeC {\'e}tricas del mejor modelo\relax }}{83}{table.caption.31}% 
+\contentsline {table}{\numberline {5.11}{\ignorespaces M\IeC {\'e}tricas en el remuestreo\relax }}{83}{table.5.11}% 
+\contentsline {table}{\numberline {5.12}{\ignorespaces M\IeC {\'e}tricas del mejor modelo\relax }}{85}{table.caption.32}% 
+\contentsline {table}{\numberline {5.13}{\ignorespaces M\IeC {\'e}tricas en el remuestreo\relax }}{85}{table.5.13}% 
+\contentsline {table}{\numberline {5.14}{\ignorespaces M\IeC {\'e}tricas del mejor modelo\relax }}{86}{table.caption.33}% 
+\contentsline {table}{\numberline {5.15}{\ignorespaces M\IeC {\'e}tricas en el remuestreo\relax }}{86}{table.5.15}% 
+\contentsline {table}{\numberline {5.16}{\ignorespaces SVM\relax }}{87}{table.5.16}% 
+\contentsline {table}{\numberline {5.17}{\ignorespaces M\IeC {\'e}tricas del mejor modelo\relax }}{89}{table.caption.35}% 
+\contentsline {table}{\numberline {5.18}{\ignorespaces M\IeC {\'e}tricas en el remuestreo\relax }}{89}{table.5.18}% 
+\contentsline {table}{\numberline {5.19}{\ignorespaces M\IeC {\'e}tricas del mejor modelo\relax }}{91}{table.caption.36}% 
+\contentsline {table}{\numberline {5.20}{\ignorespaces M\IeC {\'e}tricas en el remuestreo\relax }}{91}{table.5.20}% 
+\contentsline {table}{\numberline {5.21}{\ignorespaces M\IeC {\'e}tricas del mejor modelo\relax }}{92}{table.caption.37}% 
+\contentsline {table}{\numberline {5.22}{\ignorespaces M\IeC {\'e}tricas en el remuestreo\relax }}{92}{table.5.22}% 
+\contentsline {table}{\numberline {5.23}{\ignorespaces M\IeC {\'a}quina de vector soporte\relax }}{93}{table.5.23}% 
+\contentsline {table}{\numberline {5.24}{\ignorespaces Algoritmo XGBoost\relax }}{94}{table.caption.39}% 
 \addvspace {10\p@ }

@@ -99,42 +99,20 @@ Para los diferentes modelos entrenados, se recogerá su rendimiento para posteri
 
 Se ha tomado una partición de 80% 20% para datos de entrenamiento y testeo, con el objetivo de entrenar el modelo para posteriormente estudiar su rendimiento y capacidad de generalización.
 
+De esta manera, para mantener la temporalidad de los datos, tomamos los `r 181-36` primeros registros para entrenar el modelo y 36 para el testeo. Esto corresponde a entrenar los modelos con datos diarios desde el 1 de Agosto al 23 de Diciembre, para posteriormente realizar predicciones del 24 de Diciembre al 30 de Enero.
+
+
 
 ```{r , echo=TRUE}
 n=nrow(VolVentas_FECHA_poiss)
-indin= 1:n
-nent=ceiling(0.8*n) # número de registros de entrenamiento
-ntest= n-nent # número de registros de testeo
-set.seed(100822)
-indient= sort(sample(indin,nent)) # índices de entrenamiento
-inditest= setdiff(indin,indient) # índices de testeo
+ntest=36
+indient = 1:(n-ntest)
+inditest= (n-ntest+1):n
 ```
 
 
-```{r}
-
-Ventas_TOTAL_ENT_poiss = VolVentas_FECHA_poiss[indient,-c(3,6)]
-Ventas_TOTAL_TEST_poiss=VolVentas_FECHA_poiss[inditest,-c(3,6)]
-
-Ventas_TOTAL_ENT= VolVentas_FECHA[indient,-c(3,6)]
-Ventas_TOTAL_TEST=VolVentas_FECHA[inditest,-c(3,6)]
 
 
-Ventas_CALCIO_ENT_poiss= VolVentas_CALCIO_FECHA_poiss[indient,-c(3,6)]
-Ventas_CALCIO_TEST_poiss=VolVentas_CALCIO_FECHA_poiss[inditest,-c(3,6)]
-
-Ventas_CALCIO_ENT= VolVentas_CALCIO_FECHA[indient,-c(3,6)]
-Ventas_CALCIO_TEST=VolVentas_CALCIO_FECHA[inditest,-c(3,6)]
-
-
-
-Ventas_SIN_CALCIO_ENT_poiss= VolVentas_SIN_CALCIO_FECHA_poiss[indient,-c(3,6)]
-Ventas_SIN_CALCIO_TEST_poiss=VolVentas_SIN_CALCIO_FECHA_poiss[inditest,-c(3,6)]
-
-
-Ventas_SIN_CALCIO_ENT= VolVentas_SIN_CALCIO_FECHA[indient,-c(3,6)]
-Ventas_SIN_CALCIO_TEST=VolVentas_SIN_CALCIO_FECHA[inditest,-c(3,6)]
-```
 
 
 
@@ -157,11 +135,10 @@ Para el desarrollo de los modelos, haremos uso de los conjuntos de datos de `r n
 
 - Precio medio con impuestos
 - Descuento medio aplicado
-- Año
 - Mes del año
 - Día de la semana
 
-
+Nota: La variable año, no se ha introducido como predictora del volumen de ventas, ya que su varianza es muy próxima a cero y por tanto, no podríamos entrenar los modelos de aprendizaje automático.
 
 
 

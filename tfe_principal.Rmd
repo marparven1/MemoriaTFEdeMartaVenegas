@@ -154,6 +154,7 @@ knitr::write_bib(c("knitr","rmarkdown","dplyr","ggplot2","kableExtra","caret"),
 ```{r child = 'capitulo01.Rmd'}
 ```
 
+
 \FloatBarrier
 
 ```{r child = 'capitulo02.Rmd'}
@@ -169,6 +170,25 @@ knitr::write_bib(c("knitr","rmarkdown","dplyr","ggplot2","kableExtra","caret"),
 ```{r child = 'capitulo04.Rmd'}
 ```
 
+\FloatBarrier
+
+```{r child = 'capitulo05.Rmd'}
+```
+
+
+\FloatBarrier
+
+
+\clearpage
+\section*{Conclusiones}
+\addcontentsline{toc}{chapter}{Conclusiones}
+
+
+
+```{r child = 'conclusiones.Rmd'}
+```
+
+
 
 <!-- 
 Descomentarlo para incluir el capítulo 5 el cual contiene utilidades de ejemplo
@@ -179,11 +199,7 @@ install.packages(c("ggplot2","kableExtra","dplyr"))
 -->
 
 
-\FloatBarrier
 
-```{r child = 'capitulo05.Rmd'}
-
-```
 
 
 
