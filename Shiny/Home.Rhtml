@@ -1,7 +1,9 @@
-<!-- Carousel
-================================================== -->
+<!-- Carousel================================================== -->
+<html>
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <link rel="stylesheet" href="css/Home.css">
+<body>
+
 <div id="myCarousel" class="carousel slide" data-ride="carousel">
   <!-- Indicators -->
   <ol class="carousel-indicators">
@@ -15,7 +17,7 @@
       <div class="container">
         <div class="carousel-caption">
           <h1 class="fit-head"  style="color:white;">Sector retail</h1>
-          <p class="fit-text">La ciencia de datos aplicada al sector retail</p>
+          <h2 class="fit-text" style="color:white;">La ciencia de datos aplicada al sector retail</h2>
         </div>
       </div>
     </div>
@@ -24,7 +26,7 @@
       <div class="container">
   <div class="carousel-caption">
     <h1 class="fit-head" style="color:white;">Análisis de cesta de la compra</h1>
-    <p class="fit-text">Descubriendo asociaciones entre productos</p>
+    <h2 class="fit-text" style="color:white;">Descubriendo asociaciones entre productos</h2>
   </div>
       </div>
     </div>
@@ -33,7 +35,7 @@
       <div class="container">
         <div class="carousel-caption">
           <h1 class="fit-head" style="color:white;">Predicción de la demanda</h1>
-          <p class="fit-text">Predicciones de la demanda de productos lácteos. Mediante modelos estadísticos y algoritmos de aprendizaje automático.</p>
+          <h2 class="fit-text" style="color:white;">Predicciones de la demanda de productos lácteos. Mediante modelos estadísticos y algoritmos de aprendizaje automático.</h2>
         </div>
       </div>
     </div>
@@ -58,8 +60,10 @@
 
 <div class="w3-row w3-container row app-links">
 <h1 class="w3-center">Contenidos</h1>
+<br>
+
   <div class="w3-col s4  w3-center">
- <a href="#SmartHome"> <img src="img/ICN_home_uno.jpeg" alt="Uno" style="width: 25%;
+ <a href="#MarketBasket"> <img src="img/ICN_home_uno.jpeg" alt="Uno" style="width: 25%;
     height: auto;"> </a>
     <h2>Análisis de cesta de la compra</h2>
     <p>Para descubrir asociaiones entre productos.</p>
@@ -90,25 +94,24 @@
 
   <div class="row featurette center-on-xs">
   <div class="col-md-5 col-md-push-7">
-
+  <img  style="height:300px;" class="featurette-image img-responsive" src="img/retail_analytics.jpg" alt = "">
   </div>
   <div class="col-md-7 col-md-pull-5">
     <h2 id="MarketBasket" class="featurette-heading">Análisis de cesta de la compra<br></h2><h3><span class="text-muted">Descubriendo asociaciones entre productos</span></h3>
     
-    <p class="lead">Breve descripción <a data-toggle="collapse" data-parent="#accordionOne" href="#collapseOne">Pulse para conocer las ventajas &hellip;</a></p>
+    <p class="lead">El objetivo principal de este método es identificar patrones o asociaciones entre diversos grupos de productos a partir de las transacciones generadas en cada venta. Estas asociaciones quedan recogidas en las reglas de asociación, agrupaciones de productos en función de su afinidad. La utilidad de las reglas reside en identificar oportunidades de negocio y estrategias para las empresas.<a data-toggle="collapse" data-parent="#accordionOne" href="#collapseOne">Pulse para conocer algunas empresas que utilizan este tipo de análisis. &hellip;</a></p>
      <div class="panel-group transparent-panel-group" id="accordionOne">
         <div class="panel panel-default">
           <div id="collapseOne" class="panel-collapse collapse">
             <div class="panel-body text-left">
-              <ol>
-                <li>Gestión del hogar a distancia</li>
-                <li>Eficiencia energética: Ahorro de energía y el aumento de la eficiencia de los dispositivos: Controlar el uso de electrodomésticos, dispositivos electrónicos, temperatura del hogar, iluminación, climatización.</li>
-                <li>Mayor accesibilidad: Para los residentes ancianos o discapacitados. Los sistemas de comando por voz pueden controlar luces o cerrar puertas. </li>
-                <li>Automatización: establecer horarios para tareas automáticas, como regar el césped o encender ella calefacción a una hora determinada.</li>
-                <li> Revisión de datos de funcionamiento para elegir los mejores momentos para usar uno u otro dispositivo.  Permite regular los momentos en los que es ideal utilizar un dispositivo de gran consumo; dependiendo de la tarifa contratada, por ejemplo.</li>
-                <li>Seguridad: sistemas de alarmas. Seguridad de los datos</li>
-              </ol>
+              <ul>
+                <li>Amazon</li>
+                <li>Plataformas de entretenimiento:  Netflix, HBO</li>
+                <li>Cadenas de hipermercados: Walmart </li>
+              </ul>
+              
             </div>
+            
           </div>
         </div>
       </div>
@@ -119,9 +122,7 @@
   <hr class="featurette-divider">
 
   <div class="row featurette center-on-xs">
-    <div class="col-md-5 col-md-push-7">
-
-    </div>
+    <div class="col-md-5 col-md-push-7"><img style="height:244px;" class="featurette-image img-responsive" src="img/data_mining.jpg" alt = ""></div>
     <div class="col-md-7 col-md-pull-5">
       <h2 id="DSP" class="featurette-heading">Proceso de ciencia de datos<br></h2><h3><span class="text-muted">No hay nada que no podrás saber</span></h3>
       <p class="lead">Breve descripción.<a href="#" onclick="$('li:eq(3) a').tab('show');">Pulse para visualizar el proceso completo &hellip;</a></p>
@@ -132,7 +133,7 @@
 
   <div class="row featurette center-on-xs">
     <div class="col-md-5 col-md-push-7">
-    
+     <img style="height:250px;"  class="featurette-image img-responsive" src="img/retail.jpg" alt = "">
     </div>
     <div class="col-md-7 col-md-pull-5">
       <h2 id="Forecasting" class="featurette-heading">Pronóstico del volumen de ventas<br></h2><h3><span class="text-muted">Basándonos en datos de productos lácteos</span></h3>
@@ -160,3 +161,5 @@
 
 </div>
 <!-- /END THE FEATURETTES -->
+</body>
+</html>

@@ -17,13 +17,7 @@ ui <- fluidPage(
   # Tema
   theme = shinytheme("simplex"),
   # Estilo CSS
-  tags$head(
-  #  tags$link(rel = "stylesheet", type = "text/css", href = "www/css/Home.css")
-    
-    
-  
-    
-  ),
+ # tags$head( tags$link(rel = "stylesheet", type = "text/css", href = "Home.css")),
 
   
   #### NavBarPane ####
