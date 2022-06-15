@@ -17,44 +17,72 @@ ui <- fluidPage(
   # Tema
   theme = shinytheme("simplex"),
   # Estilo CSS
- # tags$head( tags$link(rel = "stylesheet", type = "text/css", href = "Home.css")),
+  tags$head( tags$link(rel = "stylesheet", type = "text/css", href = "estilo.css")),
 
   
   #### NavBarPane ####
   navbarPage( "TFG", 
               selected = icon("home"), collapsible = TRUE, fluid = TRUE, 
               tabPanel( icon("home"),
-                        includeHTML("Home.Rhtml")
-                        #,
-                        #includeHTML("html/footer.html")
+                        includeHTML("Home.Rhtml"),
+                        includeHTML("footer.Rhtml")
               ),
-              tabPanel(
-  # App title ----
-  titlePanel("Hello Shiny!"),
-  
-  # Sidebar layout with input and output definitions ----
-  sidebarLayout(
-    
-    # Sidebar panel for inputs ----
-    sidebarPanel(
-      
-      # Input: Slider for the number of bins ----
-      sliderInput(inputId = "bins",
-                  label = "Number of bins:",
-                  min = 1,
-                  max = 50,
-                  value = 30)
-      
+
+  #### Market basket analysis #### 
+              tabPanel("Análisis de cesta de la compra", br(),
+                       fluidRow( 
+                         column(12,
+                                h1("Análisis de cesta de la compra con datos de tickets de un supermercado"),
+                                br()) ),
+                       br(),hr(),br(),
+                       fluidRow( 
+                         column(12,
+                                p("Se ha aplicado un análisis de cesta de la compra a unos datos que proceden de una muestra de tickets 
+                                  correspondiente a transacciones de una cadena de supermercados. La muestra contiene un total de 
+                                  7801 tickets que incluyen 4631 artículos distintos."),
+                                br()) ),
+                       
+                       br(),hr(),br(),
+                       includeHTML("footer.Rhtml")
+                       ),
+  #### Data science process #### 
+    navbarMenu("Proceso de ciencia de datos",
+               tabPanel("Preprocesado", br(),
+                        fluidRow( 
+                          column(12,
+                                 h1("Adquisición de los datos y preparación"),br()) ),
+                        
+                        br(),hr(),br(),
+                        includeHTML("footer.Rhtml")
+                        ),
+               tabPanel("Análisis exploratorio", br(),
+                        fluidRow( 
+                          column(12,
+                                 h1("Análisis exploratorio de datos para dos productos lácteos"),br()) ),
+                        
+                        
+                        
+                        br(),hr(),br(),
+                        includeHTML("footer.Rhtml")
+                        ),
+               tabPanel("Modelado", br(),
+                        
+                        fluidRow( 
+                          column(12,
+                                 h1("Construcción y evaluación de modelos predictivos"),br()) ),
+                        br(),hr(),br(),
+                        includeHTML("footer.Rhtml")
+                        )
     ),
-    
-    # Main panel for displaying outputs ----
-    mainPanel(
-      
-      # Output: Histogram ----
-      plotOutput(outputId = "distPlot")
-    )
-    )
-  )
+  #### Conclusiones ####
+      tabPanel("Conclusiones", br(),
+               fluidRow( 
+                 column(12,
+                        h1("Conclusiones"),br()) ),
+               
+               br(),hr(),br(),
+               includeHTML("footer.Rhtml")
+               )
 )
 
 )

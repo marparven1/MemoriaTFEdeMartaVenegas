@@ -62,13 +62,10 @@ library(dplyr)
 
 library(lubridate)
 library(ggplot2) # Visualización
-library(plotly)
 library(hrbrthemes) # Temas 
 library(corrplot)
 library(TSA) # Series Temporales (B-C)
 ```
-
-
 
 
 
@@ -79,9 +76,9 @@ library(TSA) # Series Temporales (B-C)
 
 Este apartado lo dedicaremos a realizar un proceso de ciencia de datos completo, teniendo en cuenta los siguientes objetivos:
 
-- Analizar los datos proporcionados para conocer como varían las ventas de productos lácteos con el tiempo
-- Demostrar que existe la posibilidad de construir buenos modelos para predecir el volumen futuro de venta de productos a partir de los datos
-- Desarrollo de modelos para predecir ventas
+- Analizar los datos proporcionados para conocer como varían las ventas de dos productos lácteos con el tiempo.
+- Demostrar que existe la posibilidad de construir buenos modelos para predecir el volumen futuro de venta de productos a partir de los datos.
+- Desarrollo de modelos para predecir ventas.
 
 
 
@@ -96,7 +93,7 @@ load("Datos/datosTFGMarta.RData")
 
 
 
-Los datos contienen información correspondiente a ventas de dos productos lácteos (uno con y sin calcio) durante un período de 5 meses, desde el 1 de Septiembre de 2020 hasta el 30 de Enero de 2021, obteniéndose un total de 140025 observaciones y se estructuran de la siguiente forma: Cada fila corresponde a la línea de un ticket y hace referencia a la venta de un artículo en particular.
+Los datos contienen información correspondiente a ventas de dos productos lácteos (uno con calcio y otro sin calcio) durante un período de 5 meses, desde el 1 de Septiembre de 2020 hasta el 30 de Enero de 2021, obteniéndose un total de 140025 observaciones y se estructuran de la siguiente forma: cada fila corresponde a la línea de un ticket y hace referencia a la venta de un artículo en particular.
 
 
 En este conjunto de datos inicial encontramos las siguientes variables:
@@ -496,7 +493,7 @@ Observamos lo siguiente:
 ```
 
 Analizando el número de items vendidos y el importe de venta, es interesante mencionar que de media, se han vendido cuatro items por transacción, con un precio medio de 4.25€.
-El 75% de las ventas ha sido de seis items o menos, habiendo transacciones donde el número de productos ascendía hasta las 132 unidades. Con respecto al importe de venta (con impuestos), éste ha variando desde los 69 céntimos a los 196.680€. Sin embargo únicamente el 25% de las transacciones han sido de más de 8.34€. 
+El 75% de las ventas ha sido de seis items o menos, habiendo transacciones donde el número de productos ascendía hasta las 132 unidades. Con respecto al importe de venta (con impuestos), éste ha variando desde los 69 céntimos a los 196.68€. Sin embargo únicamente el 25% de las transacciones han sido de más de 8.34€. 
 
 
 
@@ -543,7 +540,7 @@ rbind.data.frame(VolumenVentasDiarias,VolumenVentasDiarias_P1,VolumenVentasDiari
 
 
 
-```{r , fig.height=3}
+```{r , fig.height=5}
 # La idea en shiny es poder mostrar con un gráfico interactivo las ventas totales según   # día, volumen medio de ventas mensuales, semanales,... es fácil solo es crear un dataset # con esta información
 
 ggplot(VolumenVentasDiarioTodo )+
@@ -655,7 +652,7 @@ scale_fill_brewer(palette="BuGn")+
 
 
 Inicialmente, podemos ver una tendencia creciente del número de ventas total, donde se tiende a vender más cada mes.Sin embargo, en el mes de Octubre se alcanza un maximo de artículos vendidos, con un total de 68805 artículos. En los meses siguientes el comportamiento fué de una disminución de la venta, con posterior subida del número de artículos vendidos y luego otro descenso. La tendencia general de venta de artículos es creciente, la clientela tiende a comprar más productos cada vez.
-Respecto a las ventas de cada producto individual, todos los meses ha sido mayor el volumen de venta del artículo con calcio, alcanzándose en el mes de Octubre el mayor número de artículos vendidos de cada tipo, superando en ambos casos las 32 mil unidades vendidas.
+Respecto a las ventas de cada producto individual, todos los meses ha sido mayor el volumen de venta del artículo con calcio, alcanzándose en el mes de Octubre el mayor número de artículos vendidos de cada tipo, superando en ambos casos las treinta y dos mil unidades vendidas.
 
 
 
@@ -700,11 +697,13 @@ ggplot(VENTAS_SEMANALES, aes(fill =TIPO , x = DIA_SEMANA , y=VENTAS_MEDIAS)) +
 labs(x="Mes" , y = "Volumen medio de ventas", caption = "Fuente: Elaboración propia con datos de ventas diarias")+
 scale_fill_brewer(palette="BuGn")+
   theme_bw()+ #theme(legend.position = 'none')+
-  ggtitle("Comparación del número medio de artículos vendidios según día de la semana")
+  ggtitle(label = "Comparación del número medio de artículos vendidios",subtitle = "Según día de la semana")
 ```
 
 
-Observando el gráfico, vemos que el Sábado es el día de la semana donde el núnmero de artículos vendidos es mayor, con un total de 2323 items. Por el contrario, el Domingo no se superan ni los 250 artículos vendidos, en media. Cabe destacar que los Domingos se ha vendido, de media, mayor número de items sin calcio, comportamiento que no había ocurrido hasta el momento. Los Jueves es un día donde también se tiende a vender gran candidad de productos. 
+
+
+Observando el gráfico, vemos que el Sábado es el día de la semana donde el número de artículos vendidos es mayor, con un total de 2323 items. Por el contrario, el Domingo no se superan ni los 250 artículos vendidos, en media. Cabe destacar que los Domingos se ha vendido, de media, mayor número de items sin calcio, comportamiento que no había ocurrido hasta el momento. Los Jueves es un día donde también se tiende a vender gran candidad de productos. 
 
 
 
@@ -783,7 +782,8 @@ En la matriz de correlación mostrada a continuación podemos ver el grado de as
 ```{r , fig.height=3}
 VolVentas_FECHA=mutate_at(VolVentas_FECHA, vars("ANO","DIA","SEMANA_ANO","MES","DIA_SEMANA"  ), as.numeric)
 M = cor(VolVentas_FECHA[,-1])
-corrplot(M, method = "number",type = 'lower', diag = FALSE)
+corrplot(M, method = "number",type = 'lower', diag = FALSE, number.cex = 0.9,
+         tl.col = 'black', cl.ratio = 0.1, tl.srt = 35)
 ```
 
 

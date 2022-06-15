@@ -594,7 +594,14 @@ Se dice que dos reglas son *redundantes* si tienen el mismo antecedente y mismo 
 
 Por ejemplo, dadas dos reglas de asociación:
 
-\[1. \quad \{A,B \} \rightarrow \{ C \} \\    2. \quad \{ A \} \rightarrow \{ C \} \]
+
+
+\[
+\begin{array}{ll}
+1. \quad \{A,B \} \rightarrow \{ C \}  \\
+2. \quad \{ A \} \rightarrow \{ C \}
+\end{array}
+\]
 
 Se tiene que la regla *1* es redundante.
 

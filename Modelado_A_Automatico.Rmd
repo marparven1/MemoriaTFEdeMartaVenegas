@@ -286,7 +286,7 @@ El con *K* = `r modeloKNN_T$bestTune[1,1]` vecinos es el que nos proporciona mej
 ```{r}
 modeloKNN_T$results[modeloKNN_T$results[,1]==modeloKNN_T$bestTune[1,1],] %>% 
   kableExtra::kable(booktabs=TRUE , caption = "Métricas del mejor modelo") %>% 
-    kableExtra::kable_styling(latex_options = "HOLD_position")
+    kableExtra::kable_styling(latex_options = c("HOLD_position","striped") )
 ```
 
 
@@ -295,7 +295,7 @@ modeloKNN_T$results[modeloKNN_T$results[,1]==modeloKNN_T$bestTune[1,1],] %>%
 ```{r}
 modeloKNN_T$resample %>% 
     kableExtra::kable(booktabs=TRUE , caption = "Métricas en el remuestreo",longtable = T) %>% 
-    kableExtra::kable_styling(latex_options = c("HOLD_position","striped","repeat_header") )
+    kableExtra::kable_styling(latex_options = c("HOLD_position","striped") )
 ```
 
 

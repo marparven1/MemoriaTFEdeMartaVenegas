@@ -70,7 +70,7 @@
 \contentsline {paragraph}{\numberline {5.2.4.1.1}Modelo de Regresi\IeC {\'o}n de Poisson}{53}{paragraph.5.2.4.1.1}% 
 \contentsline {subparagraph}{\numberline {5.2.4.1.1.1}Modelado}{53}{subparagraph.5.2.4.1.1.1}% 
 \contentsline {paragraph}{\numberline {5.2.4.1.2}Modelo de Regresi\IeC {\'o}n Binomial Negativa}{59}{paragraph.5.2.4.1.2}% 
-\contentsline {subparagraph}{\numberline {5.2.4.1.2.1}Modelado}{60}{subparagraph.5.2.4.1.2.1}% 
+\contentsline {subparagraph}{\numberline {5.2.4.1.2.1}Modelado}{59}{subparagraph.5.2.4.1.2.1}% 
 \contentsline {paragraph}{\numberline {5.2.4.1.3}Conclusiones}{66}{paragraph.5.2.4.1.3}% 
 \contentsline {paragraph}{\numberline {5.2.4.1.4}An\IeC {\'a}lisis de Series Temporales}{66}{paragraph.5.2.4.1.4}% 
 \contentsline {subparagraph}{\numberline {5.2.4.1.4.1}Creaci\IeC {\'o}n ST y representaci\IeC {\'o}n de los datos}{66}{subparagraph.5.2.4.1.4.1}% 

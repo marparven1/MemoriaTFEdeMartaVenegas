@@ -750,7 +750,7 @@ Sin embargo, a pesar de tener este comportamiento similar, vemos que los modelos
 
 
 - El modelo de regresión de Poisson no es adecuado para modelar el volumen de ventas diarias, debido a la gran sobredispersión existente en los datos.
-- El mejor modelo de regresión Bonimial Negativa encontrado es para el volumen de ventas total, donde se consigue explicar un 58.62% de la variabilidad total de los datos. 
+- El mejor modelo de regresión Binomial Negativa encontrado es para el volumen de ventas total, donde se consigue explicar un 58.62% de la variabilidad total de los datos. 
 - Los RMSE obtenidos son altos en comparación con el volumen de ventas que estamos tratando de predecir.
 
 - El formato de los datos que nos ha proporcionado mejores modelos de regresión binomial es el de las variables dummies
