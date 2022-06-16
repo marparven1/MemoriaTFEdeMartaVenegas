@@ -176,6 +176,8 @@ Por último, después de haber transformado nuestros datos, guardamos la columna
 ```{r , size="footnotesize"}
 cestas <- DatosBasket1$Items %>%as_tibble() %>% dplyr::rename("Items" = value)
 write.csv(cestas,"Datos/muestraTickets.csv", quote = FALSE, row.names = FALSE)
+
+#save(cestas, file="shiny/datos/DatosFormatoBasket.RData")
 ```
 
 

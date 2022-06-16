@@ -41,6 +41,23 @@ ui <- fluidPage(
                                   correspondiente a transacciones de una cadena de supermercados. La muestra contiene un total de 
                                   7801 tickets que incluyen 4631 artículos distintos."),
                                 br()) ),
+                       fluidRow( 
+                         column(12,
+                                h2(em("Conjunto de datos inicial"),icon("database",lib = "font-awesome")))),
+                       br(),
+                               fluidRow( 
+                         column(12,
+                                column(DT::dataTableOutput("CjtoInicial"), width = 12)
+                         ) , br(),
+                         column(12,
+                                h2(em("Conjunto de datos en formato cesta"),icon("database",lib = "font-awesome"))),
+                         br(),
+                         column(12,
+                                column(DT::dataTableOutput("FtoBasket"), width = 12)
+                         )
+                         
+                         
+                         ),
                        
                        br(),hr(),br(),
                        includeHTML("footer.Rhtml")
