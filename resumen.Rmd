@@ -3,7 +3,7 @@ output: pdf_document
 ---
 
 
-En el presente trabajo fin de grado, titulado *Modelización de ventas en el sector retail* se hace una revisión de diferentes modelos estadísticos y algoritmos de aprendizaje automático con el principal objetivo de aplicarlos a un conjunto de datos real para predecir el volumen de ventas de dos productos lácteos. 
+En el presente trabajo fin de grado, titulado *Modelización de ventas en el sector retail* se hace una revisión de diferentes modelos estadísticos y algoritmos de aprendizaje automático con el principal objetivo de aplicarlos a un conjunto de datos real para predecir el volumen de ventas de una pareja de productos.
 
 Para llegar a la fase del modelado, es necesario de realizar un proceso de ciencia de datos completo, que comprende desde el pre-procesado y depuración de los datos, hasta un análisis exploratorio para entender como varían las ventas en función del tiempo.
 

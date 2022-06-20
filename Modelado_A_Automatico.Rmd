@@ -222,7 +222,7 @@ El modelo tiene un costo *C* = `r modeloSVM_T$bestTune[1,1]` y nos ofrece las si
 
 ```{r}
 modeloSVM_T$results[modeloSVM_T$results[,1]==modeloSVM_T$bestTune[1,1],] %>% 
-  kableExtra::kable(booktabs=TRUE , caption = "Métricas del mejor modelo") %>% 
+  kableExtra::kable(booktabs=TRUE , caption = "Métricas del mejor modelo SVM. Algoritmo 1.1") %>% 
   kableExtra::kable_styling(latex_options = "HOLD_position")
 ```
 
@@ -231,7 +231,7 @@ modeloSVM_T$results[modeloSVM_T$results[,1]==modeloSVM_T$bestTune[1,1],] %>%
 
 ```{r}
 modeloSVM_T$resample %>%  
-  kableExtra::kable(booktabs=TRUE , caption = "Métricas en el remuestreo") %>% 
+  kableExtra::kable(booktabs=TRUE , caption = "Métricas en el remuestreo. Modelo SVM. Algoritmo 1.1") %>% 
     kableExtra::kable_styling(latex_options = c("HOLD_position","striped") )
 ```
 
@@ -285,7 +285,7 @@ El con *K* = `r modeloKNN_T$bestTune[1,1]` vecinos es el que nos proporciona mej
 
 ```{r}
 modeloKNN_T$results[modeloKNN_T$results[,1]==modeloKNN_T$bestTune[1,1],] %>% 
-  kableExtra::kable(booktabs=TRUE , caption = "Métricas del mejor modelo") %>% 
+  kableExtra::kable(booktabs=TRUE , caption = "Métricas del mejor modelo KNN. Algoritmo 2.1") %>% 
     kableExtra::kable_styling(latex_options = c("HOLD_position","striped") )
 ```
 
@@ -294,7 +294,7 @@ modeloKNN_T$results[modeloKNN_T$results[,1]==modeloKNN_T$bestTune[1,1],] %>%
 
 ```{r}
 modeloKNN_T$resample %>% 
-    kableExtra::kable(booktabs=TRUE , caption = "Métricas en el remuestreo",longtable = T) %>% 
+    kableExtra::kable(booktabs=TRUE , caption = "Métricas en el remuestreo. Modelo KNN. Algoritmo 2.1",longtable = T) %>% 
     kableExtra::kable_styling(latex_options = c("HOLD_position","striped") )
 ```
 
@@ -342,7 +342,7 @@ A continuación mostramos la configuración del mejor modelo y las métricas obt
 
 ```{r}
 modeloXGB_T$results[modeloXGB_T$results[,7]==modeloXGB_T$bestTune[1,1] & modeloXGB_T$results[,2]==modeloXGB_T$bestTune[1,2] & modeloXGB_T$results[,1]==modeloXGB_T$bestTune[1,3] & modeloXGB_T$results[,4]==modeloXGB_T$bestTune[1,5] & modeloXGB_T$results[,4]==modeloXGB_T$bestTune[1,5] & modeloXGB_T$results[,5]==modeloXGB_T$bestTune[1,6] & modeloXGB_T$results[,6]==modeloXGB_T$bestTune[1,7] ,] %>% 
-  kableExtra::kable(booktabs=TRUE , caption = "Métricas del mejor modelo") %>% 
+  kableExtra::kable(booktabs=TRUE , caption = "Métricas del mejor modelo XGBoost. Algoritmo 3.1") %>% 
     kableExtra::kable_styling(latex_options = c("HOLD_position","scale_down","striped"))
 ```
 
@@ -351,7 +351,7 @@ modeloXGB_T$results[modeloXGB_T$results[,7]==modeloXGB_T$bestTune[1,1] & modeloX
 
 ```{r}
 modeloXGB_T$resample  %>% 
-   kableExtra::kable(booktabs=TRUE , caption = "Métricas en el remuestreo",longtable = T) %>% 
+   kableExtra::kable(booktabs=TRUE , caption = "Métricas en el remuestreo. Modelo XGBoost. Algoritmo 3.1",longtable = T) %>% 
     kableExtra::kable_styling(latex_options = c("HOLD_position","striped","repeat_header") )
 ```
 
@@ -440,10 +440,10 @@ En la tabla mostrada a continuación podemos observar las predicciones para los 
 PrediccionTotal = predict(Mejor_modeloSVM_T, newdata = DatosTesteo_Total[,-c(1,5,6)])
 PrediccionTotal=round(PrediccionTotal)
 cbind.data.frame(DatosTesteo_Total$FECHA,PrediccionTotal,DatosTesteo_Total$VENTAS,abs(PrediccionTotal-DatosTesteo_Total$VENTAS)) %>% 
-  kable(booktabs=TRUE,caption = "Máquina de vector soporte", longtable=TRUE,col.names = c("Fecha","Predicción","Valor real","Error absoluto en la predicción")) %>%
+  kable(booktabs=TRUE,caption = "Resultados de predicción. Volumen total de ventas. Algoritmo Máquina de vector soporte", longtable=TRUE,col.names = c("Fecha","Predicción","Valor real","Error absoluto en la predicción")) %>%
   kable_styling(latex_options = c("striped","HOLD_position","repeat_header" ) )
 
-
+ 
 
 ```
 
@@ -510,7 +510,7 @@ El modelo con un costo *C* = `r modeloSVM_C$bestTune[1,1]` es el que proporciona
 
 ```{r}
 modeloSVM_C$results[modeloSVM_C$results[,1]==modeloSVM_C$bestTune[1,1],] %>% 
-  kableExtra::kable(booktabs=TRUE , caption = "Métricas del mejor modelo") %>% 
+  kableExtra::kable(booktabs=TRUE , caption = "Métricas del mejor modelo SVM. Algoritmo 1.2") %>% 
     kableExtra::kable_styling(latex_options = "HOLD_position")
 ```
 
@@ -519,7 +519,7 @@ modeloSVM_C$results[modeloSVM_C$results[,1]==modeloSVM_C$bestTune[1,1],] %>%
 
 ```{r}
 modeloSVM_C$resample %>% 
-  kableExtra::kable(booktabs=TRUE , caption = "Métricas en el remuestreo",longtable = T) %>% 
+  kableExtra::kable(booktabs=TRUE , caption = "Métricas en el remuestreo. Modelo SVM. Algoritmo 1.2",longtable = T) %>% 
     kableExtra::kable_styling(latex_options = c("HOLD_position","striped","repeat_header") )
 ```
 
@@ -576,7 +576,7 @@ El modelo que nos ofrece mejores métricas utiliza 3 vecinos, *K* = `r modeloKNN
 
 ```{r}
 modeloKNN_C$results[modeloKNN_C$results[,1]==modeloKNN_C$bestTune[1,1],] %>% 
-  kableExtra::kable(booktabs=TRUE , caption = "Métricas del mejor modelo") %>% 
+  kableExtra::kable(booktabs=TRUE , caption = "Métricas del mejor modelo KNN. Algoritmo 2.2") %>% 
     kableExtra::kable_styling(latex_options = "HOLD_position")
 ```
 
@@ -585,7 +585,7 @@ modeloKNN_C$results[modeloKNN_C$results[,1]==modeloKNN_C$bestTune[1,1],] %>%
 
 ```{r}
 modeloKNN_C$resample%>% 
-   kableExtra::kable(booktabs=TRUE , caption = "Métricas en el remuestreo",longtable = T) %>% 
+   kableExtra::kable(booktabs=TRUE , caption = "Métricas en el remuestreo. Modelo KNN. Algoritmo 2.2",longtable = T) %>% 
     kableExtra::kable_styling(latex_options = c("HOLD_position","striped","repeat_header") )
 ```
 
@@ -636,7 +636,7 @@ A continuación mostramos la configuración del mejor modelo y las métricas obt
 
 ```{r}
 modeloXGB_C$results[modeloXGB_C$results[,7]==modeloXGB_C$bestTune[1,1] & modeloXGB_C$results[,2]==modeloXGB_C$bestTune[1,2] & modeloXGB_C$results[,1]==modeloXGB_C$bestTune[1,3] & modeloXGB_C$results[,4]==modeloXGB_C$bestTune[1,5] & modeloXGB_C$results[,4]==modeloXGB_C$bestTune[1,5] & modeloXGB_C$results[,5]==modeloXGB_C$bestTune[1,6] & modeloXGB_C$results[,6]==modeloXGB_C$bestTune[1,7] ,] %>% 
-  kableExtra::kable(booktabs=TRUE , caption = "Métricas del mejor modelo") %>% 
+  kableExtra::kable(booktabs=TRUE , caption = "Métricas del mejor modelo XGBoost. Algoritmo 3.2") %>% 
     kableExtra::kable_styling(latex_options = c("HOLD_position","scale_down","striped"))
 ```
 
@@ -645,7 +645,7 @@ modeloXGB_C$results[modeloXGB_C$results[,7]==modeloXGB_C$bestTune[1,1] & modeloX
 
 ```{r}
 modeloXGB_C$resample%>% 
-  kableExtra::kable(booktabs=TRUE , caption = "Métricas en el remuestreo",longtable = T) %>% 
+  kableExtra::kable(booktabs=TRUE , caption = "Métricas en el remuestreo. Modelo XGBoost. Algoritmo 3.2",longtable = T) %>% 
     kableExtra::kable_styling(latex_options = c("HOLD_position","striped","repeat_header") )
 ```
 
@@ -735,9 +735,8 @@ Observando la tabla, el modelo seleccionado para predecir el volumen de ventas p
 PrediccionCalcio = predict(Mejor_modeloXGB_C, newdata = DatosTesteo_Calcio[,-c(1,5,6)])
 PrediccionCalcio=round(PrediccionCalcio)
 cbind.data.frame(DatosTesteo_Calcio$FECHA,PrediccionCalcio,DatosTesteo_Calcio$VENTAS,abs(PrediccionCalcio-DatosTesteo_Calcio$VENTAS)) %>% 
-  kable(booktabs=TRUE,longtable=T,caption = "SVM", col.names = c("Fecha","Predicción","Valor real","Error absoluto en la predicción")) %>%
+  kable(booktabs=TRUE,longtable=T,caption = "Resultados de predicción. Volumen total de ventas. Algoritmo XGBoost", col.names = c("Fecha","Predicción","Valor real","Error absoluto en la predicción")) %>%
   kable_styling(latex_options = c("striped","HOLD_position","repeat_header" ) )
-
 ```
 
 
@@ -818,7 +817,7 @@ El modelo que nos ofrece mejores métricas tiene un costo, *C* = `r modeloSVM_SC
 
 ```{r}
 modeloSVM_SC$results[modeloSVM_SC$results[,1]==modeloSVM_SC$bestTune[1,1],] %>% 
-  kableExtra::kable(booktabs=TRUE , caption = "Métricas del mejor modelo") %>% 
+  kableExtra::kable(booktabs=TRUE , caption = "Métricas del mejor modelo SVM. Algoritmo 3.1") %>% 
     kableExtra::kable_styling(latex_options = "HOLD_position")
 ```
 
@@ -827,7 +826,7 @@ modeloSVM_SC$results[modeloSVM_SC$results[,1]==modeloSVM_SC$bestTune[1,1],] %>%
 
 ```{r}
 modeloSVM_SC$resample%>% 
-  kableExtra::kable(booktabs=TRUE , caption = "Métricas en el remuestreo",longtable = T) %>% 
+  kableExtra::kable(booktabs=TRUE , caption = "Métricas en el remuestreo. Modelo SVM. Algoritmo 3.1",longtable = T) %>% 
     kableExtra::kable_styling(latex_options = c("HOLD_position","striped","repeat_header") )
 ```
 
@@ -883,7 +882,7 @@ El modelo que nos ofrece mejores métricas utiliza 3 vecinos, *K* = `r modeloKNN
 
 ```{r}
 modeloKNN_SC$results[modeloKNN_SC$results[,1]==modeloKNN_SC$bestTune[1,1],] %>% 
-  kableExtra::kable(booktabs=TRUE , caption = "Métricas del mejor modelo") %>% 
+  kableExtra::kable(booktabs=TRUE , caption = "Métricas del mejor modelo KNN. Algoritmo 3.2") %>% 
     kableExtra::kable_styling(latex_options = "HOLD_position")
 ```
 
@@ -892,7 +891,7 @@ modeloKNN_SC$results[modeloKNN_SC$results[,1]==modeloKNN_SC$bestTune[1,1],] %>%
 
 ```{r}
 modeloKNN_SC$resample%>% 
-   kableExtra::kable(booktabs=TRUE , caption = "Métricas en el remuestreo",longtable = T) %>% 
+   kableExtra::kable(booktabs=TRUE , caption = "Métricas en el remuestreo. Modelo KNN. Algoritmo 3.2",longtable = T) %>% 
     kableExtra::kable_styling(latex_options = c("HOLD_position","striped","repeat_header") )
 ```
 
@@ -941,7 +940,7 @@ A continuación mostramos la configuración del mejor modelo y las métricas obt
 
 ```{r}
 modeloXGB_SC$results[modeloXGB_SC$results[,7]==modeloXGB_SC$bestTune[1,1] & modeloXGB_SC$results[,2]==modeloXGB_SC$bestTune[1,2] & modeloXGB_SC$results[,1]==modeloXGB_SC$bestTune[1,3] & modeloXGB_SC$results[,4]==modeloXGB_SC$bestTune[1,5] & modeloXGB_SC$results[,4]==modeloXGB_SC$bestTune[1,5] & modeloXGB_SC$results[,5]==modeloXGB_SC$bestTune[1,6] & modeloXGB_SC$results[,6]==modeloXGB_SC$bestTune[1,7] ,] %>% 
-  kableExtra::kable(booktabs=TRUE , caption = "Métricas del mejor modelo") %>% 
+  kableExtra::kable(booktabs=TRUE , caption = "Métricas del mejor modelo XGBoost. Algoritmo 3.3") %>% 
     kableExtra::kable_styling(latex_options = c("HOLD_position","scale_down","striped"))
 ```
 
@@ -950,7 +949,7 @@ modeloXGB_SC$results[modeloXGB_SC$results[,7]==modeloXGB_SC$bestTune[1,1] & mode
 
 ```{r}
 modeloXGB_SC$resample%>% 
- kableExtra::kable(booktabs=TRUE , caption = "Métricas en el remuestreo",longtable = T) %>% 
+ kableExtra::kable(booktabs=TRUE , caption = "Métricas en el remuestreo. Modelo XGBoost. Algoritmo 3.3",longtable = T) %>% 
     kableExtra::kable_styling(latex_options = c("HOLD_position","striped","repeat_header") )
 ```
 
@@ -1023,7 +1022,7 @@ R2=c(Mejor_modeloSVM_SC$results[,3],Mejor_modeloKNN_SC$results[,3],Mejor_modeloX
 ```
 
 
-Observando la tabla, el modelo seleccionado para predecir el volumen de ventas para el producto con sin calcio en los datos de testeo es el modelo de máquina de vector soporte, ya que el valor del coeficiente de correlación es bastante mejor que el resto, a pesar del valor de RMSE ofrecido por el modelo XGBoost.
+Observando la tabla, el modelo seleccionado para predecir el volumen de ventas para el producto con sin calcio en los datos de testeo es el modelo de máquina de vector soporte, ya que el valor del coeficiente de correlación es bastante mejor que el resto, a pesar de que el valor de RMSE ofrecido por el modelo XGBoost sea menor.
 
 
 
@@ -1038,9 +1037,8 @@ Observando la tabla, el modelo seleccionado para predecir el volumen de ventas p
 PrediccionSinCalcio = predict(Mejor_modeloSVM_SC, newdata = DatosTesteo_SinCalcio[,-c(1,5,6)])
 PrediccionSinCalcio=round(PrediccionSinCalcio)
 cbind.data.frame(DatosTesteo_SinCalcio$FECHA,PrediccionSinCalcio,DatosTesteo_SinCalcio$VENTAS,abs(PrediccionSinCalcio-DatosTesteo_SinCalcio$VENTAS)) %>% 
-  kable(booktabs=TRUE,caption = "Máquina de vector soporte",longtable=TRUE, col.names = c("Fecha","Predicción","Valor real","Error absoluto en la predicción")) %>%
+  kable(booktabs=TRUE,caption = "Resultados de predicción. Volumen total de ventas. Algoritmo máquina de vector soporte",longtable=TRUE, col.names = c("Fecha","Predicción","Valor real","Error absoluto en la predicción")) %>%
   kable_styling(latex_options = c("striped","HOLD_position","repeat_header" ) )
-
 ```
 
 
@@ -1082,12 +1080,13 @@ En la tabla mostrada a continuación se observan las métricas obtenidas trás e
 
 
 ```{r}
-cbind(Modelo= c("Suma de productos","Producto con calcio","Producto sin calcio"),
+cbind(Predicción= c("Suma de productos","Producto con calcio","Producto sin calcio"),
+      Modelo=c("SVM","XGBoost","SVM"),
       rbind(
 round(postResample(PrediccionTotal,DatosTesteo_Total$VENTAS ),3),
 round(postResample(PrediccionCalcio,DatosTesteo_Calcio$VENTAS ),3),
 round(postResample(PrediccionSinCalcio,DatosTesteo_SinCalcio$VENTAS ) ,3) )) %>% 
-  kable(booktabs=TRUE, caption = "Algoritmo XGBoost") %>% 
+  kable(booktabs=TRUE, caption = "Resultados de la predicción en los datos de testeo. Comparación de métricas.") %>% 
     kable_styling(latex_options = c("striped","hold_position")) 
 ```
 

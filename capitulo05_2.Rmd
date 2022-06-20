@@ -647,7 +647,7 @@ ggplot(VENTAS_MENSUALES, aes(fill =TIPO , x = MES , y=TOTAL_VENTAS)) +
 labs(x="Mes" , y = "Volumen de ventas", caption = "Fuente: Elaboración propia con datos de ventas diarias")+
 scale_fill_brewer(palette="BuGn")+
   theme_bw()+ #theme(legend.position = 'none')+
-  ggtitle("Comparación del número total de artículos vendidios según mes del año")
+  ggtitle("Nº total de artículos vendidos según mes del año")
 ```
 
 
@@ -779,12 +779,22 @@ par(mfrow=c(1,3))
 En la matriz de correlación mostrada a continuación podemos ver el grado de asociación de las diferentes variables entre sí y con la variable objetivo, *ventas*.
 
 
-```{r , fig.height=3}
-VolVentas_FECHA=mutate_at(VolVentas_FECHA, vars("ANO","DIA","SEMANA_ANO","MES","DIA_SEMANA"  ), as.numeric)
-M = cor(VolVentas_FECHA[,-1])
-corrplot(M, method = "number",type = 'lower', diag = FALSE, number.cex = 0.9,
-         tl.col = 'black', cl.ratio = 0.1, tl.srt = 35)
+```{r }
+#VolVentas_FECHA=mutate_at(VolVentas_FECHA, vars("ANO","DIA","SEMANA_ANO","MES","DIA_SEMANA"  ), as.numeric)
+#M = cor(VolVentas_FECHA[,-1])
+#MatCorr = corrplot(M, method = "number",type = 'lower', diag = FALSE, number.cex = 0.9,
+#         tl.col = 'black', cl.ratio = 0.1, tl.srt = 35)
 ```
+
+
+
+
+```{r echo=FALSE,fig.align='center',out.width='65%',fig.cap="\\label{fig:shiny3}Matr\\'iz de correlaci\\'on. Fuente: elaboraci\\'on propia con datos de ventas.",fig.pos="H"}
+
+knitr::include_graphics("graficos/MAtrizCorrelacion.png")
+```
+
+
 
 
 
