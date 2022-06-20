@@ -101,9 +101,16 @@ knitr::include_graphics("graficos/Shiny_2.jpeg")
 ```
 
 
-```{r echo=FALSE,fig.align='center',fig.cap="\\label{fig:shiny4}\\ P\\'agina de análisis de cesta de la compra Fuente: elaboraci\\'on propia con Shiny.",fig.pos="H"}
+```{r echo=FALSE,fig.align='center',fig.pos="H", out.width='100%'}
 
 knitr::include_graphics("graficos/CestaCompra.jpeg")
+```
+
+
+
+```{r echo=FALSE,fig.align='center',out.width='100%',fig.cap="\\label{fig:shiny4}\\ P\\'agina de análisis de cesta de la compra Fuente: elaboraci\\'on propia con Shiny.",fig.pos="H"}
+
+knitr::include_graphics("graficos/ShinyBasket.png")
 ```
 
 

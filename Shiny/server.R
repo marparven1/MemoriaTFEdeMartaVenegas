@@ -90,9 +90,9 @@ output$TamanoTrans <- renderPlotly({
   fig <- fig %>% layout(xaxis = list(title = "",
                                      tickangle = -45),
                         margin = list(b = 100),
-                        title = 'Productos más vendidos',
+                        title = 'Distribución del tamaño de las transacciones',
                         xaxis = list(title = "ID del producto"),
-                        yaxis = list(title = "Número de ventas"),
+                        yaxis = list(title = "Tamaño de la transacción"),
                         barmode = 'stack',
                         paper_bgcolor = 'rgba(245, 246, 249, 1)',
                         plot_bgcolor = 'rgba(245, 246, 249, 1)',
@@ -105,7 +105,7 @@ output$TamanoTrans <- renderPlotly({
 
 
 plotDataVentas <- reactive({
-  CotaVentas <- muestra %>% group_by(item) %>% summarise(Cota = n())
+  CotaVentas <- muestra %>% group_by(item) %>% dplyr::summarise(Cota = n())
   CotaVentas <- CotaVentas[order(CotaVentas$Cota,decreasing = TRUE),]
   CotaVentas[1:input$ConteoArticulos,]
 })
