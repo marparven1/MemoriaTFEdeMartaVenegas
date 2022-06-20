@@ -41,23 +41,43 @@ ui <- fluidPage(
                                   correspondiente a transacciones de una cadena de supermercados. La muestra contiene un total de 
                                   7801 tickets que incluyen 4631 artículos distintos."),
                                 br()) ),
+                       br(),
                        fluidRow( 
                          column(12,
                                 h2(em("Conjunto de datos inicial"),icon("database",lib = "font-awesome")))),
-                       br(),
+                       br(), br(),
                                fluidRow( 
                          column(12,
                                 column(DT::dataTableOutput("CjtoInicial"), width = 12)
                          ) , br(),
                          column(12,
                                 h2(em("Conjunto de datos en formato cesta"),icon("database",lib = "font-awesome"))),
-                         br(),
+                         br(), br(),
                          column(12,
-                                column(DT::dataTableOutput("FtoBasket"), width = 12)
-                         )
-                         
-                         
-                         ),
+                                column(DT::dataTableOutput("FtoBasket"), width = 12),br(),p("Nota: Únicamente se observa una cota inferior de la venta de cada producto.")
+                         ) 
+                         ),br(),hr(),br(),
+                       fluidRow(
+                         h2("Tamaño de las transacciones"),br(),
+                        column(7,
+                                plotlyOutput("TamanoTrans",height = "500px")),
+                        column(5,sliderInput("TamanoTransaccionesInput", 
+                                                   "Seleccione el tamaño máximo de las transacciones:",
+                                                   1, 82, 12, 
+                                                   round = FALSE, 
+                                                   ticks = TRUE, animate = FALSE)),
+                        )
+                         ,
+                       br(),br(),
+                       fluidRow(
+                         h2("Cota inferior de ventas"),
+                         column(5,
+                                numericInput("ConteoArticulos", 
+                                            "Seleccione el número de artículos que quiere mostrar:",
+                                            20, min =1, max = 4631)
+                                ),
+                         column(7, plotlyOutput("VentaArt",height = "500px") )
+                       ),
                        
                        br(),hr(),br(),
                        includeHTML("footer.Rhtml")

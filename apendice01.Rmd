@@ -29,8 +29,6 @@ output:
       #after_body: latex/latex_antes_enddoc.tex
 ---
 
-
-
 ```{r include=FALSE}
 knitr::opts_chunk$set(fig.path = 'figurasR/',
                       echo = FALSE, warning = FALSE, message = FALSE,
@@ -39,21 +37,25 @@ knitr::opts_chunk$set(fig.path = 'figurasR/',
 
 ```
 
-
 <!-- \setcounter{chapter}{2} -->
+
 <!-- \setcounter{chapter}{2} escribir 2 para capítulo 3  -->
+
 <!-- \pagenumbering{arabic} -->
 
-
+```{=tex}
 \ifdefined\ifprincipal
 \else
 \setlength{\parindent}{1em}
 \pagestyle{fancy}
 \setcounter{tocdepth}{4}
 \tableofcontents
+```
 <!-- \nocite{*} -->
+
 \fi
 
+```{=tex}
 \ifdefined\ifdoblecara
 \fancyhead{}{}
 \fancyhead[LE,RO]{\scriptsize\rightmark}
@@ -69,17 +71,40 @@ knitr::opts_chunk$set(fig.path = 'figurasR/',
 \fi
 \renewcommand{\headrulewidth}{0.4pt}
 \renewcommand{\footrulewidth}{0.4pt}
-
+```
 # Apéndice: App shiny
 
+Para la exposición del trabajo se ha desarrollado una aplicación web interactiva haciendo uso del paquete de R **Shiny**. Una aplicación Shiny es simplemente un directorio que contiene un script R llamado app.R que se compone de un objeto de interfaz de usuario y una función de servidor.
 
-Para la exposición del trabajo se ha desarrollado una aplicación web interactiva haciendo uso del paquete de R **Shiny**.  Una aplicación Shiny es simplemente un directorio que contiene un script R llamado app.R que se compone de un objeto de interfaz de usuario y una función de servidor.
-
-Se optó por esta opción debido a la amplia gama de opciones que ofrece,  diseñando desde cero la propia aplicación, pudiendo insertar gráficos, tablas dinámicas y documentos interactivos. Además, se puede mejorar aún más el rendimiendo con acciones JavaScript así como la interfaz de usuario con HTML y el estilo añadiendo código CSS.
-
+Se optó por esta opción debido a la amplia gama de opciones que ofrece, diseñando desde cero la propia aplicación, pudiendo insertar gráficos, tablas dinámicas y documentos interactivos. Además, se puede mejorar aún más el rendimiendo con acciones JavaScript así como la interfaz de usuario con HTML y el estilo añadiendo código CSS.
 
 La aplicación desarrollada consta de una página inicial y diferentes paneles con las distintas secciones del trabajo, relacionadas con la aplicación práctica para un conjunto datos reales de las técnicas revisadas de forma teórica. Desde la app es fácil navegar por los distintos paneles a través de una barra de navegación.
 
+A continuación se muestran diferentes imágenes de la aplicación:
+
+
+```{r echo=FALSE,fig.align='center', fig.cap="\\label{fig:shiny1}Barra de navegación. Fuente: elaboraci\\'on propia con Shiny.",fig.pos="H"}
+
+knitr::include_graphics("graficos/Barra2.jpeg")
+```
+
+
+```{r echo=FALSE,fig.align='center',fig.cap="\\label{fig:shiny2}Carrusel interactivo. P\\'agina de inicio. Fuente: elaboraci\\'on propia con Shiny.",fig.pos="H"}
+
+knitr::include_graphics("graficos/Shiny_1.jpeg")
+```
+
+
+```{r echo=FALSE,fig.align='center',out.width='70%',fig.cap="\\label{fig:shiny3}\\'Indice de contenidos. P\\'agina de inicio. Fuente: elaboraci\\'on propia con Shiny.",fig.pos="H"}
+
+knitr::include_graphics("graficos/Shiny_2.jpeg")
+```
+
+
+```{r echo=FALSE,fig.align='center',fig.cap="\\label{fig:shiny4}\\ P\\'agina de análisis de cesta de la compra Fuente: elaboraci\\'on propia con Shiny.",fig.pos="H"}
+
+knitr::include_graphics("graficos/CestaCompra.jpeg")
+```
 
 
 

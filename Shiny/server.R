@@ -20,6 +20,11 @@ library(arules)
 
 load("datos/muestraTickets.RData")
 load("datos/DatosFormatoBasket.RData")
+TransBasket <- read.transactions("Datos/muestraTickets.csv", 
+                                 format = 'basket', sep=',', header = TRUE )
+
+
+
 
 
 
@@ -67,6 +72,68 @@ output$FtoBasket<- DT::renderDataTable(
   colnames = colnames(cestas)
   ))
   
+
+
+plotData <- reactive({
+  tamanos <- size(TransBasket) 
+  tamanos <- table(tamanos)
+  tamanos<-as.data.frame(tamanos)
+  tamanos[1:input$TamanoTransaccionesInput,]
+})
+
+
+output$TamanoTrans <- renderPlotly({
+  TamanoTransacciones <- plotData() 
+  fig <- plot_ly(TamanoTransacciones, x = ~TamanoTransacciones$tamanos, y = ~TamanoTransacciones$Freq, type = 'bar', marker = list(color = 'rgba(219, 64, 82, 0.7)',
+                                                                               line = list(color = 'rgba(219, 64, 82, 1.0)',
+                                                                                           width = 2)))
+  fig <- fig %>% layout(xaxis = list(title = "",
+                                     tickangle = -45),
+                        margin = list(b = 100),
+                        title = 'Distribución del tamaño de las transacciones',
+                        xaxis = list(title = "Tamaño de la transacción"),
+                        yaxis = list(title = "Número de ventas"),
+                        barmode = 'stack',
+                        paper_bgcolor = 'rgba(245, 246, 249, 1)',
+                        plot_bgcolor = 'rgba(245, 246, 249, 1)',
+                        showlegend = FALSE)
+  
+  fig 
+})
+
+
+
+
+plotDataVentas <- reactive({
+  CotaVentas <- muestra %>% group_by(item) %>% summarise(Cota = n())
+  CotaVentas <- CotaVentas[order(CotaVentas$Cota,decreasing = TRUE),]
+  CotaVentas[1:input$ConteoArticulos,]
+})
+
+
+
+
+output$VentaArt <- renderPlotly({
+  VentaArt <- plotDataVentas() 
+  fig <- plot_ly(VentaArt, x = ~reorder(item,-Cota), y = ~Cota, type = 'bar', 
+                 marker = list(color = 'rgba(219, 64, 82, 0.7)',
+                               line = list(color = 'rgba(219, 64, 82, 1.0)',
+                                           width = 2)))
+  fig <- fig %>% layout(xaxis = list(title = "",
+                                     tickangle = -45),
+                        margin = list(b = 100),
+                        title = 'Distribución del tamaño de las transacciones',
+                        xaxis =  list(title = "Mes del año",rangeslider = list(visible = T)),
+                        yaxis = list(title = "Número de ventas"),
+                        barmode = 'stack',
+                        paper_bgcolor = 'rgba(245, 246, 249, 1)',
+                        plot_bgcolor = 'rgba(245, 246, 249, 1)',
+                        showlegend = FALSE)
+  fig
+})
+
+
+
 
 
   

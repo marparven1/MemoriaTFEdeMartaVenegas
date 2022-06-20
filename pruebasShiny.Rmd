@@ -1,0 +1,73 @@
+---
+title: "pruebas"
+author: "Marta Venegas Pardo"
+date: "6/17/2022"
+output: html_document
+---
+
+```{r}
+load("datos/DatosFormatoBasket.RData")
+
+TransBasket <- read.transactions("Datos/muestraTickets.csv", 
+                                 format = 'basket', sep=',', header = TRUE )
+tamanos <- size(TransBasket)
+```
+
+```{r}
+tamanos <- table(tamanos)
+tamanos<-as.data.frame(tamanos)
+```
+
+```{r}
+library(plotly)
+
+fig <- plot_ly(tamanos, x = ~tamanos, y = ~Freq, type = 'bar', marker = list(color = 'rgba(219, 64, 82, 0.7)',
+                                      line = list(color = 'rgba(219, 64, 82, 1.0)',
+                                                  width = 2)))
+fig <- fig %>% layout(xaxis = list(title = "",
+                                   tickangle = -45),
+         margin = list(b = 100),
+         title = 'Distribución del tamaño de las transacciones',
+         xaxis = list(title = "Tamaño de la transacción"),
+         yaxis = list(title = "Número de ventas"),
+         barmode = 'stack',
+         paper_bgcolor = 'rgba(245, 246, 249, 1)',
+         plot_bgcolor = 'rgba(245, 246, 249, 1)',
+         showlegend = FALSE,  xaxis = list(rangeslider = list(visible = T)))
+
+fig
+```
+
+
+
+
+```{r}
+load("datos/muestraTickets.RData")
+CotaVentas <- muestra %>% group_by(item) %>% summarise(Cota = n())
+CotaVentas <- CotaVentas[order(CotaVentas$Cota,decreasing = TRUE),]
+CotaVentas<-CotaVentas[1:5,]
+```
+
+
+
+```{r}
+fig <- plot_ly(CotaVentas, x = ~reorder(item,-Cota), y = ~Cota, type = 'bar', 
+               marker = list(color = 'rgba(219, 64, 82, 0.7)',
+                                      line = list(color = 'rgba(219, 64, 82, 1.0)',
+                                                  width = 2)))
+fig <- fig %>% layout(xaxis = list(title = "",
+                                   tickangle = -45),
+         margin = list(b = 100),
+         title = 'Distribución del tamaño de las transacciones',
+        xaxis =  list(title = "Mes del año",rangeslider = list(visible = T)),
+         yaxis = list(title = "Número de ventas"),
+         barmode = 'stack',
+         paper_bgcolor = 'rgba(245, 246, 249, 1)',
+         plot_bgcolor = 'rgba(245, 246, 249, 1)',
+         showlegend = FALSE)
+fig
+```
+
+
+
+
