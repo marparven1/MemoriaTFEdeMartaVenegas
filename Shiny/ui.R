@@ -41,12 +41,12 @@ ui <- fluidPage(
                          h2("Muestra de transacciones")),
                        fluidRow(
                          box(
-                           title = "Tickets", width = 6, solidHeader = TRUE, status = "primary",
+                           title = "Tickets", width = 6, solidHeader = TRUE, 
                             img(class="imgIcon",src='img/Ticket.png',width="20%"), 
                            p("7801",align= "center")
                          ),
                          box(
-                           title = "Artículos", width = 6, solidHeader = TRUE,status = "info",
+                           title = "Artículos", width = 6, solidHeader = TRUE,
                            img(class="imgIcon",src='img/Articulos.png',width="20%"),p("4631",align= "center")
                          )
                        ),
@@ -159,8 +159,6 @@ ui <- fluidPage(
                            "No se deben al azar, existe un patrón de comportamiento de ventas real."
                          )
                        ),
-                       
-                       
                       div(p(""),br(),p(""),br(),p(""),br()),
                        br(),hr(),br(),
                        includeHTML("footer.Rhtml")
@@ -169,9 +167,29 @@ ui <- fluidPage(
     navbarMenu("Proceso de ciencia de datos",
                tabPanel("Preprocesado", br(),
                         fluidRow( 
-                          column(12,
-                                 h1("Adquisición de los datos y preparación"),br()) ),
+                                 h1("Adquisición de los datos y preparación"),br(),
+                                 h2("Muestra de transacciones")
+                                 ) ,
                         
+                        fluidRow(
+                         box(
+                            title = tagList(shiny::icon("money"), "Ventas de dos productos lácteos"), width = 6,  br(),
+                            column(width = 6,box(img(class="imgIcon",src='img/prod1.png',width="80%"), br(),p("Con calcio") ) ),
+                            column(width = 6,box(img(class="imgIcon",src='img/prod2.png',width="80%"),br(),p("Sin calcio") ) )
+                            
+                         ),
+                         box( 
+                           title = tagList(shiny::icon("calendar"), "Período de ventas considerado"), width = 6,  br(),
+                           p("1/Septiembre/2020") , br(),p("30/Enero/2021")
+                         )
+                         
+                          ),
+                       
+                        
+                        
+                        
+                        
+                       
                         br(),hr(),br(),
                         includeHTML("footer.Rhtml")
                         ),
