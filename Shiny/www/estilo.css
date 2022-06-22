@@ -3,7 +3,13 @@
 
 
 /* Change font of header text */
-h1{
+h1,h3{
+  text-align: center;
+  font-family: 'Yusei Magic', sans-serif;
+}
+
+
+h2{
   text-align: center;
 }
 
@@ -20,4 +26,8 @@ p{
 .control-label{
     font-size: x-large;
     text-align: justify;
+}
+
+.imgIcon{
+  display: block; margin-left: auto; margin-right: auto;
 }

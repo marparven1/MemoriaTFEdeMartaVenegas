@@ -4,8 +4,7 @@ library(leaflet)
 library(plotly)
 library(shinyjs)
 library(shinyBS)
-
-
+library(shinydashboard)
 
 
 
@@ -31,53 +30,138 @@ ui <- fluidPage(
   #### Market basket analysis #### 
               tabPanel("Análisis de cesta de la compra",
                        br(),br(),hr(),br(),
-                       fluidRow( h1("Análisis de cesta de la compra con datos de tickets de un supermercado"),
+                       fluidRow(
+                         h1("Análisis de cesta de la compra con datos de tickets de un supermercado"),
                                  br(),
                          column(12,
                                 p("Se ha aplicado un análisis de cesta de la compra a unos datos que proceden de una muestra de tickets 
                                   correspondiente a transacciones de una cadena de supermercados. La muestra contiene un total de 
-                                  7801 tickets que incluyen 4631 artículos distintos."),
-                                br()) ),
-                       br(),br(), br(),
-                               fluidRow( h2(em("Conjunto de datos inicial"),icon("database",lib = "font-awesome")),
-                         column(12,
-                                column(DT::dataTableOutput("CjtoInicial"), width = 12)
-                         )),
+                                  7801 tickets que incluyen 4631 artículos distintos.")
+                                ),br(),
+                         h2("Muestra de transacciones")),
                        fluidRow(
-                        br(),
-                         column(12,
-                                h2(em("Conjunto de datos en formato cesta"),icon("database",lib = "font-awesome"))),
-                         br(), br(),
-                         column(12,
-                                column(DT::dataTableOutput("FtoBasket"), width = 12),br(),
-                                p("Nota: Únicamente se observa una cota inferior de la venta de cada producto."))),
-                       br(),br(),
-                       
-                       fluidRow( h2("Tamaño de las transacciones"),
-                                 column(9,plotlyOutput("TamanoTrans",height = "500px")),                  
-                                 column(3,
-                                          sliderInput("TamanoTransaccionesInput", 
-                                                      p("Seleccione el número de transacciones"),
-                                                                           min = 1, max = 82, value = 10)
-                                        )
-                                 ),
-                       br(),br(),br(),
-                       fluidRow(
-                         h2("Análisis de transacciones"),
-                         column(9, plotlyOutput("soporte",height = "500px") ),
-                         column(3,
-                                div(id="FormBasket",h3("Opciones de visualización"),
-                                    numericInput("ConteoArticulos", 
-                                                 "Seleccione el número de artículos que quiere mostrar:",
-                                                 20, min =1, max = 4631),
-                                    br(),
-                                    selectInput("selectorVis", "Seleccione una opción para visualizar:",
-                                                list(`Cota inferior de ventas` = list("Cota"),
-                                                     `Soporte individual` = list("Soporte"))),
-                                    helpText("Nota: El soporte es la proporción de transacciones que contiene a un item o conjunto de items, y se mostrará en porcentaje."))
-                        ),
+                         box(
+                           title = "Tickets", width = 6, solidHeader = TRUE, status = "primary",
+                            img(class="imgIcon",src='img/Ticket.png',width="20%"), 
+                           p("7801",align= "center")
+                         ),
+                         box(
+                           title = "Artículos", width = 6, solidHeader = TRUE,status = "info",
+                           img(class="imgIcon",src='img/Articulos.png',width="20%"),p("4631",align= "center")
+                         )
                        ),
-
+                       br(),hr(),br(),
+                       fluidRow(h2(em("Conjuntos de datos"),icon("database",lib = "font-awesome")),
+                         tabBox(
+                           title = "Datos",
+                           # The id lets us use input$tabset1 on the server to find the current tab
+                           id = "datos", height = "600px",width = "100%",
+                           tabPanel("Conjunto de datos inicial", DT::dataTableOutput("CjtoInicial")),
+                           tabPanel("Conjunto de datos en formato cesta", DT::dataTableOutput("FtoBasket"),
+                                    br(),p("Nota: Únicamente se observa una cota inferior de la venta de cada producto."),br())
+                         )),
+                       br(),hr(),br(),
+                       fluidRow(h1("1. Análisis de transacciones"),
+                         tabBox(title = "Gráficas",width = "9",
+                           tabPanel("Tamaño",
+                                    plotlyOutput("TamanoTrans",height = "500px")
+                           ),
+                           tabPanel("ID producto", 
+                                    plotlyOutput("soporte",height = "500px")
+                                    )
+                         ),
+                         tabBox(title = "Selectores",width = "3",br(),
+                                tabPanel("Tamaño",
+                                         sliderInput("TamanoTransaccionesInput", 
+                                                     p("Seleccione el número de transacciones"),
+                                                     min = 1, max = 82, value = 10)
+                                ),
+                                tabPanel("ID producto", 
+                                         numericInput("ConteoArticulos", 
+                                                      "Seleccione el número de artículos que quiere mostrar:",
+                                                      20, min =1, max = 4631),
+                                         br(),
+                                         selectInput("selectorVis", "Seleccione una opción para visualizar:",
+                                                     list(`Cota inferior de ventas` = list("Cota"),
+                                                          `Soporte individual` = list("Soporte"))),
+                                         helpText("Nota: El soporte es la proporción de transacciones que contiene a un item
+                                             o conjunto de items, y se mostrará en porcentaje."))
+                                )
+                         ),
+                       br(),hr(),br(),
+                       fluidRow(
+                         div(h1("2. Aplicación del algoritmo a priori"), 
+                             br(),
+                             p("Este algoritmo permite generar una serie de reglas de 
+                              asociación y descubrir conjuntos de items frecuentes.")),
+                       ),
+                       
+                       br(),
+                       
+                       fluidRow(h2("Configuración del algoritmo a priori"),
+                         box(title="Configuración inicial",
+                           width = 6, 
+                           "Confianza mínima: 50%",br(),"Soporte mínimo: al menos 20 compras", br(),
+                           "Problema: recomendación de los productos más vendidos: 1096 y 1033."
+                         ),
+                         box(
+                           title = "Configuración final", width = 6, 
+                           "Confianza mínima: 18%", br(),"Soporte mínimo: al menos 15 compras", br(),
+                           "Solución: Introducir en el antecedente los productos más vendidos para descubrir la asociación con productos menos vendidos."
+                         )
+                       ),
+                       fluidRow(h2("Resultado de las reglas de asociación"), br(),
+                                tabBox(title="Gráficas",
+                                       height = "350px",
+                                  tabPanel("Grafo", br(),
+                                           img(class="imgIcon",src='img/grafoReglas.png',width="100%"),
+                                                p("Venta frecuente de los productos 1096 y 1033.")
+                                           ),
+                                  
+                                  tabPanel("Confianza", br()," ", br(),
+                                           img(class="imgIcon",src='img/CestaConfianza.png',width="100%")
+                                           ),
+                                  
+                                  tabPanel("Soporte", br(),
+                                           "Soporte: frecuencia con que los objetos son comprados juntos.",br(),
+                                           br(),img(class="imgIcon",src='img/CestaSoporte.png',width="100%")
+                                           )
+                                  ),
+                                tabBox(title="Evaluación de las reglas",
+                                       height = "350px",
+                                       tabPanel("Generalidades",br(),
+                                                "La transacción más repetida:", br(), img(class="imgIcon",src='img/BasketMasRepetida.png',width="100%"),
+                                                br(),
+                                                "Lift",br(),
+                                                "Valores de este parámetro bastante altos. Reglas robustas, es decir, no se 
+                                                  deben a la aleatoriedad, sino a un patrón de comportamiento existente.",
+                                                br(),
+                                                "Regla más robusta:" , br(),img(class="imgIcon",src='img/BasketMasRobusta.png',width="100%")
+                                       ),
+                                       tabPanel("Test exacto fisher", 
+                                                br(),"Test exacto de Fisher: muestra un comportamiento real de ventas.",br(),
+                                                img(class="imgIcon",src='img/MarketTestFisher.png',width="90%"), 
+                                                img(class="imgIcon",src='img/MarketResTestFisher.png',width="65%")
+                                       )
+                                )
+                                ),br(),br(),br(),hr(),br(),br(),br(),
+                       fluidRow(div(h1("3. Conclusiones")),
+                         box( title = "Patrón de ventas",
+                           width = 4, background = "black",
+                           "Uno o dos productos diferentes por transacción"
+                         ),
+                         box(
+                           title = "Productos más vendidos", width = 4, background = "light-blue",
+                           "La venta conjunta de los productos 1033 y 1096 se ha producido en un 1.23% de las transacciones, unas 170 veces."
+                         ),
+                         box(
+                           title = "Reglas robustas",width = 4, background = "maroon",
+                           "No se deben al azar, existe un patrón de comportamiento de ventas real."
+                         )
+                       ),
+                       
+                       
+                      div(p(""),br(),p(""),br(),p(""),br()),
                        br(),hr(),br(),
                        includeHTML("footer.Rhtml")
                        ),

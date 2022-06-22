@@ -15,6 +15,7 @@ library( shinyjs  )
 library( rintrojs )
 library( markdown )
 library( tidyr    )
+library(shinydashboard)
 
 
 

@@ -566,7 +566,11 @@ quality(rulesII) <- cbind(quality(rulesII), Testfisher)
 # inspect(sort(x = reglas, decreasing = TRUE, by = "confidence"))
 Res_rulesII <- as(rulesII, Class = "data.frame") 
 Res_rulesII %>% as.tibble() %>% arrange(desc(confidence)) %>% head()
+
+
+#Res_rulesII %>% as.data.frame() %>% arrange(desc(confidence)) %>% select(rules, Testfisher) %>% kable(booktabs=TRUE) %>% #kable_styling(latex_options = "striped")
 ```
+
 **Conclusión**: En la columna Testfisher se encuentran los *p-valores* del cotraste, y son todos menores que $\alpha=0.05$, por lo que no existen evidencias significativas a favor de que las reglas obtenidas son fruto del azar, por lo que podemos afirmar que significativamente, las reglas de asociación obtenidas se deben a un comportamiento real de ventas.
 
 #### Reglas maximales
