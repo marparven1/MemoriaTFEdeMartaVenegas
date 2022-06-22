@@ -13,10 +13,7 @@ TransBasket <- read.transactions("Datos/muestraTickets.csv",
 tamanos <- size(TransBasket)
 ```
 
-```{r}
-tamanos <- table(tamanos)
-tamanos<-as.data.frame(tamanos)
-```
+
 
 ```{r}
 library(plotly)
@@ -45,6 +42,7 @@ fig
 load("datos/muestraTickets.RData")
 CotaVentas <- muestra %>% group_by(item) %>% summarise(Cota = n())
 CotaVentas <- CotaVentas[order(CotaVentas$Cota,decreasing = TRUE),]
+CotaVentas$prop<-round(100*(CotaVentas$Cota/ 7801 ),2)
 CotaVentas<-CotaVentas[1:5,]
 ```
 
@@ -69,5 +67,24 @@ fig
 ```
 
 
+
+
+```{r}
+
+fig <- plot_ly(CotaVentas, x = ~reorder(item,-prop), y = ~CotaVentas$prop, type = 'bar', 
+               marker = list(color = brewer.pal(4,'Spectral'),
+                                      line = list(color = brewer.pal(4,'Spectral'),
+                                                  width = 2)))
+fig <- fig %>% layout(xaxis = list(title = "",
+                                   tickangle = -45),
+         margin = list(b = 100),
+        xaxis =  list(title = "Mes del año",rangeslider = list(visible = T)),
+         yaxis = list(title = "Número de ventas"),
+         barmode = 'stack',
+         paper_bgcolor = brewer.pal(4,'Spectral'),
+         plot_bgcolor = brewer.pal(4,'Spectral'),
+         showlegend = FALSE)
+fig
+```
 
 

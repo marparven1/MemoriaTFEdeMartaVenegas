@@ -16,14 +16,13 @@ library( rintrojs )
 library( markdown )
 library( tidyr    )
 library(arules)
+library(RColorBrewer)
 
 
 load("datos/muestraTickets.RData")
 load("datos/DatosFormatoBasket.RData")
 TransBasket <- read.transactions("Datos/muestraTickets.csv", 
                                  format = 'basket', sep=',', header = TRUE )
-
-
 
 
 
@@ -87,12 +86,9 @@ output$TamanoTrans <- renderPlotly({
   fig <- plot_ly(TamanoTransacciones, x = ~TamanoTransacciones$tamanos, y = ~TamanoTransacciones$Freq, type = 'bar', marker = list(color = 'rgba(219, 64, 82, 0.7)',
                                                                                line = list(color = 'rgba(219, 64, 82, 1.0)',
                                                                                            width = 2)))
-  fig <- fig %>% layout(xaxis = list(title = "",
-                                     tickangle = -45),
-                        margin = list(b = 100),
-                        title = 'Distribución del tamaño de las transacciones',
-                        xaxis = list(title = "ID del producto"),
-                        yaxis = list(title = "Tamaño de la transacción"),
+  fig <- fig %>% layout(margin = list(b = 100),
+                        yaxis = list(title = "Número de transacciones"),
+                        xaxis = list(title = "Numero de artículos"),
                         barmode = 'stack',
                         paper_bgcolor = 'rgba(245, 246, 249, 1)',
                         plot_bgcolor = 'rgba(245, 246, 249, 1)',
@@ -104,35 +100,42 @@ output$TamanoTrans <- renderPlotly({
 
 
 
+
+
+
+
+
+
+
 plotDataVentas <- reactive({
   CotaVentas <- muestra %>% group_by(item) %>% dplyr::summarise(Cota = n())
   CotaVentas <- CotaVentas[order(CotaVentas$Cota,decreasing = TRUE),]
-  CotaVentas[1:input$ConteoArticulos,]
+  CotaVentas$Soporte<-round(100*(CotaVentas$Cota/ 7801 ),2)
+  CotaVentas<-CotaVentas[1:input$ConteoArticulos,c("item",input$selectorVis)]
+  res <- input$ConteoArticulos
+  colnames(CotaVentas)<-c("item","Seleccion")
+  CotaVentas
 })
 
 
 
 
-output$VentaArt <- renderPlotly({
+output$soporte <- renderPlotly({
   VentaArt <- plotDataVentas() 
-  fig <- plot_ly(VentaArt, x = ~reorder(item,-Cota), y = ~Cota, type = 'bar', 
+  fig <- plot_ly(VentaArt, x = ~reorder(item,-Seleccion), y = ~Seleccion, type = 'bar',
                  marker = list(color = 'rgba(219, 64, 82, 0.7)',
                                line = list(color = 'rgba(219, 64, 82, 1.0)',
                                            width = 2)))
-  fig <- fig %>% layout(xaxis = list(title = "",
+  fig <- fig %>% layout(xaxis = list(title = "ID item",
                                      tickangle = -45),
                         margin = list(b = 100),
-                        title = 'Distribución del tamaño de las transacciones',
-                        xaxis =  list(title = "Mes del año",rangeslider = list(visible = T)),
-                        yaxis = list(title = "Número de ventas"),
+                        yaxis = list(title = "Número de ventas / Soporte (%)"),
                         barmode = 'stack',
                         paper_bgcolor = 'rgba(245, 246, 249, 1)',
                         plot_bgcolor = 'rgba(245, 246, 249, 1)',
                         showlegend = FALSE)
   fig
 })
-
-
 
 
 

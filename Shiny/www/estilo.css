@@ -12,3 +12,12 @@ body {
     width: 100%;
 }
 
+p{   
+      font-size: x-large;
+}
+
+
+.control-label{
+    font-size: x-large;
+    text-align: justify;
+}
