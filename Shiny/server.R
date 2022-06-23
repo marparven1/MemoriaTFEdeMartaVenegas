@@ -25,14 +25,14 @@ TransBasket <- read.transactions("Datos/muestraTickets.csv",
                                  format = 'basket', sep=',', header = TRUE )
 
 
-
+load("Datos/datosTFGMarta.RData")
 
 # Define server logic required to draw a histogram ----
 server <- function(input, output) {
 
 #### Análisis cesta de la compra #### 
 
-  
+   
 output$CjtoInicial<- DT::renderDataTable(
   DT::datatable({
     muestra
@@ -139,6 +139,28 @@ output$soporte <- renderPlotly({
 
 
 
+
+
+#### EDA #### 
+# output$Datos1  <- DT::renderDataTable(
+# DT::datatable({
+#   datos
+# },
+# options = list(lengthMenu=list(c(5,15,20),c('10','15','20')),pageLength=5,
+#                initComplete = JS(
+#                  "function(settings, json) {",
+#                  "$(this.api().table().header()).css({'background-color': 'rgb(236, 85, 107)', 'color': 'white'});",
+#                  "}"),
+#                columnDefs=list(list(className='dt-center',targets="_all"))
+# ),
+# filter = "top",
+# selection = 'multiple',
+# style = 'bootstrap',
+# class = 'cell-border stripe',
+# rownames = FALSE,
+# colnames = colnames(datos)
+# ))
   
+
   
 }

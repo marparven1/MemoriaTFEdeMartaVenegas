@@ -16,7 +16,7 @@ ui <- fluidPage(
   # Tema
   theme = shinytheme("simplex"),
   # Estilo CSS
-  tags$head( tags$link(rel = "stylesheet", type = "text/css", href = "estilo.css")),
+ tags$head( tags$link(rel = "stylesheet", type = "text/css", href = "estilo.css")),
 
   
   #### NavBarPane ####
@@ -174,18 +174,60 @@ ui <- fluidPage(
                         fluidRow(
                          box(
                             title = tagList(shiny::icon("money"), "Ventas de dos productos lácteos"), width = 6,  br(),
-                            column(width = 6,box(img(class="imgIcon",src='img/prod1.png',width="80%"), br(),p("Con calcio") ) ),
-                            column(width = 6,box(img(class="imgIcon",src='img/prod2.png',width="80%"),br(),p("Sin calcio") ) )
+                            column(width = 6,img(class="imgIcon",src='img/prod1.png',width="40%"), br(),p("Con calcio",class="Tipo",align= "center")  ),
+                            column(width = 6,img(class="imgIcon",src='img/prod2.png',width="40%"),br(),p("Sin calcio",class="Tipo",align= "center")  )
                             
                          ),
                          box( 
                            title = tagList(shiny::icon("calendar"), "Período de ventas considerado"), width = 6,  br(),
                            p("1/Septiembre/2020") , br(),p("30/Enero/2021")
                          )
-                         
                           ),
-                       
+                       fluidRow(
+                         h2(em("Conjuntos de datos inicial"),icon("database",lib = "font-awesome")),
+                         box(title="Variables",width = 2,
+                           HTML("<ul>
+                         <li>ID de ticket</li>
+                         <li>Línea de ticket</li>
+                         <li>Fecha</li>
+                         <li>Código</li>
+                         <li>Cantidad</li>
+                         <li>Precio</li>
+                         <li>Precio con impuestos</li>
+                         <li>Descuento</li>
+                         <li>Importe</li>
+                         <li>Importe con impuestos</li>
+                        </ul>")),
+                         box(collapsible = TRUE,width = 10,
+                          # DT::dataTableOutput("Datos1",height = 250)
+                          "Un listado mono"
+                         )
+                         
+                       ),br(),
+                     
+                       fluidRow( 
+                         h2("Transformación de los datos"),
+                         box(width = 4,
+                             title = h3("Transformación de variables"),
+                             column(6,"Factorización"),
+                             column(6,"Reformateo de variables numéricas")
+                             ), 
+                         box(width = 4,
+                             title = h3("Creación de variables"),
+                             column(4,"Temporales",br(), "Año, mes, día de la semama, día del mes y semana del año"),
+                             column(4,"Ventas" , br(), "Volumen diario de ventas"),
+                             column(4,"Dummies", br(), "Día de la semana y mes del año")
+                             ), 
+                         box(width = 4,
+                             title= h3("Datos faltantes"),
+                             column(5,  div(h1("2"))),
+                             column(7,div(p("25/12/2020"),br(),p("01/01/2021")))
+                             ),
+                         
                         
+                       ) ,
+                        
+                       
                         
                         
                         
