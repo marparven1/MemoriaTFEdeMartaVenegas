@@ -29,7 +29,7 @@ ui <- fluidPage(
 
   #### Market basket analysis #### 
               tabPanel("Análisis de cesta de la compra",
-                       br(),br(),hr(),br(),
+                      br(),hr(),br(),
                        fluidRow(
                          h1("Análisis de cesta de la compra con datos de tickets de un supermercado"),
                                  br(),
@@ -93,7 +93,7 @@ ui <- fluidPage(
                          div(h1("2. Aplicación del algoritmo a priori"), 
                              br(),
                              p("Este algoritmo permite generar una serie de reglas de 
-                              asociación y descubrir conjuntos de items frecuentes.")),
+                              asociación y descubrir conjuntos de items frecuentes."))
                        ),
                        
                        br(),
@@ -159,7 +159,6 @@ ui <- fluidPage(
                            "No se deben al azar, existe un patrón de comportamiento de ventas real."
                          )
                        ),
-                      div(p(""),br(),p(""),br(),p(""),br()),
                        br(),hr(),br(),
                        includeHTML("footer.Rhtml")
                        ),
@@ -174,8 +173,8 @@ ui <- fluidPage(
                         fluidRow(
                          box(
                             title = tagList(shiny::icon("money"), "Ventas de dos productos lácteos"), width = 6,  br(),
-                            column(width = 6,img(class="imgIcon",src='img/prod1.png',width="40%"), br(),p("Con calcio",class="Tipo",align= "center")  ),
-                            column(width = 6,img(class="imgIcon",src='img/prod2.png',width="40%"),br(),p("Sin calcio",class="Tipo",align= "center")  )
+                            column(width = 6,img(class="imgIcon",src='img/prod1.png',width="20%"), br(),h4("Con calcio",class="Tipo")  ),
+                            column(width = 6,img(class="imgIcon",src='img/prod2.png',width="20%"),br(),h4("Sin calcio",class="Tipo")  )
                             
                          ),
                          box( 
@@ -183,28 +182,77 @@ ui <- fluidPage(
                            p("1/Septiembre/2020") , br(),p("30/Enero/2021")
                          )
                           ),
+                        br(),hr(),br(),
                        fluidRow(
-                         h2(em("Conjuntos de datos inicial"),icon("database",lib = "font-awesome")),
-                         box(title="Variables",width = 2,
-                           HTML("<ul>
-                         <li>ID de ticket</li>
-                         <li>Línea de ticket</li>
-                         <li>Fecha</li>
-                         <li>Código</li>
-                         <li>Cantidad</li>
-                         <li>Precio</li>
-                         <li>Precio con impuestos</li>
-                         <li>Descuento</li>
-                         <li>Importe</li>
-                         <li>Importe con impuestos</li>
-                        </ul>")),
-                         box(collapsible = TRUE,width = 10,
-                          # DT::dataTableOutput("Datos1",height = 250)
-                          "Un listado mono"
+                         h2("Variables",icon("database",lib = "font-awesome")),
+                         p("A continuación se muestran las variables del conjunto de datos inicial"),
+                         br()
+                       ),
+                       
+                       fluidRow(
+                           column(2, icon("receipt",class="ICN")),
+                           column(10,strong("ID ticket:"), "sdfnsodvsidsoihgisfviodnfvodnfiovndfo"
+                       )
+                       ),
+                       br(),
+                       fluidRow(
+                         column(2, icon("barcode",class="ICN")),
+                         column(10,strong("Línea ticket"), "sdfnsodvsidsoihgisfviodnfvodnfiovndfo"
                          )
-                         
-                       ),br(),
-                     
+                       ),
+                       br(),
+                       fluidRow(
+                         column(2,icon("calendar",class="ICN")),
+                         column(10,strong("Fecha"), "sdfnsodvsidsoihgisfviodnfvodnfiovndfo"
+                         )
+                       ),
+                       br(),
+                       fluidRow(
+                         column(2,icon("calendar",class="ICN")),
+                         column(10,strong("Código producto"), "sdfnsodvsidsoihgisfviodnfvodnfiovndfo"
+                         )
+                       ),
+                       br(),
+                       fluidRow(
+                         column(2,icon("calendar",class="ICN")),
+                         column(10,strong("Cantidad"), "sdfnsodvsidsoihgisfviodnfvodnfiovndfo"
+                         )
+                       ),
+                       br(),
+                       fluidRow(
+                         column(2,icon("euro-sign",class="ICN")),
+                         column(10,strong("Precio con impuestos"), "sdfnsodvsidsoihgisfviodnfvodnfiovndfo"
+                         )
+                       ),
+                       br(),
+                       fluidRow(
+                         column(2, icon("money-bill",class="ICN")),
+                         column(10,strong("Precio"), "sdfnsodvsidsoihgisfviodnfvodnfiovndfo"
+                         )
+                       ),
+                       br(),
+                       fluidRow(
+                         column(2, icon("percent",class="ICN")),
+                         column(10,strong("Descuento"), "sdfnsodvsidsoihgisfviodnfvodnfiovndfo"
+                         )
+                       ),
+                       br(),
+                       fluidRow(
+                         column(2,  icon("tag",class="ICN")),
+                         column(10,strong("Importe"), "sdfnsodvsidsoihgisfviodnfvodnfiovndfo"
+                         ),
+                        
+                       ),
+                       br(),
+                       fluidRow(
+                         column(2, icon("tags", class="ICN")),
+                         column(10,strong("Importe con impuestos"), "sdfnsodvsidsoihgisfviodnfvodnfiovndfo"
+                         )
+                       ),
+                       
+                    
+                      
+                       br(),hr(),br(),
                        fluidRow( 
                          h2("Transformación de los datos"),
                          box(width = 4,
@@ -214,37 +262,90 @@ ui <- fluidPage(
                              ), 
                          box(width = 4,
                              title = h3("Creación de variables"),
-                             column(4,"Temporales",br(), "Año, mes, día de la semama, día del mes y semana del año"),
-                             column(4,"Ventas" , br(), "Volumen diario de ventas"),
-                             column(4,"Dummies", br(), "Día de la semana y mes del año")
+                             column(4,strong("TEMPORALES"),br(), "Año, mes, día de la semama, día del mes y semana del año"),
+                             column(4,strong("VENTAS") , br(), "Volumen diario de ventas"),
+                             column(4,strong("DUMMIES"), br(), "Día de la semana y mes del año")
                              ), 
                          box(width = 4,
                              title= h3("Datos faltantes"),
-                             column(5,  div(h1("2"))),
+                             column(5,  div(h1("2", style="text-align: end;"))),
                              column(7,div(p("25/12/2020"),br(),p("01/01/2021")))
-                             ),
-                         
-                        
+                             )
                        ) ,
                         
-                       
-                        
-                        
-                        
-                       
-                        br(),hr(),br(),
                         includeHTML("footer.Rhtml")
                         ),
                tabPanel("Análisis exploratorio", br(),
                         fluidRow( 
                           column(12,
                                  h1("Análisis exploratorio de datos para dos productos lácteos"),br()) ),
+                        fluidRow(
+                          shiny::HTML("<br><br><center> <h1>Objetivos</h1> </center>
+                                            <br>")
+                        ),
+                        fluidRow(
+                          column(3),
+                          column(2,
+                                 div(class="panel panel-default", 
+                                     div(class="panel-body",  width = "600px",
+                                         align = "center",
+                                         div(
+                                           tags$img(src = "img/uno.png", height = "50px")
+                                         ),
+                                         div(
+                                           h5(
+                                             "Encotrar un patrón de ventas de productos."
+                                           )
+                                         )
+                                     )
+                                 )
+                          ),
+                          column(2,
+                                 div(class="panel panel-default",
+                                     div(class="panel-body",  width = "600px", 
+                                         align = "center",
+                                         div(
+                                           tags$img(src = "img/dos.png",     height = "50px")),
+                                         div(
+                                           h5(
+                                             "Estudiar que variables influyen en el volumen de ventas de productos lácteos"
+                                           )
+                                         )
+                                     )
+                                 )
+                          ),
+                          column(2,
+                                 div(class="panel panel-default",
+                                     div(class="panel-body",  width = "600px", 
+                                         align = "center",
+                                         div(
+                                           tags$img(src = "img/tres.png",   height = "50px")
+                                         ),
+                                         div(
+                                           h5(
+                                             "Describir la evolución de ventas con tiempo", icon("chart-line")
+                                           )
+                                         )
+                                     )
+                                 )
+                          ),
+                          column(3)
+                        ),
+                       hr(),
+                          
+                          fluidRow(
+                            h2("Resumen de los datos")
+                            ),
+                        
+                        
+                        
                         
                         
                         
                         br(),hr(),br(),
                         includeHTML("footer.Rhtml")
-                        ),
+               ),
+                       
                tabPanel("Modelado", br(),
                         
                         fluidRow( 
@@ -253,7 +354,8 @@ ui <- fluidPage(
                         br(),hr(),br(),
                         includeHTML("footer.Rhtml")
                         )
-    ),
+               ),
+   
   #### Conclusiones ####
       tabPanel("Conclusiones", br(),
                fluidRow( 
@@ -263,6 +365,8 @@ ui <- fluidPage(
                br(),hr(),br(),
                includeHTML("footer.Rhtml")
                )
+  )
 )
 
-)
+
+
