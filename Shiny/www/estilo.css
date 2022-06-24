@@ -26,23 +26,27 @@
 
 
 .navbar-default .navbar-brand {
-    font-size: 40px;
-    color: #F9633A;
+  font-size: 40px;
+  color: #73C6B6;
   padding-top: 33px;
 }
 
 
 
-
-
 .navbar-default .navbar-nav>li>a:focus, .navbar-default .navbar-nav>li>a:hover {
-    background-color: rgb(222, 222, 222);
+  background-color: #D0ECE7;
+  color: #566573;
+}
+
+
+.navbar-default .navbar-nav>.active>a{
+  color: #566573;
 }
 
 
 .navbar-default .navbar-nav>.active>a, .navbar-default .navbar-nav>.active>a:focus, .navbar-default .navbar-nav>.active>a:hover {
-    color: #ffffff;
-    background-color: #F9633A;
+  color: #566573;
+  background-color: #D1F2EB;
 }
 
 
@@ -55,20 +59,7 @@ body {
 
 /* HEADINGS */
 
-
-
-/* ICONOS */
-
-.fa.ICN{
-  font-size: 30px;
-  padding-left:2em;
-  /*color: dfjodfj*/
-  
-}
-
-/* Change font of header text */
-
-h1,h3{
+h3{
   text-align: center;
 }
 
@@ -84,8 +75,68 @@ h1,h2,h3{
   padding-left: 10px;
 }
 
+/* BOX  */
+
+div.row.container{
+  display: flex ; 
+  justify-content:center;
+  margin: 0 auto ;
+}
+
+  
+.container div.col-sm-3{
+    background-color: #D0ECE7;
+    padding: 3px 10px 5px;
+    border: #73C6B6 2px solid;
+    border-radius: 20px;
+    text-align: justify;
+   margin:  2px 1em 0px 10px;
+   flex-grow: 4; /* default 0 */
+}
+
+div.box-body.BoxCesta{
+  text-align: justify;
+}
 
 
+/* RESUMEN  */
+
+#resumen .col-sm-4{
+      background-color: #D0ECE7;
+    padding: 3px 10px 5px;
+    border: #73C6B6 2px solid;
+    border-radius: 20px;
+    text-align: justify;
+   margin:  2px 1em 0px 10px;
+}
+
+#resumen{
+    display: flex ; 
+  justify-content:center;
+  margin: 0 auto ;
+}
+
+/* ICONOS */
+
+.fa.ICN{
+  font-size: 30px;
+  padding-left:2em;
+  /*color: dfjodfj*/
+  
+}
+
+/* Change font of header text */
+
+
+
+.center{
+  text-align: center;
+}
+
+
+b, strong {
+    font-weight: bold;
+}
 
 
 p{   
@@ -118,6 +169,31 @@ div.row.ColVbles{
   padding:10px;
   justify-content: space-evenly ; 
   
+}
+
+
+/* ICONOS LISTA VARIABLES */
+
+.ICN{ color: #A2D9CE;}
+
+
+
+/* TABLA EDA  */
+
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
 }
 
 

@@ -573,8 +573,6 @@ TIPO = c("SIN CALCIO","CON CALCIO") )
 
 
 
-
-
 ```{r , fig.height=3 , fig.width=5 , fig.align='center'}
 ggplot(Ventas_Prod, aes(fill =TIPO , x = TIPO , y=VENTAS_TOTALES)) + 
   geom_histogram(stat="identity", position="dodge")   +

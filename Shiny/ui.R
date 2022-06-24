@@ -95,21 +95,52 @@ ui <- fluidPage(
                              p("Este algoritmo permite generar una serie de reglas de 
                               asociación y descubrir conjuntos de items frecuentes."))
                        ),
-                       
                        br(),
-                       
-                       fluidRow(h2("Configuración del algoritmo a priori"),
-                         box(title="Configuración inicial",
-                           width = 6, 
-                           "Confianza mínima: 50%",br(),"Soporte mínimo: al menos 20 compras", br(),
-                           "Problema: recomendación de los productos más vendidos: 1096 y 1033."
-                         ),
-                         box(
-                           title = "Configuración final", width = 6, 
-                           "Confianza mínima: 18%", br(),"Soporte mínimo: al menos 15 compras", br(),
-                           "Solución: Introducir en el antecedente los productos más vendidos para descubrir la asociación con productos menos vendidos."
-                         )
-                       ),
+                      fluidRow(
+                        h2("Configuración del algoritmo a priori", class="center"),
+                        column(2),
+                        column(4,
+                               div(class="panel panel-default", 
+                                   div(class="panel-body",   align = "justify",
+                                       div(
+                                         h3(
+                                           "Configuración inicial"
+                                         ),
+                                         div(
+                                           shiny::HTML("<ul>
+                                                       <li><b>Confianza mínima</b>: 50%</li>
+                                                       <li><b>Soporte mínimo</b>: 20 compras</li>
+                                                       <li><b>Problema</b>: Recomendación de los productos más vendidos: 1096 y 1033</li>
+                                                       </ul>")
+                                           )
+                                       )
+                                   )
+                               )
+                        ),
+                        column(4,
+                               div(class="panel panel-default",
+                                   div(class="panel-body",    align = "justify",
+                                       div(
+                                         h3(
+                                           "Configuración final"
+                                         ),
+                                         div(
+                                           shiny::HTML("<ul>
+                                                       <li><b>Confianza mínima</b>: 18%</li>
+                                                       <li><b>Soporte mínimo</b>: 15 compras</li>
+                                                       <li><b>Problema</b>: Introducción en el antecedente de los productos más vendidos</li>
+                                                       </ul>")
+                                         )
+                                       )
+                                     
+                                   )
+                               )
+                        ),
+                        column(2)
+                      ),
+                      
+                      
+                      br(),
                        fluidRow(h2("Resultado de las reglas de asociación"), br(),
                                 tabBox(title="Gráficas",
                                        height = "350px",
@@ -145,17 +176,21 @@ ui <- fluidPage(
                                        )
                                 )
                                 ),br(),br(),br(),hr(),br(),br(),br(),
-                       fluidRow(div(h1("3. Conclusiones")),
-                         box( title = "Patrón de ventas",
-                           width = 4, background = "black",
-                           "Uno o dos productos diferentes por transacción"
-                         ),
+                      fluidRow(h1("3. Conclusiones"), br()),
+                       fluidRow(
+                         class="container",
+                     
                          box(
-                           title = "Productos más vendidos", width = 4, background = "light-blue",
+                           title = "Productos más vendidos", width = 3,  class="BoxCesta",
                            "La venta conjunta de los productos 1033 y 1096 se ha producido en un 1.23% de las transacciones, unas 170 veces."
                          ),
+                         
+                         box( title = "Patrón de ventas", class="BoxCesta",
+                              width = 3, 
+                              "Uno o dos productos diferentes por transacción."
+                         ),
                          box(
-                           title = "Reglas robustas",width = 4, background = "maroon",
+                           title = "Reglas robustas",width = 3, class="BoxCesta",
                            "No se deben al azar, existe un patrón de comportamiento de ventas real."
                          )
                        ),
@@ -189,64 +224,65 @@ ui <- fluidPage(
                          br()
                        ),
                        
-                       fluidRow(
+                       fluidRow(style="justify-content: center;width: 50%;",
                            column(2, icon("receipt",class="ICN")),
-                           column(10,strong("ID ticket:"), "sdfnsodvsidsoihgisfviodnfvodnfiovndfo"
+                           column(10,strong("ID ticket:"), "Variable numérica que identifica unívocamente a cada ticket de venta."
                        )
                        ),
                        br(),
-                       fluidRow(
+                       fluidRow(style="justify-content: center;width: 50%;",
                          column(2, icon("barcode",class="ICN")),
-                         column(10,strong("Línea ticket"), "sdfnsodvsidsoihgisfviodnfvodnfiovndfo"
+                         column(10,strong("Línea ticket:"), "Variable numérica con la línea correspondiente del ticket."
                          )
                        ),
                        br(),
-                       fluidRow(
+                       fluidRow(style="justify-content: center;width: 50%;",
                          column(2,icon("calendar",class="ICN")),
-                         column(10,strong("Fecha"), "sdfnsodvsidsoihgisfviodnfvodnfiovndfo"
+                         column(10,strong("Fecha:"), "Fecha en que se realizó la venta."
                          )
                        ),
                        br(),
-                       fluidRow(
-                         column(2,icon("calendar",class="ICN")),
-                         column(10,strong("Código producto"), "sdfnsodvsidsoihgisfviodnfvodnfiovndfo"
+                       fluidRow(style="justify-content: center;width: 50%;",
+                         column(2,icon("code",class="ICN")),
+                         column(10,strong("Código producto:"), "Identificador del producto."
                          )
                        ),
                        br(),
-                       fluidRow(
-                         column(2,icon("calendar",class="ICN")),
-                         column(10,strong("Cantidad"), "sdfnsodvsidsoihgisfviodnfvodnfiovndfo"
+                       fluidRow(style="justify-content: center;width: 50%;",
+                         column(2,icon("cards-blank",class="ICN")),
+                         column(10,strong("Cantidad:"), "Número de items vendidos de un determinado producto."
                          )
                        ),
                        br(),
-                       fluidRow(
-                         column(2,icon("euro-sign",class="ICN")),
-                         column(10,strong("Precio con impuestos"), "sdfnsodvsidsoihgisfviodnfvodnfiovndfo"
-                         )
-                       ),
-                       br(),
-                       fluidRow(
+                       fluidRow(style="justify-content: center;width: 50%;",
                          column(2, icon("money-bill",class="ICN")),
-                         column(10,strong("Precio"), "sdfnsodvsidsoihgisfviodnfvodnfiovndfo"
+                         column(10,strong("Precio:"), "Precio base del artículo libre de impuestos, euros."
                          )
                        ),
                        br(),
-                       fluidRow(
+                       fluidRow(style="justify-content: center;width: 50%;",
+                         column(2,icon("euro-sign",class="ICN")),
+                         column(10,strong("Precio con impuestos:"), "Precio de venta del artículo, en euros."
+                         )
+                       ),
+                     
+                       br(),
+                       fluidRow(style="justify-content: center;width: 50%;",
                          column(2, icon("percent",class="ICN")),
-                         column(10,strong("Descuento"), "sdfnsodvsidsoihgisfviodnfvodnfiovndfo"
+                         column(10,strong("Descuento:"), "Descuento aplicado."
                          )
                        ),
                        br(),
-                       fluidRow(
+                       fluidRow(style="justify-content: center;width: 50%;",
                          column(2,  icon("tag",class="ICN")),
-                         column(10,strong("Importe"), "sdfnsodvsidsoihgisfviodnfvodnfiovndfo"
+                         column(10,strong("Importe:"), " Importe de la compra libre de impuestos, en euros."
                          ),
                         
                        ),
                        br(),
-                       fluidRow(
+                       fluidRow(style="justify-content: center;width: 50%;",
                          column(2, icon("tags", class="ICN")),
-                         column(10,strong("Importe con impuestos"), "sdfnsodvsidsoihgisfviodnfvodnfiovndfo"
+                         column(10,strong("Importe con impuestos:"), "Importe a pagar por el comprador, en euros."
                          )
                        ),
                        
@@ -334,18 +370,98 @@ ui <- fluidPage(
                        hr(),
                           
                           fluidRow(
-                            h2("Resumen de los datos")
+                            h2("Resumen de los datos"),br(),
                             ),
-                        
-                        
-                        
-                        
-                        
-                        
-                        br(),hr(),br(),
-                        includeHTML("footer.Rhtml")
-               ),
                        
+                        fluidRow(id = "resumen", 
+                          box(style="text-align: justify",
+                            width = 4, title ="Ventas totales",
+                           p("97143",style= "48pt") ,  "1978 unidades vendidas en una media de 537 transacciones diarias."
+                          ),
+                        
+                          box(style="text-align: justify",
+                            title = "Importe por transacción", width = 4,
+                            "Medio: 4,25€" , br(), "Máximo: 196,68€",
+                            br(),"Mínimo: 69 céntimos", br(),"25% de las transaciones han tenido 
+                            un importe mayor a 8.34€"
+                          ),
+                          box(style="text-align: justify",
+                            title = "Tamaño de las transacciones",width = 4,
+                            "El 75% de las transacciones han sido de 6 items o menos." , br(),
+                            "Tamaño máximo: 132 items."
+                          )
+                        ),
+                       hr(),
+                       
+                       fluidRow(
+                         h2("Gráficas"),br(),
+                       ),
+                       
+                       fluidRow(
+                         tabBox(
+                           title = "Gráficas EDA",side = "right", 
+                           # The id lets us use input$tabset1 on the server to find the current tab
+                           id = "graficasEDA", height = "500px",width = 100,
+                           tabPanel("Evolución ventas",br(),
+                                    sidebarLayout(
+                                      mainPanel(width = 8,h2("Evolución del volumen de ventas diario"),
+                                                plotlyOutput("EvolVentas")
+                                      ),
+                                      sidebarPanel(width = 4,
+                                        "Gran variación del volumen de ventas diario en función del día de la semana.",br(), 
+                                          "Picos donde el volumen de ventas fué superior al habitual, 
+                                          a mediados de Octubre y a mediados de Diciembre del año 2020."
+                                      )
+                                    )
+                                    ),
+                           
+                           tabPanel("Comparación de ventas",br(),
+                                    sidebarLayout(
+                                      mainPanel(width = 8,h2("Volumen total de ventas"),
+                                                plotOutput("VentasTotalComp")
+                                      ),
+                                      sidebarPanel(width = 4,
+                                        "El volumen de ventas del producto con calcio ha sido ligeramente 
+                                        superior, con un volumen total de ventas de 188867 unidades frente a 
+                                        las 169196 unidades vendidas del producto que no lleva calcio.", br(),br(),
+                                        HTML("<table>  <tr>    <th>TIPO</th>    <th>IMPORTE MEDIO TRANSACCIÓN</th>    <th>PRECIO MEDIO PRODUCTO</th>  </tr>  <tr>    <td>Con calcio</td>    <td>4.07</td>    <td>1.49</td>  </tr>  <tr>    <td>Sin calcio</td>    <td>3.31</td>    <td>1.39</td>  </tr></table>")
+                                      )
+                                    )
+                                    ),
+                           
+                           tabPanel("Granularidad mensual",br(),
+                                   
+                                    sidebarLayout(
+                                      mainPanel(width = 8,
+                                                plotlyOutput("VentasMensuales")
+                                      ),
+                                      sidebarPanel(width = 4,
+                                                   "osdnfsidfpijsdfpsjdfpsjdfposjdfposjdpo"
+                                       )
+                                    )
+                                    ),
+                           
+                           tabPanel("Granularidad semanal", br(),
+                                     
+                                    sidebarLayout(
+                                      mainPanel(width = 8,br(),
+                                                plotlyOutput("VentasSemanales")
+                                      ),
+                                      sidebarPanel(width = 4,
+                                                   "osdnfsidfpijsdfpsjdfpsjdfposjdfposjdpo"
+                                      )
+                                    )
+                                    )
+                           
+                         )
+                       ),
+                       
+                       
+                       
+                       br(),hr(),br(),
+                       includeHTML("footer.Rhtml")
+                        ),
+                        
                tabPanel("Modelado", br(),
                         
                         fluidRow( 
@@ -353,8 +469,15 @@ ui <- fluidPage(
                                  h1("Construcción y evaluación de modelos predictivos"),br()) ),
                         br(),hr(),br(),
                         includeHTML("footer.Rhtml")
-                        )
+               )    
+                        
+                        
+                        
+                       
                ),
+                       
+               
+               
    
   #### Conclusiones ####
       tabPanel("Conclusiones", br(),

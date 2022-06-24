@@ -142,6 +142,7 @@ output$soporte <- renderPlotly({
 
 
 #### EDA #### 
+#### 
 # output$Datos1  <- DT::renderDataTable(
 # DT::datatable({
 #   datos
@@ -162,5 +163,112 @@ output$soporte <- renderPlotly({
 # ))
   
 
+load("datos/Dataset_Final.RData")
+
+EvolVentasDatos <- reactive({
+  VolumenVentasDiarias = dataset %>% group_by(FECHA,ID_TICKET) %>%  dplyr::summarize(n =  n()) %>% as.data.frame() %>% group_by(FECHA) %>%  dplyr::summarize(n =  n())
+  VolumenVentasDiarias = VolumenVentasDiarias %>% mutate(TIPO = rep("TOTAL",nrow(VolumenVentasDiarias)))
   
+  
+  VolumenVentasDiarias_P1=dataset %>% filter(CODIGO==20445) %>% group_by(FECHA,ID_TICKET) %>%  dplyr::summarize(n =  n()) %>% as.data.frame() %>% group_by(FECHA) %>%  dplyr::summarize(n =  n())
+  VolumenVentasDiarias_P1 = VolumenVentasDiarias_P1 %>% mutate(TIPO = rep("Sin calcio",nrow(VolumenVentasDiarias_P1)))
+  
+  VolumenVentasDiarias_P2=dataset %>% filter(CODIGO==22336) %>% group_by(FECHA,ID_TICKET) %>%  dplyr::summarize(n =  n()) %>% as.data.frame() %>% group_by(FECHA) %>%  dplyr::summarize(n =  n())
+  VolumenVentasDiarias_P2 = VolumenVentasDiarias_P2 %>% mutate(TIPO = rep("Con calcio",nrow(VolumenVentasDiarias_P2)))
+  
+  VolumenVentasDiarioTodo=
+    rbind.data.frame(VolumenVentasDiarias,VolumenVentasDiarias_P1,VolumenVentasDiarias_P2)
+  VolumenVentasDiarioTodo
+})
+
+
+
+output$EvolVentas<- renderPlotly({
+  VolumenVentasDiarioTodo <- EvolVentasDatos() 
+  fig <- plot_ly(VolumenVentasDiarioTodo, x = ~FECHA, y = ~n, color = ~TIPO) 
+  fig <- fig %>% add_lines()
+  fig <- fig %>% layout(yaxis = list(title = "Ventas diarias"),
+                        xaxis = list(title = "Día",rangeslider = list(visible = T)) )
+  
+  fig
+})
+
+
+
+Comp <- reactive({
+  Ventas <- cbind.data.frame(
+    VENTAS_TOTALES=c(169196,188867),
+    TIPO = c("SIN CALCIO","CON CALCIO") ) 
+  Ventas
+})
+
+
+output$VentasTotalComp<- renderPlot(
+  {
+    Ventas <- Comp() 
+    ggplot(Ventas, aes(fill =TIPO , x = TIPO , y=VENTAS_TOTALES)) + 
+      geom_histogram(stat="identity", position="dodge")   +
+      labs(x="ID Producto" , y = "Volumen total de ventas", 
+           caption = "Fuente: Elaboración propia con datos de ventas")+
+      scale_fill_brewer(palette="BuGn")+
+      theme_bw()+ theme(legend.position = 'none')
+     
+    
+  }
+)
+
+
+load("datos/VENTAS_MENSUALES.RData")
+
+VMensuales <- reactive({
+  VENTAS_MENSUALES
+})
+
+
+output$VentasMensuales<- renderPlotly(
+  {
+    VentasM <- VMensuales() 
+    fig <- plot_ly(VentasM, x = ~MES, y = ~TOTAL_VENTAS,
+                   color = ~TIPO,
+                   colors = c(`CON CALCIO` = '#BB8FCE', `SIN CALCIO` = '#45B39D', `TOTAL` = '#A9CCE3'),
+                   type = 'bar'
+    ) 
+    fig <- fig %>% layout(title="Volumen de ventas según mes del año",
+                          yaxis = list(title = "Volumen de ventas"),
+                          xaxis = list(title = "Mes") )
+    fig
+    
+  }
+)
+
+load("datos/VENTAS_SEMANALES.RData")
+
+Vsemanales <- reactive({
+  VENTAS_SEMANALES
+})
+
+
+output$VentasSemanales<- renderPlotly(
+  {
+    VentasS <- Vsemanales() 
+
+    fig <- plot_ly(VENTAS_SEMANALES, x = ~DIA_SEMANA, y = ~VENTAS_MEDIAS,
+                   color = ~TIPO,
+                   colors = c(`CON CALCIO` = '#BB8FCE', `SIN CALCIO` = '#45B39D', `TOTAL` = '#A9CCE3'),
+                   type = 'bar'
+    ) 
+    fig <- fig %>% layout(title="Volumen de ventas según mes del año",
+                          yaxis = list(title = "Volumen de ventas"),
+                          xaxis = list(title = "Mes") )
+    fig
+    
+    
+  }
+)
+
+#output$GranCom
+
+
+
+
 }

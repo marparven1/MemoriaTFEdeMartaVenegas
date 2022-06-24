@@ -10,6 +10,7 @@ body{
 /* Change font of header text */
 h1,h2 {
   font-family: 'Yusei Magic', sans-serif;
+  text-align: center;
 }
 
 
@@ -28,3 +29,7 @@ p{
 #dataMining{ height: 244px;}
 
 #imgVentas{height:250px;}
+
+a {
+  color:rgb(255,0,0);
+}

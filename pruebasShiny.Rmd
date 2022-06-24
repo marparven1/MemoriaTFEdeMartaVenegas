@@ -88,3 +88,172 @@ fig
 ```
 
 
+```{r}
+load("datos/Dataset_Final.RData")
+```
+
+
+
+```{r}
+VolumenVentasDiarias = dataset %>% group_by(FECHA,ID_TICKET) %>%  dplyr::summarize(n =  n()) %>% as.data.frame() %>% group_by(FECHA) %>%  dplyr::summarize(n =  n())
+VolumenVentasDiarias = VolumenVentasDiarias %>% mutate(TIPO = rep("TOTAL",nrow(VolumenVentasDiarias)))
+
+
+VolumenVentasDiarias_P1=dataset %>% filter(CODIGO==20445) %>% group_by(FECHA,ID_TICKET) %>%  dplyr::summarize(n =  n()) %>% as.data.frame() %>% group_by(FECHA) %>%  dplyr::summarize(n =  n())
+VolumenVentasDiarias_P1 = VolumenVentasDiarias_P1 %>% mutate(TIPO = rep("Sin calcio",nrow(VolumenVentasDiarias_P1)))
+
+VolumenVentasDiarias_P2=dataset %>% filter(CODIGO==22336) %>% group_by(FECHA,ID_TICKET) %>%  dplyr::summarize(n =  n()) %>% as.data.frame() %>% group_by(FECHA) %>%  dplyr::summarize(n =  n())
+VolumenVentasDiarias_P2 = VolumenVentasDiarias_P2 %>% mutate(TIPO = rep("Con calcio",nrow(VolumenVentasDiarias_P2)))
+
+VolumenVentasDiarioTodo=
+rbind.data.frame(VolumenVentasDiarias,VolumenVentasDiarias_P1,VolumenVentasDiarias_P2)
+```
+
+
+```{r}
+fig <- plot_ly(VolumenVentasDiarioTodo, x = ~FECHA, y = ~n, color = ~TIPO) 
+fig <- fig %>% add_lines()
+
+fig
+```
+
+
+
+```{r , fig.height=5}
+# La idea en shiny es poder mostrar con un gráfico interactivo las ventas totales según   # día, volumen medio de ventas mensuales, semanales,... es fácil solo es crear un dataset # con esta información
+
+ggplot(VolumenVentasDiarioTodo )+
+  geom_line(aes(x=FECHA, y = n, group=CODIGO, colour=CODIGO)  ) +
+  scale_x_date(date_labels = "%d %b %y",date_breaks = "15 days")+
+  labs(x="Día" , y = "Volumen total de ventas", caption = "Fuente: Elaboración propia con datos")+
+ theme_gray() +
+  theme(axis.text.x = element_text(angle = 45))+
+  ggtitle("Evolución del volumen total de ventas diario")
+  
+```
+
+
+
+
+
+```{r}
+load(file = "Datos/VENTAS_Dia_SCALCIO.RData")
+load(file = "Datos/VENTAS_Dia_CALCIO.RData")
+```
+
+
+
+```{r}
+Ventas_Prod=cbind.data.frame(
+VENTAS_TOTALES=c(VolVentas_SIN_CALCIO_FECHA$VENTAS %>% sum(),VolVentas_CALCIO_FECHA$VENTAS %>% sum()),
+TIPO = c("SIN CALCIO","CON CALCIO") ) 
+```
+
+
+
+
+
+```{r , fig.height=3 , fig.width=5 , fig.align='center'}
+ggplot(Ventas_Prod, aes(fill =TIPO , x = TIPO , y=VENTAS_TOTALES)) + 
+  geom_histogram(stat="identity", position="dodge")   +
+  labs(x="ID Producto" , y = "Volumen total de ventas", 
+       caption = "Fuente: Elaboración propia con datos de ventas")+
+ scale_fill_brewer(palette="BuGn")+
+  theme_bw()+ theme(legend.position = 'none')+
+  ggtitle("Volumen total de ventas")
+```
+
+
+
+
+
+
+
+
+```{r}
+VENTAS_MENSUALES = 
+rbind.data.frame(
+  VolVentas_CALCIO_FECHA %>% group_by(MES) %>% dplyr::summarise(TOTAL_VENTAS = sum(VENTAS)) %>% mutate(TIPO = "CON CALCIO"),
+  VolVentas_SIN_CALCIO_FECHA %>% group_by(MES) %>% dplyr::summarise(TOTAL_VENTAS=sum(VENTAS))%>% mutate(TIPO = "SIN CALCIO"),
+  VolVentas_FECHA %>% group_by(MES) %>% dplyr::summarise(TOTAL_VENTAS=sum(VENTAS))%>% mutate(TIPO = "TOTAL") ) 
+
+VENTAS_MENSUALES$MES=c(
+ifelse(VENTAS_MENSUALES$MES == 1 , "Enero",
+       ifelse(
+          VENTAS_MENSUALES$MES == 8 , "Agosto",
+       ifelse(
+         VENTAS_MENSUALES$MES == 9 , "Septiembre",
+         ifelse( VENTAS_MENSUALES$MES == 10 , "Octubre",
+                 ifelse(
+                    VENTAS_MENSUALES$MES == 11 , "Noviembre",
+                    ifelse(VENTAS_MENSUALES$MES == 12 , "Diciembre"," " ))))))
+)
+
+# save(VENTAS_MENSUALES, file = "Shiny/datos/VENTAS_MENSUALES.RData")
+```
+
+
+
+```{r ,fig.height=3 , fig.width=6}
+
+
+fig <- plot_ly(VENTAS_MENSUALES, x = ~MES, y = ~TOTAL_VENTAS,
+               color = ~TIPO,
+               colors = c(`CON CALCIO` = '#BB8FCE', `SIN CALCIO` = '#45B39D', `TOTAL` = '#A9CCE3'),
+               type = 'bar'
+               ) 
+fig <- fig %>% layout(title="Volumen de ventas según mes del año",
+                        yaxis = list(title = "Volumen de ventas"),
+                        xaxis = list(title = "Mes") )
+fig
+
+
+
+```
+
+
+
+
+
+```{r}
+VENTAS_SEMANALES = 
+rbind.data.frame(
+  
+  VolVentas_CALCIO_FECHA %>% group_by(DIA_SEMANA) %>% dplyr::summarise(VENTAS_MEDIAS = ceiling(mean(VENTAS)) ) %>% mutate(TIPO = "CON CALCIO"),
+  
+  VolVentas_SIN_CALCIO_FECHA %>% group_by(DIA_SEMANA) %>% dplyr::summarise(VENTAS_MEDIAS=ceiling(mean(VENTAS)) )%>% mutate(TIPO = "SIN CALCIO"),
+  
+  VolVentas_FECHA %>% group_by(DIA_SEMANA) %>% dplyr::summarise(VENTAS_MEDIAS=ceiling(mean(VENTAS)) )%>% mutate(TIPO = "TOTAL") ) 
+
+
+VENTAS_SEMANALES$DIA_SEMANA=c(
+ifelse(VENTAS_SEMANALES$DIA_SEMANA == 1 , "Lunes",
+       ifelse(
+          VENTAS_SEMANALES$DIA_SEMANA == 2 , "Martes",
+       ifelse(
+        VENTAS_SEMANALES$DIA_SEMANA== 3 , "Miércoles",
+         ifelse( VENTAS_SEMANALES$DIA_SEMANA == 4 , "Jueves",
+                 ifelse(
+                    VENTAS_SEMANALES$DIA_SEMANA == 5 , "Viernes",
+                    ifelse(VENTAS_SEMANALES$DIA_SEMANA == 6 , "Sábado",
+                           ifelse(VENTAS_SEMANALES$DIA_SEMANA == 7 , "Domingo",""))))))))
+
+save(VENTAS_SEMANALES, file = "Shiny/datos/VENTAS_SEMANALES.RData")
+```
+
+
+
+```{r}
+fig <- plot_ly(VENTAS_SEMANALES, x = ~DIA_SEMANA, y = ~VENTAS_MEDIAS,
+               color = ~TIPO,
+               colors = c(`CON CALCIO` = '#BB8FCE', `SIN CALCIO` = '#45B39D', `TOTAL` = '#A9CCE3'),
+               type = 'bar'
+               ) 
+fig <- fig %>% layout(title="Volumen de ventas según mes del año",
+                        yaxis = list(title = "Volumen de ventas"),
+                        xaxis = list(title = "Mes") )
+fig
+
+
+```
+
