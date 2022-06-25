@@ -631,13 +631,39 @@ ui <- fluidPage(
 								                     al 30 de Enero."))
 								          ),
 								          fluidRow(
-								            column(12,h2("Modelado")),br(),
+								            column(12,h2("Modelado clásico")),br(),
 								            tabBox(
-								              title = "Modelos",
+								              title = "Modelos",width = 100,
 								              # The id lets us use input$tabset1 on the server to find the current tab
-								              id = "Modelos", 
+								              id = "ModelosClasicos", 
 								              tabPanel("Regresión de Poisson", 
-								                       tabBox(
+								                       tabBox(width = 100,
+								                         tabPanel(
+								                           "General",br(),
+								                           HTML(' <div class="row" style="margin-top: 0px">
+								                                  <div class="column3" >
+                                              <h3>Variable respuesta</h3>
+                                                <h4>Volumen de diario de ventas</h4>
+                                              <p>Variable discreta de tipo conteo</p>
+                                              <img src="img/Poisson.png" style="width: 95%;">
+                                              <p>Problema: sobredispersión de los datos</p>
+                                            </div>
+                                             <div class="column3" >
+                                              <h3>Variables explicativas</h3>
+                                                 <ul>
+                                                  <li><p>Precio medio con impuestos</p></li>
+                                                  <li><p>Descuento medio con impuestos</p></li>
+                                                  <li><p>Día de la semana</p></li>
+                                                  <li><p>Mes del año</p></li>
+                                                 </ul>
+                                            </div>
+                                            <div class="column3" >
+                                              <h3>Datos</h3>
+                                              <p>Datos con variables categóricas en forma de factor</p>
+                                              <p>Datos con variables en formato dummy</p>
+                                            </div>
+                                          </div>')
+								                         ),
 								                         tabPanel(
 								                           "Total"
 								                         ),
@@ -652,7 +678,33 @@ ui <- fluidPage(
 								                       )
 								                       ),
 								              tabPanel("Binomial Negativa",
-								                       tabBox(
+								                       tabBox(width = 100,
+								                              tabPanel(
+								                                "General",br(),
+								                                HTML('
+								                                <div class="row" style="margin-top: 0px">
+								                                  <div class="column3" >
+                                              <h3>Variable respuesta</h3>
+                                                <h4>Volumen de diario de ventas</h4>
+                                              <p>Variable discreta de tipo conteo</p>
+                                              <p>Solución a la sobredispersión de los datos</p>
+                                            </div>
+                                            <div class="column3" >
+                                              <h3>Datos</h3>
+                                              <p>Datos con variables categóricas en forma de factor</p>
+                                              <p>Datos con variables en formato dummy</p>
+                                            </div>
+                                             <div class="column3" >
+                                              <h3>Variables explicativas</h3>
+                                                 <ul>
+                                                  <li><p>Precio medio con impuestos</p></li>
+                                                  <li><p>Descuento medio con impuestos</p></li>
+                                                  <li><p>Día de la semana</p></li>
+                                                  <li><p>Mes del año</p></li>
+                                                 </ul>
+                                            </div>
+                                          </div>')
+								                              ),
 								                         tabPanel(
 								                           "Total"
 								                         ),
@@ -668,11 +720,91 @@ ui <- fluidPage(
 								                       ),
 								              tabPanel("Series temporales",
 								                    "FDFDF"
-								                       ),
+								                       ))),
+								          fluidRow(
+								            column(12,h2("Aprendizaje automático")),br(),
+								            tabBox(
+								              title = "Modelos",width = 100,
+								              # The id lets us use input$tabset1 on the server to find the current tab
+								              id = "AprendizajeAutomatico", 
+								              
+								              tabPanel(
+								                "Generalidades",
+								                
+								                HTML('<div class="row">
+								                       <!-- feature -->
+								                       <div class="feature">
+								                       <i class="feature-icon fa fa-circle "></i>
+								                       <div class="feature-content">
+								                       <h4>Algoritmos de regresión</h4>
+								                       <p>Para predecir el volumen de ventas diario se han aplicado los siguientes algoritmos de 
+								                       regresión: máquinas de vector soporte, K-Nearest Neighbor Regression (KNN) y árboles de regresión, en particular, XGBoost. </p>
+								                       </div>
+								                       </div>
+								                       <!-- /feature -->
+								                       
+								                       <!-- feature -->
+								                       <div class="feature">
+								                       <i class="feature-icon fa fa-circle "></i>
+								                       <div class="feature-content">
+								                       <h4>Variables predictoras</h4>
+								                       <p>Precio medio de venta con impuestos, descuento, mes del año y día de la semana.</p>
+								                       <h4>Nota: No se ha introducido la variable año, ya que su varianza es prácticamente nula.</h4>
+								                       </div>
+								                       </div>
+								                       <!-- /feature -->
+								                       
+								                       <!-- feature -->
+								                       <div class="feature">
+								                       <i class="feature-icon fa fa-circle"></i>
+								                       <div class="feature-content">
+								                       <h4>Validación cruzada</h4>
+								                       <p>Con cinco grupos y tres repeticiones.</p>
+								                       </div>
+								                       </div>
+								                       <!-- /feature -->	
+								                       
+								                       <!-- feature -->
+								                       <div class="feature">
+								                       <i class="feature-icon fa fa-circle"></i>
+								                       <div class="feature-content">
+								                       <h4>Estandarización de las variables</h4>
+								                       <p>Se han escalado las variables para que estén todas en la misma escala, con el objetivo de obtener mejores métricas y para que los modelos minimicen el error al predecir el volumen de ventas.</p>
+								                       </div>
+								                       </div>
+								                       <!-- /feature -->	
+								                       
+								                        <!-- feature -->
+								                       <div class="feature">
+								                       <i class="feature-icon fa fa-circle"></i>
+								                       <div class="feature-content">
+								                       <h4>Sin conjunto de validación</h4>
+								                       <p>Debido a que únicamente se dispone de 181 registros y utilizar conjunto de datos de 
+								                       validación conduciría a la obtención de modelos con peores métricas.</p>
+								                       </div>
+								                       </div>
+								                       <!-- /feature -->	
+								                     </div>')
+								              ),
+								              
 								              tabPanel("SVM",
-								                       tabBox(
+								                       tabBox(width = 100,
 								                         tabPanel(
-								                           "Total"
+								                           "Hiperparámetros",
+								                           HTML('<div class="section-header"><h3>Hiperparámetros del modelo</h3></div>
+								                           <div class="row">
+								                       <!-- feature -->
+								                       <div class="feature">
+								                       <i class="feature-icon fa fa-circle"></i>
+								                       <div class="feature-content">
+								                       <h4>Parámetro de costo, C</h4>
+								                       <p>Este parámetro penaliza al modelo por cometer errores. Cuanto mayor sea su valor,
+								                       menos probable es que el algoritmo realice una penalización errónea.</p>
+								                       <p>Malla de valores entre 1 y 3.</p>
+								                       </div>
+								                       </div>
+								                       <!-- /feature -->	
+								                     </div>')
 								                         ),
 								                         tabPanel(
 								                           "Sin calcio"
@@ -685,10 +817,22 @@ ui <- fluidPage(
 								                       )
 								                       ),
 								              tabPanel("KNN",
-								                       tabBox(
-								                         tabPanel(
-								                           "Total"
-								                         ),
+								                       tabBox(width = 100,
+								                              tabPanel(
+								                                "Hiperparámetros",
+								                                HTML('<div class="section-header"><h3>Hiperparámetros del modelo</h3></div>
+								                                <div class="row">
+								                       <!-- feature -->
+								                       <div class="feature">
+								                       <i class="feature-icon fa fa-circle"></i>
+								                       <div class="feature-content">
+								                       <h4>Número de vecinos, k</h4>
+								                       <p>Malla de valores: 3,5,7 y 9</p>
+								                       </div>
+								                       </div>
+								                       <!-- /feature -->	
+								                     </div>')
+								                              ),
 								                         tabPanel(
 								                           "Sin calcio"
 								                           
@@ -700,18 +844,29 @@ ui <- fluidPage(
 								                       )
 								              ),
 								              tabPanel("XGBoost",
-								                       tabBox(
+								                       tabBox(width = 100,
 								                         tabPanel(
-								                           "Total"
+								                           "Hiperparámetros",
+								                           HTML('<div class="section-header"><h3>Hiperparámetros del modelo</h3></div>
+								                           <div class="row">
+								                       <!-- feature -->
+								                       <div class="feature">
+								                       <i class="feature-icon fa fa-circle"></i>
+								                       <div class="feature-content">
+								                       <h4>Hiperparametrizaciones</h4>
+								                       <p>Se han probado cinco hiperparametrizaciones diferentes.</p>
+								                       </div>
+								                       </div>
+								                       <!-- /feature -->	
+								                     </div>')
 								                         ),
+								                         
 								                         tabPanel(
 								                           "Sin calcio"
-								                           
 								                         ),
 								                         tabPanel(
 								                           "Con calcio"
-								                           
-								                         )
+								                             )
 								                       )
 								              )
 								            )
