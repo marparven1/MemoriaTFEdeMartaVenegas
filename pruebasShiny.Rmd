@@ -196,7 +196,6 @@ ifelse(VENTAS_MENSUALES$MES == 1 , "Enero",
 
 ```{r ,fig.height=3 , fig.width=6}
 
-
 fig <- plot_ly(VENTAS_MENSUALES, x = ~MES, y = ~TOTAL_VENTAS,
                color = ~TIPO,
                colors = c(`CON CALCIO` = '#BB8FCE', `SIN CALCIO` = '#45B39D', `TOTAL` = '#A9CCE3'),
@@ -204,9 +203,11 @@ fig <- plot_ly(VENTAS_MENSUALES, x = ~MES, y = ~TOTAL_VENTAS,
                ) 
 fig <- fig %>% layout(title="Volumen de ventas según mes del año",
                         yaxis = list(title = "Volumen de ventas"),
-                        xaxis = list(title = "Mes") )
-fig
+                        xaxis = list(title = "Mes",
+                                     categoryorder = "array",
+                                     categoryarray = c("Agosto","Septiembre","Octubre","Noviembre","Diciembre","Enero")) )
 
+fig
 
 
 ```
@@ -251,7 +252,9 @@ fig <- plot_ly(VENTAS_SEMANALES, x = ~DIA_SEMANA, y = ~VENTAS_MEDIAS,
                ) 
 fig <- fig %>% layout(title="Volumen de ventas según mes del año",
                         yaxis = list(title = "Volumen de ventas"),
-                        xaxis = list(title = "Mes") )
+                        xaxis =  list(title = "Día de la semana",
+                                     categoryorder = "array",
+                                     categoryarray = c("Lunes","Martes","Miércoles","Jueves","Viernes","Sábado","Domingo")) )
 fig
 
 

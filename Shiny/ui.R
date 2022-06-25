@@ -29,7 +29,7 @@ ui <- fluidPage(
 
   #### Market basket analysis #### 
               tabPanel("Análisis de cesta de la compra",
-                      br(),hr(),br(),
+                    
                        fluidRow(
                          h1("Análisis de cesta de la compra con datos de tickets de un supermercado"),
                                  br(),
@@ -70,7 +70,7 @@ ui <- fluidPage(
                                     plotlyOutput("soporte",height = "500px")
                                     )
                          ),
-                         tabBox(title = "Selectores",width = "3",br(),
+                         tabBox(title = "Selectores",width = "3",
                                 tabPanel("Tamaño",
                                          sliderInput("TamanoTransaccionesInput", 
                                                      p("Seleccione el número de transacciones"),
@@ -218,96 +218,162 @@ ui <- fluidPage(
                          )
                           ),
                         br(),hr(),br(),
-                       fluidRow(
-                         h2("Variables",icon("database",lib = "font-awesome")),
-                         p("A continuación se muestran las variables del conjunto de datos inicial"),
-                         br()
-                       ),
-                       
-                       fluidRow(style="justify-content: center;width: 50%;",
-                           column(2, icon("receipt",class="ICN")),
-                           column(10,strong("ID ticket:"), "Variable numérica que identifica unívocamente a cada ticket de venta."
-                       )
-                       ),
-                       br(),
-                       fluidRow(style="justify-content: center;width: 50%;",
-                         column(2, icon("barcode",class="ICN")),
-                         column(10,strong("Línea ticket:"), "Variable numérica con la línea correspondiente del ticket."
-                         )
-                       ),
-                       br(),
-                       fluidRow(style="justify-content: center;width: 50%;",
-                         column(2,icon("calendar",class="ICN")),
-                         column(10,strong("Fecha:"), "Fecha en que se realizó la venta."
-                         )
-                       ),
-                       br(),
-                       fluidRow(style="justify-content: center;width: 50%;",
-                         column(2,icon("code",class="ICN")),
-                         column(10,strong("Código producto:"), "Identificador del producto."
-                         )
-                       ),
-                       br(),
-                       fluidRow(style="justify-content: center;width: 50%;",
-                         column(2,icon("cards-blank",class="ICN")),
-                         column(10,strong("Cantidad:"), "Número de items vendidos de un determinado producto."
-                         )
-                       ),
-                       br(),
-                       fluidRow(style="justify-content: center;width: 50%;",
-                         column(2, icon("money-bill",class="ICN")),
-                         column(10,strong("Precio:"), "Precio base del artículo libre de impuestos, euros."
-                         )
-                       ),
-                       br(),
-                       fluidRow(style="justify-content: center;width: 50%;",
-                         column(2,icon("euro-sign",class="ICN")),
-                         column(10,strong("Precio con impuestos:"), "Precio de venta del artículo, en euros."
-                         )
-                       ),
-                     
-                       br(),
-                       fluidRow(style="justify-content: center;width: 50%;",
-                         column(2, icon("percent",class="ICN")),
-                         column(10,strong("Descuento:"), "Descuento aplicado."
-                         )
-                       ),
-                       br(),
-                       fluidRow(style="justify-content: center;width: 50%;",
-                         column(2,  icon("tag",class="ICN")),
-                         column(10,strong("Importe:"), " Importe de la compra libre de impuestos, en euros."
-                         ),
-                        
-                       ),
-                       br(),
-                       fluidRow(style="justify-content: center;width: 50%;",
-                         column(2, icon("tags", class="ICN")),
-                         column(10,strong("Importe con impuestos:"), "Importe a pagar por el comprador, en euros."
-                         )
-                       ),
-                       
-                    
-                      
-                       br(),hr(),br(),
-                       fluidRow( 
-                         h2("Transformación de los datos"),
-                         box(width = 4,
-                             title = h3("Transformación de variables"),
-                             column(6,"Factorización"),
-                             column(6,"Reformateo de variables numéricas")
-                             ), 
-                         box(width = 4,
-                             title = h3("Creación de variables"),
-                             column(4,strong("TEMPORALES"),br(), "Año, mes, día de la semama, día del mes y semana del año"),
-                             column(4,strong("VENTAS") , br(), "Volumen diario de ventas"),
-                             column(4,strong("DUMMIES"), br(), "Día de la semana y mes del año")
-                             ), 
-                         box(width = 4,
-                             title= h3("Datos faltantes"),
-                             column(5,  div(h1("2", style="text-align: end;"))),
-                             column(7,div(p("25/12/2020"),br(),p("01/01/2021")))
-                             )
-                       ) ,
+        #### Listado vbles ####
+				fluidRow(
+				  HTML('<div class="section-header"><h2>Variables de la muestra de tickets</h2></div>
+						<div class="row">
+						<div class="column" ">
+						<!-- feature -->
+						<div class="feature">
+                              <i class="feature-icon fa fa-receipt"></i>
+                              <div class="feature-content">
+                              <h4>Identificador de ticket</h4>
+                              <p>Variable numérica que identifica unívocamente a cada ticket de venta.</p>
+                              </div>
+                              </div>
+						<!-- /feature -->
+
+						<!-- feature -->
+						<div class="feature">
+							<i class="feature-icon fa fa-barcode"></i>
+							<div class="feature-content">
+								<h4>Línea ticket</h4>
+								<p>Variable numérica con la línea correspondiente del ticket..</p>
+							</div>
+						</div>
+						<!-- /feature -->
+
+						<!-- feature -->
+						<div class="feature">
+							<i class="feature-icon fa fa-calendar"></i>
+							<div class="feature-content">
+								<h4>Fecha</h4>
+								<p>Fecha en que se realizó la venta.</p>
+							</div>
+						</div>
+						<!-- /feature -->
+						
+								<!-- feature -->
+						<div class="feature">
+							<i class="feature-icon fa fa-th-large"></i>
+							<div class="feature-content">
+								<h4>Código producto</h4>
+								<p>Variable que corresponde al identificador del producto.</p>
+							</div>
+						</div>
+						<!-- /feature -->
+								<!-- feature -->
+						<div class="feature">
+							<i class="feature-icon fa fa-clock-o"></i>
+							<div class="feature-content">
+								<h4>Cantidad</h4>
+								<p>Número de items vendidos de un determinado producto para la línea correspondiente.</p>
+							</div>
+						</div>
+						<!-- /feature -->
+						</div>
+						<div class="column" ">
+    		<!-- feature -->
+					<div class="feature">
+                              <i class="feature-icon fa fa-money-bill"></i>
+                              <div class="feature-content">
+                              <h4>Precio</h4>
+                              <p>Precio base del artículo libre de impuestos, euros.</p>
+                              </div>
+                              </div>
+						<!-- /feature -->
+
+						<!-- feature -->
+						<div class="feature">
+							<i class="feature-icon fa fa-euro-sign"></i>
+							<div class="feature-content">
+								<h4>Precio con impuestos:</h4>
+								<p>Precio de venta del artículo, en euros.</p>
+							</div>
+						</div>
+						<!-- /feature -->
+
+						<!-- feature -->
+						<div class="feature">
+							<i class="feature-icon fa fa-percent"></i>
+							<div class="feature-content">
+								<h4>Descuento</h4>
+								<p>Descuento aplicado</p>
+							</div>
+						</div>
+						<!-- /feature -->
+						
+								<!-- feature -->
+						<div class="feature">
+							<i class="feature-icon fa fa-tag"></i>
+							<div class="feature-content">
+								<h4>Importe</h4>
+								<p>Importe de la compra libre de impuestos, en euros.</p>
+							</div>
+						</div>
+						<!-- /feature -->
+								<!-- feature -->
+						<div class="feature">
+							<i class="feature-icon fa fa-tags"></i>
+							<div class="feature-content">
+								<h4>Importe con impuestos</h4>
+								<p>Importe a pagar por el comprador, en euros.</p>
+							</div>
+						</div>
+						<!-- /feature -->
+					</div></div>'
+				  )
+				),
+				
+				#### / Listado vbles ####
+				
+				br(),hr(),br(),
+				fluidRow(
+				  HTML('<h2>TRANSFORMACIÓN DE LOS DATOS</h2>
+				  <div class="row">
+				  <div class="column" >
+				  <h3>Transformación de variables</h3>
+				  <p style="text-align: center;">Factorización de las variables línea de ticket y código de producto.</p>
+				  </div>
+				  <div class="column" >
+				  <h3>Datos faltantes</h3>
+				  <p style="text-align: center;">Datos faltantes para los días de Navidad y Año nuevo.</p>
+				  </div>
+				  </div>')),
+				fluidRow( 
+				HTML('<div class="section-header"><h3>Creación de variables</h3></div>
+					<div class="row">
+					
+						<!-- feature -->
+						<div class="feature">
+							<i class="feature-icon fa fa-clock-o"></i>
+							<div class="feature-content">
+								<h4>Variables temporales</h4>
+								<p>De la fecha se han extraído las siguientes variables: Año, mes, día de la semama, día del mes y semana del año.</p>
+							</div>
+						</div>
+						<!-- /feature -->
+						
+								<!-- feature -->
+						<div class="feature">
+							<i class="feature-icon fa fa-shopping-bag"></i>
+							<div class="feature-content">
+								<h4>Variable ventas</h4>
+								<p>Volumen diario de ventas.</p>
+							</div>
+						</div>
+						<!-- /feature -->
+								<!-- feature -->
+						<div class="feature">
+							<i class="feature-icon fa fa-tags"></i>
+							<div class="feature-content">
+								<h4>DUMMIES</h4>
+								<p>Creación de variables dummy para el día de la semana y mes del año con la intención de representar la pertenencia de cada instancia a los distintos grupos.</p>
+							</div>
+						</div>
+						<!-- /feature -->	</div>')
+				
+				),
                         
                         includeHTML("footer.Rhtml")
                         ),
@@ -375,7 +441,7 @@ ui <- fluidPage(
                        
                         fluidRow(id = "resumen", 
                           box(style="text-align: justify",
-                            width = 4, title ="Ventas totales",
+                            width = 4, title ="Transacciones",
                            p("97143",style= "48pt") ,  "1978 unidades vendidas en una media de 537 transacciones diarias."
                           ),
                         
@@ -394,12 +460,12 @@ ui <- fluidPage(
                        hr(),
                        
                        fluidRow(
-                         h2("Gráficas"),br(),
+                         h2("Gráficas")
                        ),
                        
                        fluidRow(
                          tabBox(
-                           title = "Gráficas EDA",side = "right", 
+                           title = "VENTAS",side = "right", 
                            # The id lets us use input$tabset1 on the server to find the current tab
                            id = "graficasEDA", height = "500px",width = 100,
                            tabPanel("Evolución ventas",br(),
@@ -417,14 +483,15 @@ ui <- fluidPage(
                            
                            tabPanel("Comparación de ventas",br(),
                                     sidebarLayout(
-                                      mainPanel(width = 8,h2("Volumen total de ventas"),
+                                      mainPanel(width = 8,h2("Comparación del volumen total de ventas"),
                                                 plotOutput("VentasTotalComp")
                                       ),
                                       sidebarPanel(width = 4,
                                         "El volumen de ventas del producto con calcio ha sido ligeramente 
                                         superior, con un volumen total de ventas de 188867 unidades frente a 
                                         las 169196 unidades vendidas del producto que no lleva calcio.", br(),br(),
-                                        HTML("<table>  <tr>    <th>TIPO</th>    <th>IMPORTE MEDIO TRANSACCIÓN</th>    <th>PRECIO MEDIO PRODUCTO</th>  </tr>  <tr>    <td>Con calcio</td>    <td>4.07</td>    <td>1.49</td>  </tr>  <tr>    <td>Sin calcio</td>    <td>3.31</td>    <td>1.39</td>  </tr></table>")
+                                        HTML("<table>  <tr>    <th>TIPO</th>    <th>IMPORTE MEDIO TRANSACCIÓN</th>    <th>PRECIO MEDIO PRODUCTO</th>  </tr>  <tr>    <td>Con calcio</td>    <td>4.07</td>    <td>1.49</td>  </tr>  <tr>    <td>Sin calcio</td>    <td>3.31</td>    <td>1.39</td>  </tr></table>"),
+                                        br(), "Nota: no siempre se opta por la opción mas económica."
                                       )
                                     )
                                     ),
@@ -432,11 +499,12 @@ ui <- fluidPage(
                            tabPanel("Granularidad mensual",br(),
                                    
                                     sidebarLayout(
-                                      mainPanel(width = 8,
+                                      mainPanel(width = 8,h2("Volumen de ventas mensual"),
                                                 plotlyOutput("VentasMensuales")
                                       ),
                                       sidebarPanel(width = 4,
-                                                   "osdnfsidfpijsdfpsjdfpsjdfposjdfposjdpo"
+                                                   "Comportamiento inicial de ventas creciente, hasta obtener récord de ventas en el mes de Octubre,
+                                                   con un volumen total de ventas de 68805 artículos.", br(),"Mayor volumen de ventas del producto con calcio."
                                        )
                                     )
                                     ),
@@ -444,14 +512,26 @@ ui <- fluidPage(
                            tabPanel("Granularidad semanal", br(),
                                      
                                     sidebarLayout(
-                                      mainPanel(width = 8,br(),
+                                      mainPanel(width = 8,h2("Volumen medio de ventas según día de la semana"),
                                                 plotlyOutput("VentasSemanales")
                                       ),
                                       sidebarPanel(width = 4,
-                                                   "osdnfsidfpijsdfpsjdfpsjdfposjdfposjdpo"
+                                                   "Mayor volumen de ventas los Jueves y Sábados, con una media, respectivamente de 2445 y 2503 items vendidos.", br(),
+                                                   "Los Domingos, el volumen de ventas disminuye considerablemente, 
+                                                   superando el número medio de ventas del artículo sin calcio al del 
+                                                   producto que sí tiene."
                                       )
                                     )
+                                    ),
+                           tabPanel("Precio y descuento",br(),
+                                    sidebarLayout(
+                                      mainPanel(width = 8,h2("Estudio del precio y descuentos")
+                                      ),
+                                      sidebarPanel(width = 4,
+                                                   "ssdfsdf"
+                                      )
                                     )
+                           )
                            
                          )
                        ),
@@ -463,22 +543,190 @@ ui <- fluidPage(
                         ),
                         
                tabPanel("Modelado", br(),
-                        
                         fluidRow( 
                           column(12,
-                                 h1("Construcción y evaluación de modelos predictivos"),br()) ),
+                                 h1("Construcción y evaluación de modelos predictivos") ),
+                          column(12,
+                                 p("Se han aplicado diferentes modelos predictivos a los datos de transacciones con el objetivo de predecir
+                                   el volumen diario de ventas. 
+                                   La etapa de modelado ha consistido en la aplicación de modelos estadísticos clásicos y modelos de
+                                   aprendizaje automático. Para cada algoritmo utilizado, salvo para el análisis de series temporales, se han 
+                                   construido tres diferentes:"))),
+                        fluidRow( 
+                          HTML('<div class="row">
+                          <!-- feature -->
+                          <div class="feature">
+                          <i class="feature-icon fa fa-atom"></i>
+                          <div class="feature-content">
+                          <h4>Total de ventas</h4>
+                          <p style="margin-right:100px;">Predicción del volumen total de ventas diario, es decir, volumen de ventas de la suma de los dos tipos de productos, con y sin calcio.</p>
+                          </div>
+                          </div>
+                          <!-- /feature -->
+
+								          <!-- feature -->
+								          <div class="feature">
+								          <i class="feature-icon fa fa-blender"></i>
+								          <div class="feature-content">
+								          <h4>Con calcio</h4>
+								          <p>Predicción del volumen de ventas diario para el producto con calcio.</p>
+								          </div>
+								          </div>
+								          <!-- /feature -->
+								          
+								          <!-- feature -->
+								          <div class="feature">
+								          <i class="feature-icon fa fa-blender-phone"></i>
+								          <div class="feature-content">
+								          <h4>Sin calcio</h4>
+								          <p>Predicción del volumen de ventas diario para el producto sin calcio.</p>
+								          </div>
+								          </div>
+								          <!-- /feature -->	</div>')
+                        ),
+								          fluidRow(
+								            column(12,
+								                   p("Posteriormente, realizaremos una comparación de las predicciones de la suma de productos con
+								                     la suma de las predicciones proporcionadas por cada modelo individual.
+								                     Para los diferentes modelos entrenados, se recogerá su rendimiento para 
+								                     compararlos y elegir el mejor modelo para predecir la demanda."))
+								          ),hr(),
+								          fluidRow(
+								            column(12,h2("Partición de los datos de entrenamiento y testeo")),
+								            
+								            column(4),
+								            column(2,
+								                   div(class="panel panel-default",
+								                       div(class="panel-body",  width = "600px", 
+								                           align = "center",
+								                           div(
+								                             h5(
+								                               "Datos de entrenamiento", icon("arrows-spin")
+								                             )
+								                           ),
+								                           div(
+								                             p("80%", class="NumGran")
+								                           )))
+								            ),
+								            column(2,
+								                   div(class="panel panel-default", 
+								                       div(class="panel-body",  width = "600px",
+								                           align = "center",
+								                           div(
+								                             h5(
+								                               "Datos de testeo", icon("arrows-to-dot")
+								                             )
+								                           ),
+								                           div(br(),
+								                             p("20%", class="NumGran")
+								                           )))
+								                   ),
+								            column(4),
+								            br(),
+								            column(12,
+								                   p("De esta manera, para mantener la temporalidad de los datos, tomamos los 145 
+								                     primeros registros para entrenar el modelo y 36 para el testeo. Esto
+								                     corresponde a entrenar los modelos con datos diarios desde el 1 de Agosto al
+								                     23 de Diciembre, para posteriormente realizar predicciones del 24 de Diciembre
+								                     al 30 de Enero."))
+								          ),
+								          fluidRow(
+								            column(12,h2("Modelado")),br(),
+								            tabBox(
+								              title = "Modelos",
+								              # The id lets us use input$tabset1 on the server to find the current tab
+								              id = "Modelos", 
+								              tabPanel("Regresión de Poisson", 
+								                       tabBox(
+								                         tabPanel(
+								                           "Total"
+								                         ),
+								                         tabPanel(
+								                           "Sin calcio"
+								                           
+								                         ),
+								                         tabPanel(
+								                           "Con calcio"
+								                           
+								                         )
+								                       )
+								                       ),
+								              tabPanel("Binomial Negativa",
+								                       tabBox(
+								                         tabPanel(
+								                           "Total"
+								                         ),
+								                         tabPanel(
+								                           "Sin calcio"
+								                           
+								                         ),
+								                         tabPanel(
+								                           "Con calcio"
+								                           
+								                         )
+								                       )
+								                       ),
+								              tabPanel("Series temporales",
+								                    "FDFDF"
+								                       ),
+								              tabPanel("SVM",
+								                       tabBox(
+								                         tabPanel(
+								                           "Total"
+								                         ),
+								                         tabPanel(
+								                           "Sin calcio"
+								                           
+								                         ),
+								                         tabPanel(
+								                           "Con calcio"
+								                           
+								                         )
+								                       )
+								                       ),
+								              tabPanel("KNN",
+								                       tabBox(
+								                         tabPanel(
+								                           "Total"
+								                         ),
+								                         tabPanel(
+								                           "Sin calcio"
+								                           
+								                         ),
+								                         tabPanel(
+								                           "Con calcio"
+								                           
+								                         )
+								                       )
+								              ),
+								              tabPanel("XGBoost",
+								                       tabBox(
+								                         tabPanel(
+								                           "Total"
+								                         ),
+								                         tabPanel(
+								                           "Sin calcio"
+								                           
+								                         ),
+								                         tabPanel(
+								                           "Con calcio"
+								                           
+								                         )
+								                       )
+								              )
+								            )
+								            
+								          ),
+                        
+                          
                         br(),hr(),br(),
-                        includeHTML("footer.Rhtml")
-               )    
-                        
-                        
-                        
+                        fluidRow(column(12)),
+                        fluidRow( includeHTML("footer.Rhtml"))
                        
+               )
+                    
                ),
-                       
-               
-               
-   
+                   
   #### Conclusiones ####
       tabPanel("Conclusiones", br(),
                fluidRow( 

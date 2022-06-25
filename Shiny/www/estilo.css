@@ -49,31 +49,71 @@
   background-color: #D1F2EB;
 }
 
+.nav a{
+  color:#566573 ; 
+   background-color: #D1F2EB ; 
+}
+
+.dropdown-menu>.active>a:hover, .dropdown-menu>.active>a:focus {
+    color: #ffffff;
+    outline: 0;
+    background-color: #73C6B6;
+   
+}
+
 
 /* body */
 
 body {
-   width: 100%;
+  font-family: 'Montserrat', sans-serif;
+	font-size: 15px;
+  font-weight: 400;
+	overflow-x:hidden;
 }
+
+
+
 
 
 /* HEADINGS */
 
+h4,h5,h6 {
+	margin-top: 20px;
+	margin-bottom: 20px;
+	font-weight: 600;
+	color: #374050;
+	text-transform: uppercase;
+}
+
 h3{
   text-align: center;
+	margin-top: 20px;
+	margin-bottom: 20px;
+	font-weight: 600;
+	color: #374050;
+	text-transform: uppercase;
 }
 
 h2{
   text-align: left;
   font-size: 2em;
+	margin-top: 20px;
+	margin-bottom: 20px;
+	font-weight: 600;
+	color: #374050;
+	text-transform: uppercase;
 }
 
-
-h1,h2,h3{
-  text-transform: uppercase;
-  font-family: "Segoe UI",Arial,sans-serif;
-  padding-left: 10px;
+h1 {
+    font-family: 'Yusei Magic', sans-serif;
+    text-align: center;
+	margin-top: 20px;
+	margin-bottom: 20px;
+	font-weight: 600;
+	color: #374050;
+	text-transform: uppercase;
 }
+
 
 /* BOX  */
 
@@ -139,8 +179,16 @@ b, strong {
 }
 
 
-p{   
-      font-size: x-large;
+
+p{
+  text-align: justify;
+  font-size: x-large;
+}
+
+
+.NumGran{
+  font-size: xxx-large;
+  text-align: center;
 }
 
 .box{ padding: 1em; } 
@@ -172,6 +220,16 @@ div.row.ColVbles{
 }
 
 
+/*  SIDEBAR */
+
+.tab-pane .row{
+  
+  margin-top:50px;
+}
+
+
+
+
 /* ICONOS LISTA VARIABLES */
 
 .ICN{ color: #A2D9CE;}
@@ -198,3 +256,49 @@ tr:nth-child(even) {
 
 
 
+
+/* -- Feature -- */
+
+.feature {
+	position:relative;
+	margin-left: 5em
+}
+
+.feature + .feature  {
+	margin-top:40px;
+}
+
+.feature .feature-icon {
+	position:absolute;
+	left:0;
+	top:0;
+	width:80px;
+	height:80px;
+	line-height:80px;
+	text-align:center;
+	border-radius: 50%;
+	font-size:30px;
+	border:1px solid #EBEBEB;
+	color:#A2D9CE;
+}
+
+.feature-content {
+	padding-left:100px;
+}
+
+
+
+/* Create two equal columns that floats next to each other */
+.column {
+  float: left;
+  width: 50%;
+  padding: 10px;
+
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}

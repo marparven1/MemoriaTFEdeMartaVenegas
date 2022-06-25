@@ -129,7 +129,7 @@ output$soporte <- renderPlotly({
   fig <- fig %>% layout(xaxis = list(title = "ID item",
                                      tickangle = -45),
                         margin = list(b = 100),
-                        yaxis = list(title = "Número de ventas / Soporte (%)"),
+                        yaxis = list(title = "Volumen de ventas / Soporte (%)"),
                         barmode = 'stack',
                         paper_bgcolor = 'rgba(245, 246, 249, 1)',
                         plot_bgcolor = 'rgba(245, 246, 249, 1)',
@@ -185,7 +185,8 @@ EvolVentasDatos <- reactive({
 
 output$EvolVentas<- renderPlotly({
   VolumenVentasDiarioTodo <- EvolVentasDatos() 
-  fig <- plot_ly(VolumenVentasDiarioTodo, x = ~FECHA, y = ~n, color = ~TIPO) 
+  fig <- plot_ly(VolumenVentasDiarioTodo, x = ~FECHA, y = ~n, color = ~TIPO,
+                 colors = c(`Con calcio` = '#BB8FCE', `Sin calcio` = '#45B39D', `TOTAL` = '#A9CCE3')) 
   fig <- fig %>% add_lines()
   fig <- fig %>% layout(yaxis = list(title = "Ventas diarias"),
                         xaxis = list(title = "Día",rangeslider = list(visible = T)) )
@@ -197,8 +198,8 @@ output$EvolVentas<- renderPlotly({
 
 Comp <- reactive({
   Ventas <- cbind.data.frame(
-    VENTAS_TOTALES=c(169196,188867),
-    TIPO = c("SIN CALCIO","CON CALCIO") ) 
+    VENTAS_TOTALES=c(188867,169196),
+    TIPO = c("CON CALCIO","SIN CALCIO") ) 
   Ventas
 })
 
@@ -210,7 +211,7 @@ output$VentasTotalComp<- renderPlot(
       geom_histogram(stat="identity", position="dodge")   +
       labs(x="ID Producto" , y = "Volumen total de ventas", 
            caption = "Fuente: Elaboración propia con datos de ventas")+
-      scale_fill_brewer(palette="BuGn")+
+      scale_fill_brewer(palette="Accent")+
       theme_bw()+ theme(legend.position = 'none')
      
     
@@ -233,9 +234,12 @@ output$VentasMensuales<- renderPlotly(
                    colors = c(`CON CALCIO` = '#BB8FCE', `SIN CALCIO` = '#45B39D', `TOTAL` = '#A9CCE3'),
                    type = 'bar'
     ) 
-    fig <- fig %>% layout(title="Volumen de ventas según mes del año",
+    fig <- fig %>% layout(
                           yaxis = list(title = "Volumen de ventas"),
-                          xaxis = list(title = "Mes") )
+                          xaxis =  list(title = "Mes",
+                                        categoryorder = "array",
+                                        categoryarray = c("Agosto","Septiembre","Octubre","Noviembre","Diciembre","Enero"))
+                          )
     fig
     
   }
@@ -257,9 +261,11 @@ output$VentasSemanales<- renderPlotly(
                    colors = c(`CON CALCIO` = '#BB8FCE', `SIN CALCIO` = '#45B39D', `TOTAL` = '#A9CCE3'),
                    type = 'bar'
     ) 
-    fig <- fig %>% layout(title="Volumen de ventas según mes del año",
+    fig <- fig %>% layout(
                           yaxis = list(title = "Volumen de ventas"),
-                          xaxis = list(title = "Mes") )
+                          xaxis = list(title = "Día de la semana",
+                                       categoryorder = "array",
+                                       categoryarray = c("Lunes","Martes","Miércoles","Jueves","Viernes","Sábado","Domingo"))  )
     fig
     
     
