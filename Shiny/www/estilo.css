@@ -3,6 +3,25 @@
 
 
 
+#myCarousel{ width: 100%}
+
+
+
+#imgRetail{  height: 300px;
+}
+
+#dataMining{ height: 244px;}
+
+#imgVentas{height:250px;}
+
+a {
+  color:rgb(255,0,0);
+}
+
+
+
+
+
 /* Navbar */
 
 
@@ -95,7 +114,8 @@ h3{
 }
 
 h2{
-  text-align: left;
+  font-family: 'Yusei Magic', sans-serif;
+  text-align: center;
   font-size: 2em;
 	margin-top: 20px;
 	margin-bottom: 20px;
@@ -105,8 +125,8 @@ h2{
 }
 
 h1 {
-    font-family: 'Yusei Magic', sans-serif;
-    text-align: center;
+  font-family: 'Yusei Magic', sans-serif;
+  text-align: center;
 	margin-top: 20px;
 	margin-bottom: 20px;
 	font-weight: 600;
@@ -302,3 +322,6 @@ tr:nth-child(even) {
   display: table;
   clear: both;
 }
+
+
+

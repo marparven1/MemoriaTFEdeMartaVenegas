@@ -1,26 +1,29 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Yusei+Magic&display=swap');
 
-
+/*
 body{
   width: 100%;
 }
+*/
 
-
-/* Change font of header text */
+/* Change font of header text 
 h1,h2 {
   font-family: 'Yusei Magic', sans-serif;
   text-align: center;
 }
 
+*/
+
 
 #myCarousel{ width: 100%}
 
-
+/*
 p{   
   font-size: x-large;
 }
 
+*/
 
 
 #imgRetail{  height: 300px;
