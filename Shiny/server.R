@@ -252,7 +252,7 @@ Vsemanales <- reactive({
 })
 
 
-output$VentasSemanales<- renderPlotly(
+output$VentasSemanales <- renderPlotly(
   {
     VentasS <- Vsemanales() 
 
@@ -273,6 +273,153 @@ output$VentasSemanales<- renderPlotly(
 )
 
 #output$GranCom
+
+
+#### Modelado ####
+
+load("datos/PrediccionesTotalVentas.RData")
+
+PredsTotalVentas <- reactive({
+  PredTotal
+})
+
+
+output$Total <- renderPlotly(
+  {
+    PredTotal <- PredsTotalVentas() 
+    
+    fig <- plot_ly(PredTotal, x = ~Fecha, y = ~Predicción, name = 'Predicción', type = 'scatter', mode = 'lines+markers') 
+    fig <- fig %>% add_trace(y = ~ValorReal, name = 'Valor real', mode = 'lines+markers') 
+    fig <- fig %>%
+      layout(
+        xaxis = list(zerolinecolor = '#ffff',
+                     zerolinewidth = 2,
+                     gridcolor = 'ffff',rangeslider = list(visible = T)),
+        yaxis = list(zerolinecolor = '#ffff',
+                     zerolinewidth = 2, title ="Volumen de ventas",
+                     gridcolor = 'ffff'),
+        plot_bgcolor='#e5ecf6')
+    
+    
+    fig
+    
+  }
+)
+
+
+load("datos/PrediccionesCalcioVentas.RData")
+
+PredsCalcioVentas <- reactive({
+  PredCalcio
+})
+
+
+output$Calcio <- renderPlotly(
+  {
+    PredCalcio <- PredsCalcioVentas() 
+    
+    fig <- plot_ly(PredCalcio, x = ~Fecha, y = ~Predicción, name = 'Predicción', type = 'scatter', mode = 'lines+markers') 
+    fig <- fig %>% add_trace(y = ~ValorReal, name = 'Valor real', mode = 'lines+markers') 
+    fig <- fig %>%
+      layout(
+        xaxis = list(zerolinecolor = '#ffff',
+                     zerolinewidth = 2,
+                     gridcolor = 'ffff',rangeslider = list(visible = T)),
+        yaxis = list(zerolinecolor = '#ffff',
+                     zerolinewidth = 2, title ="Volumen de ventas",
+                     gridcolor = 'ffff'),
+        plot_bgcolor='#e5ecf6')
+    
+    
+    fig
+    
+  }
+)
+
+
+load("datos/PrediccionesSinCalcioVentas.RData")
+
+PredssinCalcioVentas <- reactive({
+  PredSinCalcio
+})
+
+
+output$SinCalcio <- renderPlotly(
+  {
+    PredSinCalcio <- PredssinCalcioVentas() 
+    
+    fig <- plot_ly(PredSinCalcio, x = ~Fecha, y = ~Predicción, name = 'Predicción', type = 'scatter', mode = 'lines+markers') 
+    fig <- fig %>% add_trace(y = ~ValorReal, name = 'Valor real', mode = 'lines+markers') 
+    fig <- fig %>%
+      layout(
+        xaxis = list(zerolinecolor = '#ffff',
+                     zerolinewidth = 2,
+                     gridcolor = 'ffff',rangeslider = list(visible = T)),
+        yaxis = list(zerolinecolor = '#ffff',
+                     zerolinewidth = 2, title ="Volumen de ventas",
+                     gridcolor = 'ffff'),
+        plot_bgcolor='#e5ecf6')
+    
+    
+    fig
+    
+  }
+)
+
+
+
+load("datos/CompPreds.RData")
+
+CompPred <- reactive({
+  comparacionPreds
+})
+
+
+output$CompModelado <- renderPlotly(
+  {
+    comparacionPreds <- CompPred() 
+    
+
+fig <- plot_ly(comparacionPreds, x = ~FECHA, y = ~Pred, color = ~Tipo,
+               colors = c(`Suma de la predicción` = '#BB8FCE', `Predicción de la suma` = '#45B39D', `Ventas reales` = '#A9CCE3')) 
+fig <- fig %>% add_lines()
+fig <- fig %>% layout(yaxis = list(title = "Volumen de ventas"),
+                      xaxis = list(title = "Día",rangeslider = list(visible = T)) )
+
+fig
+
+}
+)
+
+
+
+
+
+load("datos/CompPredsBN.RData")
+
+CompPredII <- reactive({
+  PredTotalBn
+})
+
+
+output$CompModeladobN <- renderPlotly(
+  {
+    comparacionPredsBN <- CompPredII() 
+    
+    
+    fig <- plot_ly(comparacionPredsBN, x = ~fecha, y = ~`Predicción`, color = ~Tipo,
+                   colors = c(`Suma de la predicción` = '#BB8FCE', `Predicción de la suma` = '#45B39D', `Ventas reales` = '#A9CCE3')) 
+    fig <- fig %>% add_lines()
+    fig <- fig %>% layout(yaxis = list(title = "Volumen de ventas"),
+                          xaxis = list(title = "Día",rangeslider = list(visible = T)) )
+    
+    fig
+    
+  }
+)
+
+
+
 
 
 

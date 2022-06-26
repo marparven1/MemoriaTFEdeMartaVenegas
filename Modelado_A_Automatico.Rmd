@@ -445,7 +445,16 @@ cbind.data.frame(DatosTesteo_Total$FECHA,PrediccionTotal,DatosTesteo_Total$VENTA
 
  
 
+
 ```
+
+```{r}
+PredTotal = cbind.data.frame(DatosTesteo_Total$FECHA,PrediccionTotal,DatosTesteo_Total$VENTAS,abs(PrediccionTotal-DatosTesteo_Total$VENTAS)) 
+colnames(PredTotal)<-c("Fecha","Predicción","ValorReal","ErrorAbs")
+save(PredTotal,file = "Shiny/datos/PrediccionesTotalVentas.RData")
+```
+
+
 
 
 
@@ -742,6 +751,14 @@ cbind.data.frame(DatosTesteo_Calcio$FECHA,PrediccionCalcio,DatosTesteo_Calcio$VE
 
 
 
+
+
+
+```{r}
+PredCalcio = cbind.data.frame(DatosTesteo_Calcio$FECHA,PrediccionCalcio,DatosTesteo_Calcio$VENTAS,abs(PrediccionCalcio-DatosTesteo_Calcio$VENTAS))
+colnames(PredCalcio)<-c("Fecha","Predicción","ValorReal","ErrorAbs")
+save(PredCalcio,file = "Shiny/datos/PrediccionesCalcioVentas.RData")
+```
 
 
 
@@ -1045,6 +1062,17 @@ cbind.data.frame(DatosTesteo_SinCalcio$FECHA,PrediccionSinCalcio,DatosTesteo_Sin
 
 
 ```{r}
+PredSinCalcio = cbind.data.frame(DatosTesteo_SinCalcio$FECHA,PrediccionSinCalcio,DatosTesteo_SinCalcio$VENTAS,abs(PrediccionSinCalcio-DatosTesteo_SinCalcio$VENTAS))
+colnames(PredSinCalcio)<-c("Fecha","Predicción","ValorReal","ErrorAbs")
+save(PredSinCalcio,file = "Shiny/datos/PrediccionesSinCalcioVentas.RData")
+```
+
+
+
+
+
+
+```{r}
 (PostResSVM_SC<- postResample(PrediccionSinCalcio,DatosTesteo_SinCalcio$VENTAS) )
 ```
 
@@ -1131,6 +1159,14 @@ ggplot(cbind.data.frame(Pred,Tipo,Fecha) )+
   ggtitle("Comparación del volumen de ventas")
   
 ```
+
+```{r}
+comparacionPreds = cbind.data.frame(Pred,Tipo,Fecha)
+save(comparacionPreds,file = "Shiny/datos/CompPreds.RData")
+```
+
+
+
 
 
 Observamos, que de forma *general*, la suma de las predicciones se comporta de manera más acorde a la realidad, es decir, que el volumen de ventas de la suma de las predicciones se parece más al volumen de ventas real. Parece que los modelos, y en especial el modelo de la predicción de la suma, no han sabido captar siempre los valores *extremos*, es decir, cuando se venden muchas unidades (28 de Diciembre) o cuando se venden muy pocas (5 de Enero). 

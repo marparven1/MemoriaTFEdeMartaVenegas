@@ -741,6 +741,16 @@ ggplot(cbind.data.frame(Pred,Tipo,Fecha = rep(Fecha,3) ) )+
   
 ```
 
+```{r}
+PredTotalBn = cbind.data.frame(Pred,Tipo,Fecha = rep(Fecha,3) )
+colnames(PredTotalBn)<-c("Predicción","Tipo","fecha")
+save(PredTotalBn,file = "Shiny/datos/CompPredsBN.RData")
+```
+
+
+
+
+
 Se observa que la suma de las predicciones individuales de cada producto arroja unas ventas ligeramente superiores que en la predicción considerando las ventas de ambos productos, pero son prácticamente son las mismas predicciones, por lo que no variaría mucho utilizar los modelos para cada producto y sumar las predicciones que usar el modelo que predice la suma del volumen de ventas.
 
 Sin embargo, a pesar de tener este comportamiento similar, vemos que los modelos no han sabido reflejar correctamente las verdaderas variaciones en las ventas cuando la tendencia es creciente. Podemos ver este comportamiento, por ejemplo, los días 31 de Diciembre, 8, 14 o 20 de Enero. Cabe destacar que esto ocurre cada 8 días, cuando la serie de datos tiene el mismo comportamiento, viene de un fuerte descenso de ventas el Domingo y tiende a subir bruscamente el Lunes, para luego volver a descender el volumen el Miércoles y Jueves, cosa que en las predicciones se ve reflejado como un aumento este cuarto día de la semana.

@@ -1,4 +1,3 @@
-
 library(shiny)
 library(leaflet)
 library(plotly)
@@ -43,11 +42,11 @@ ui <- fluidPage(
                          box(
                            title = "Tickets", width = 6, solidHeader = TRUE, 
                             img(class="imgIcon",src='img/Ticket.png',width="20%"), 
-                           p("7801",align= "center")
+                           h3("7801",align= "center")
                          ),
                          box(
                            title = "Artículos", width = 6, solidHeader = TRUE,
-                           img(class="imgIcon",src='img/Articulos.png',width="20%"),p("4631",align= "center")
+                           img(class="imgIcon",src='img/Articulos.png',width="20%"),h3("4631",align= "center")
                          )
                        ),
                        br(),hr(),br(),
@@ -205,16 +204,31 @@ ui <- fluidPage(
                                  h2("Muestra de transacciones")
                                  ) ,
                         
-                        fluidRow(
+                        fluidRow(class="ColorFondo",
                          box(
-                            title = tagList(shiny::icon("money"), "Ventas de dos productos lácteos"), width = 6,  br(),
+                            title = tagList(shiny::icon("money"), "Ventas de dos productos lácteos"), width = 6,  
                             column(width = 6,img(class="imgIcon",src='img/prod1.png',width="20%"), br(),h4("Con calcio",class="Tipo")  ),
                             column(width = 6,img(class="imgIcon",src='img/prod2.png',width="20%"),br(),h4("Sin calcio",class="Tipo")  )
                             
                          ),
                          box( 
-                           title = tagList(shiny::icon("calendar"), "Período de ventas considerado"), width = 6,  br(),
-                           p("1/Septiembre/2020") , br(),p("30/Enero/2021")
+                           title = tagList(shiny::icon("calendar"), "Período de ventas considerado"), width = 6, 
+                           column(1),
+                           column(5,  
+                                     div( width = "600px", 
+                                         align = "center",
+                                      
+                                           h4("1-Septiembre-2020"))),
+                           column(5,   
+                                     div(  width = "600px", 
+                                         align = "center",
+                                           h4( "30-Enero-2021") )),
+                           column(1)
+                           
+                          
+                           
+                           
+                           
                          )
                           ),
                         br(),hr(),br(),
@@ -328,8 +342,9 @@ ui <- fluidPage(
 				#### / Listado vbles ####
 				
 				br(),hr(),br(),
-				fluidRow(
-				  HTML('<h2>TRANSFORMACIÓN DE LOS DATOS</h2>
+				fluidRow(h2("TRANSFORMACIÓN DE LOS DATOS")),
+				fluidRow(class="ColorFondo",
+				  HTML('
 				  <div class="row">
 				  <div class="column" >
 				  <h3>Transformación de variables</h3>
@@ -376,6 +391,9 @@ ui <- fluidPage(
 				),
                         
                         includeHTML("footer.Rhtml")
+				
+				
+#### EDA ####				
                         ),
                tabPanel("Análisis exploratorio", br(),
                         fluidRow( 
@@ -522,17 +540,7 @@ ui <- fluidPage(
                                                    producto que sí tiene."
                                       )
                                     )
-                                    ),
-                           tabPanel("Precio y descuento",br(),
-                                    sidebarLayout(
-                                      mainPanel(width = 8,h2("Estudio del precio y descuentos")
-                                      ),
-                                      sidebarPanel(width = 4,
-                                                   "ssdfsdf"
-                                      )
                                     )
-                           )
-                           
                          )
                        ),
                        
@@ -617,7 +625,7 @@ ui <- fluidPage(
 								                               "Datos de testeo", icon("arrows-to-dot")
 								                             )
 								                           ),
-								                           div(br(),
+								                           div(
 								                             p("20%", class="NumGran")
 								                           )))
 								                   ),
@@ -665,16 +673,170 @@ ui <- fluidPage(
                                           </div>')
 								                         ),
 								                         tabPanel(
-								                           "Total"
-								                         ),
-								                         tabPanel(
-								                           "Sin calcio"
+								                           "Total",
+								                           column(6,h3("Modelado"),
+								                                  HTML('
+								                                    <!-- feature --> 
+								                                     <div class="feature"> 
+								                                     <i class="feature-icon fa fa-circle"></i> 
+                                                     <div class="feature-content"> 
+                                                     <h4>Modelo seleccionado según el criterio de información de Akaike</h4> 
+                                                     <p>Para predecir el volumen diario de ventas para el producto con calcio se ha seleccionado el modelo
+                                                     con variables dummy, ya que el valor del AIC=26958.345 es menor que el obtenido
+                                                     con el conjunto de datos factorizado, AIC = 30079.583.</p> 
+								                                     </div> 
+								                                     </div> 
+								                                    <!-- /feature -->
+								                                       <!-- feature --> 
+								                                     <div class="feature"> 
+								                                     <i class="feature-icon fa fa-circle"></i> 
+                                                     <div class="feature-content"> 
+                                                     <h4>Variables significativas en el modelo</h4> 
+                                                     <p>Todas las variables salvo el precio, y si la venta es un Domingo o durante el mes 
+                                                     de agosto pueden considerarse significativas en el volumen de ventas.En particular, si la venta se realiza un Sábado se puede afirmar que el volumen de ventas aumentará en 11 unidades.</p> 
+								                                     </div> 
+								                                     </div> 
+								                                    <!-- /feature -->')
+								                           ),
+								                           column(6,h3("Resultados"),
+								                                  HTML('
+								                                    <!-- feature --> 
+								                                     <div class="feature"> 
+								                                     <i class="feature-icon fa fa-circle"></i> 
+                                                     <div class="feature-content"> 
+                                                     <h4>Contraste de bondad de ajuste</h4> 
+                                                     <p>El p-valor = 0, por tanto, no existen evidencias significativas para afirmar que el modelo es adecuado.</p> 
+								                                     </div> 
+								                                     </div> 
+								                                    <!-- /feature -->
+								                                    <!-- feature --> 
+								                                     <div class="feature"> 
+								                                     <i class="feature-icon fa fa-circle"></i> 
+                                                     <div class="feature-content"> 
+                                                     <h4>Métricas obtenidas en el testeo</h4> 
+                                                     <p>El modelo generaliza bien pero el valor de la raíz del error cuadrático medio es bastante alto en comparación con el orden del volumen de ventas.</p> 
+								                                     </div> 
+								                                     </div> 
+								                                    <!-- /feature -->'),
+								                                  img(src='img/Poisson1.png', style="width: 80%;margin-top: 25px;" )
+								                                  )
 								                           
 								                         ),
 								                         tabPanel(
-								                           "Con calcio"
+								                           "Con calcio",
+								                           column(6,h3("Modelado"),
+								                                  HTML('
+								                                    <!-- feature --> 
+								                                     <div class="feature"> 
+								                                     <i class="feature-icon fa fa-circle"></i> 
+                                                     <div class="feature-content"> 
+                                                     <h4>Modelo seleccionado según el criterio de información de Akaike</h4> 
+                                                     <p>Para predecir el volumen diario de ventas del producto sin calcio se ha seleccionado el modelo
+                                                     con variables dummy, ya que el valor del AIC=12690.96 es menor que el obtenido
+                                                     con el conjunto de datos factorizado, AIC = 13961.937</p> 
+								                                     </div> 
+								                                     </div> 
+								                                    <!-- /feature -->
+								                                       <!-- feature --> 
+								                                     <div class="feature"> 
+								                                     <i class="feature-icon fa fa-circle"></i> 
+                                                     <div class="feature-content"> 
+                                                     <h4>Variables significativas en el modelo</h4> 
+                                                     <p>Todas las variables introducidas en el modelo influyen en el volumen de ventas del producto con calcio salvo el precio de venta.</p> 
+								                                     </div> 
+								                                     </div> 
+								                                    <!-- /feature -->')
+								                           ),
+								                           column(6,h3("Resultados"),
+								                                  HTML('
+								                                    <!-- feature --> 
+								                                     <div class="feature"> 
+								                                     <i class="feature-icon fa fa-circle"></i> 
+                                                     <div class="feature-content"> 
+                                                     <h4>Contraste de bondad de ajuste</h4> 
+                                                     <p>El p-valor = 0, por tanto, no existen evidencias significativas para afirmar que el modelo es adecuado.</p> 
+								                                     </div> 
+								                                     </div> 
+								                                    <!-- /feature -->
+								                                    <!-- feature --> 
+								                                     <div class="feature"> 
+								                                     <i class="feature-icon fa fa-circle"></i> 
+                                                     <div class="feature-content"> 
+                                                     <h4>Métricas obtenidas en el testeo</h4> 
+                                                     <p>El modelo generaliza bien al apliarlo en los datos de testeo, ya que las métricas han mejorado. Sin embargo, el valor de la raíz del error cuadrático medio es 
+                                                     bastante alta en comparación con el orden del volumen de ventas.</p> 
+								                                     </div> 
+								                                     </div> 
+								                                    <!-- /feature -->'),
+								                                  img(src='img/Poisson2.png', style="width: 80%;margin-top: 25px;" )
+								                           )
 								                           
-								                         )
+								                           
+								                         ),
+								                         tabPanel(
+								                           "Sin calcio",
+								                           column(6,h3("Modelado"),
+								                                  HTML('
+								                                    <!-- feature --> 
+								                                     <div class="feature"> 
+								                                     <i class="feature-icon fa fa-circle"></i> 
+                                                     <div class="feature-content"> 
+                                                     <h4>Modelo seleccionado según el criterio de información de Akaike</h4> 
+                                                     <p>Para predecir el volumen total de ventas diario se ha seleccionado el modelo
+                                                     con variables dummy, ya que el valor del AIC=16925.032 es menor que el obtenido
+                                                     con el conjunto de datos factorizado, AIC = 18854.07</p> 
+								                                     </div> 
+								                                     </div> 
+								                                    <!-- /feature -->
+								                                       <!-- feature --> 
+								                                     <div class="feature"> 
+								                                     <i class="feature-icon fa fa-circle"></i> 
+                                                     <div class="feature-content"> 
+                                                     <h4>Variables significativas en el modelo</h4> 
+                                                     <p>De nuevo, la variable precio no es significativa para predecir el volumen de ventas. </p> 
+								                                     </div> 
+								                                     </div> 
+								                                    <!-- /feature -->')
+								                           ),
+								                           column(6,h3("Resultados"),
+								                                  HTML('
+								                                    <!-- feature --> 
+								                                     <div class="feature"> 
+								                                     <i class="feature-icon fa fa-circle"></i> 
+                                                     <div class="feature-content"> 
+                                                     <h4>Contraste de bondad de ajuste</h4> 
+                                                     <p>El p-valor = 0, por tanto, no existen evidencias significativas para afirmar que el modelo es adecuado.</p> 
+								                                     </div> 
+								                                     </div> 
+								                                    <!-- /feature -->
+								                                    <!-- feature --> 
+								                                     <div class="feature"> 
+								                                     <i class="feature-icon fa fa-circle"></i> 
+                                                     <div class="feature-content"> 
+                                                     <h4>Métricas obtenidas en el testeo</h4> 
+                                                     <p>El modelo generaliza bien pero el valor de la raíz del error cuadrático medio es bastante alto en comparación con el orden del volumen de ventas.</p> 
+								                                     </div> 
+								                                     </div> 
+								                                    <!-- /feature -->'),
+								                                  img(src='img/Poisson3.png', style="width: 80%;margin-top: 25px;" )
+								                                  )
+								                           
+								                           
+								                         ),
+								                         tabPanel("Sobredispersión",
+								                                  p("Estos modelos se han desarrollando asumiendo que la distribución de las ventas diarias sigue una Poisson, 
+								                                    caracterizándose esta distribución porque su esperanza y su varianza coinciden; pero esto no ocurre con 
+								                                    nuestros datos."),
+								                                  p("Por este motivo, podemos afirmar que el modelo de regresión de poisson no es adecuaado para modelar 
+								                                    el volumen de ventas diario."),
+								                                  p("A continuación podemos ver el constraste de sobresipersión en los modelos:"),
+								                                  div(
+								                                    column(4,img(src="img/SobreDisp1.png",style="width:80% , margin-bottom:10px")),
+								                                    column(4,img(src="img/SobreDisp2.png",style="width:80% , margin-bottom:10px")),
+								                                    column(4,img(src="img/SobreDisp3.png",style="width:80% , margin-bottom:10px")),
+								                                  )
+								                                 
+								                                  )
 								                       )
 								                       ),
 								              tabPanel("Binomial Negativa",
@@ -700,31 +862,289 @@ ui <- fluidPage(
                                                   <li><p>Precio medio con impuestos</p></li>
                                                   <li><p>Descuento medio con impuestos</p></li>
                                                   <li><p>Día de la semana</p></li>
-                                                  <li><p>Mes del año</p></li>
                                                  </ul>
                                             </div>
                                           </div>')
 								                              ),
 								                         tabPanel(
-								                           "Total"
-								                         ),
-								                         tabPanel(
-								                           "Sin calcio"
+								                           "Total",
+								                           column(6,h3("Modelado"),
+								                                  HTML('
+								                                    <!-- feature --> 
+								                                     <div class="feature"> 
+								                                     <i class="feature-icon fa fa-circle"></i> 
+                                                     <div class="feature-content"> 
+                                                     <h4>Modelo seleccionado según el criterio de información de Akaike</h4> 
+                                                     <p>Para predecir el volumen total de ventas diario se ha seleccionado el modelo
+                                                     con variables dummy, con un valor del AIC=2227.36</p> 
+								                                     </div> 
+								                                     </div> 
+								                                    <!-- /feature -->
+								                                       <!-- feature --> 
+								                                     <div class="feature"> 
+								                                     <i class="feature-icon fa fa-circle"></i> 
+                                                     <div class="feature-content"> 
+                                                     <h4>Variables significativas en el modelo</h4> 
+                                                     <p>La variable más significativa es si la compra se realiza o no un Domingo, pudiendo afirmar que el volumen de ventas será menor si la venta se realiza un Domingo.</p> 
+								                                     </div> 
+								                                     </div> 
+								                                    <!-- /feature -->')
+								                           ),
+								                           column(6,h3("Resultados"),
+								                                  HTML('
+								                                    <!-- feature --> 
+								                                     <div class="feature"> 
+								                                     <i class="feature-icon fa fa-circle"></i> 
+                                                     <div class="feature-content"> 
+                                                     <h4>Métricas obtenidas en el testeo</h4> 
+                                                     <p>El modelo generaliza bien pero el valor de la raíz del error cuadrático medio es bastante alto en 
+                                                     comparación con el orden del volumen de ventas.</p> 
+								                                     </div> 
+								                                     </div> 
+								                                    <!-- /feature -->'),
+								                                  img(src='img/BN1.png', style="width: 80%;margin-top: 25px;" )
+								                           )
 								                           
 								                         ),
 								                         tabPanel(
-								                           "Con calcio"
+								                           "Con calcio",
+								                           column(6,h3("Modelado"),
+								                                  HTML('
+								                                    <!-- feature --> 
+								                                     <div class="feature"> 
+								                                     <i class="feature-icon fa fa-circle"></i> 
+                                                     <div class="feature-content"> 
+                                                     <h4>Modelo seleccionado según el criterio de información de Akaike</h4> 
+                                                     <p>Para predecir el volumen total de ventas diario se ha seleccionado el modelo
+                                                     con variables dummy, con un valor del AIC=2044.261 frente al valor 2187.59 para el conjutno de datos de variables factorizadas.</p> 
+								                                     </div> 
+								                                     </div> 
+								                                    <!-- /feature -->
+								                                       <!-- feature --> 
+								                                     <div class="feature"> 
+								                                     <i class="feature-icon fa fa-circle"></i> 
+                                                     <div class="feature-content"> 
+                                                     <h4>Variables significativas en el modelo</h4> 
+                                                     <p>La única variable significativa es si la compra se realiza o no un Domingo. El mes del año no es significativo del volumen de ventas.</p> 
+								                                     </div> 
+								                                     </div> 
+								                                    <!-- /feature -->')
+								                           ),
+								                           column(6,h3("Resultados"),
+								                                  HTML('
+								                                    <!-- feature --> 
+								                                     <div class="feature"> 
+								                                     <i class="feature-icon fa fa-circle"></i> 
+                                                     <div class="feature-content"> 
+                                                     <h4>Métricas obtenidas en el testeo</h4> 
+                                                     <p>El modelo generaliza bien pero el valor de la raíz del error cuadrático medio es bastante alto en 
+                                                     comparación con el orden del volumen de ventas.</p> 
+								                                     </div> 
+								                                     </div> 
+								                                    <!-- /feature -->'),
+								                                  img(src='img/BN2.png', style="width: 80%;margin-top: 25px;" )
+								                           )
 								                           
-								                         )
+								                         ),
+								                         tabPanel(
+								                           "Sin calcio",
+								                           column(6,h3("Modelado"),
+								                                  HTML('
+								                                    <!-- feature --> 
+								                                     <div class="feature"> 
+								                                     <i class="feature-icon fa fa-circle"></i> 
+                                                     <div class="feature-content"> 
+                                                     <h4>Modelo seleccionado según el criterio de información de Akaike</h4> 
+                                                     <p>Para predecir el volumen total de ventas diario se ha seleccionado el modelo
+                                                     con variables dummy, con un valor del AIC=2014.79 frente al valor 2017.9 para el conjutno de datos de variables factorizadas.</p> 
+								                                     </div> 
+								                                     </div> 
+								                                    <!-- /feature -->
+								                                       <!-- feature --> 
+								                                     <div class="feature"> 
+								                                     <i class="feature-icon fa fa-circle"></i> 
+                                                     <div class="feature-content"> 
+                                                     <h4>Variables significativas en el modelo</h4> 
+                                                     <p>El precio medio de venta no es una variable significativa en este modelo. Las variables significativas son el mes de Agosto y el día de la semana.
+                                                     </p> 
+								                                     </div> 
+								                                     </div> 
+								                                    <!-- /feature -->')
+								                           ),
+								                           column(6,h3("Resultados"),
+								                                  HTML('
+								                                    <!-- feature --> 
+								                                     <div class="feature"> 
+								                                     <i class="feature-icon fa fa-circle"></i> 
+                                                     <div class="feature-content"> 
+                                                     <h4>Métricas obtenidas en el testeo</h4> 
+                                                     <p>Ambos resultados son bastante similares.</p> 
+								                                     </div> 
+								                                     </div> 
+								                                    <!-- /feature -->'),
+								                                  img(src='img/BN3.png', style="width: 80%;margin-top: 25px;" )
+								                           )
+								                          
+								                           
+								                         ),
+								                         tabPanel("Comparación",
+								                                  
+								                                  tabBox(width = 100,
+								                                         tabPanel( "Resultados",
+								                                                   column(2),
+								                                                   column(8,
+								                                                          h3("Comparación de resultados del modelado"),
+								                                                          p("En la tabla mostrada a continuación se observan las métricas obtenidas para los tres modelos:"),
+								                                                          img(src='img/ResBN.png', style="margin-left: 25%;"), 
+								                                                   ),
+								                                                   column(2)
+								                                                   
+								                                         ),
+								                                         tabPanel("Gráfico",
+								                                                  column(12,h3("Comparación de la suma de predicciones con la predicción de la suma"),
+								                                                         p("Mostramos un gráfico para comparar la predicción de ventas de la suma de
+								                                         productos con la suma de las predicciones de cada uno de los productos
+								                                         por separado.")),
+								                                         column(7,plotlyOutput("CompModeladobN",height = 700)),
+								                                         column(5, 
+								                                                HTML('<!-- feature -->
+								                                              <div class="feature">
+								                                              <i class="feature-icon fa fa-circle"></i>
+								                                              <div class="feature-content">
+								                                              <h4>Resultados similares</h4> 
+                                                                <p>Los resultados obtenidos por la suma de predicciones son prácticamente los mismos que para la predicción de la suma, por lo que no variaría mucho utilizar un modelo u otro.</p> 
+								                                              </div>
+								                                              </div>
+								                                              <!-- /feature -->
+								                                               <!-- feature -->
+								                                              <div class="feature">
+								                                              <i class="feature-icon fa fa-circle"></i>
+								                                              <div class="feature-content">
+								                                            <h4>Mala representación del aumento de ventas</h4>
+                                                              <p>Los modelos no han sabido captar el comporamiento creciente de las ventas trás un fuerte descenso de éstas el Domingo.</p>
+								                                              </div>
+								                                              </div>
+								                                              <!-- /feature --> 
+								                                             <!-- feature -->
+								                                              <div class="feature">
+								                                              <i class="feature-icon fa fa-circle"></i>
+								                                              <div class="feature-content">
+								                                            <h4>Día festivo</h4>
+                                                              <p>Tampoco ha generalizado bien el día 6 de Enero, ya que hubo un 
+                                                              volumen de ventas muy inferior al que los modelos predicen, se trata de un día festivo</p>
+								                                              </div>
+								                                              </div>
+								                                              <!-- /feature --> ')
+								                                            
+								                                          
+								                                         )
+								                                         )
+								                                  )
+								                                  
+								                                  )
 								                       )
 								                       ),
 								              tabPanel("Series temporales",
-								                    "FDFDF"
+								                       tabBox(width = 100 , 
+								                         tabPanel("Datos",
+								                                  HTML('<!-- feature --> 
+								                                              <div class="feature"> 
+								                                              <i class="feature-icon fa fa-circle"></i> 
+                                                              <div class="feature-content"> 
+                                                              <h4>Datos diarios</h4> 
+                                                              <p>Los datos de la serie son las ventas totales para cada día, considerando
+                                                              un período S=7, es decir, datos semanales.</p> 
+								                                              </div> 
+								                                              </div> 
+								                                              <!-- /feature --> 
+								                                       <!-- feature --> 
+								                                              <div class="feature"> 
+								                                              <i class="feature-icon fa fa-circle"></i> 
+                                                              <div class="feature-content"> 
+                                                              <h4>Transformación de los datos</h4> 
+                                                              <p>Al existir valores nulos, el 25 de Diciembre y 1 de Enero, se ha sumado una constante de 10 unidades a todas 
+                                                              las observaciones.</p> 
+								                                              </div> 
+								                                              </div> 
+								                                              <!-- /feature -->')
+								                           
+								                         ),
+								                         tabPanel("Transformaciones",
+								                                  column(1),
+								                                  column(4,   img(src='img/FAS.png', style="width: 100%;margin-top: 25px;" )),
+								                                  column(6, HTML('<!-- feature --> 
+								                                              <div class="feature"> 
+								                                              <i class="feature-icon fa fa-circle"></i> 
+                                                              <div class="feature-content"> 
+                                                              <h4>Transformación de BoxCox para estabilizar la varianza</h4> 
+                                                              <p>Valor de lambda =1/2, el extremo inferior del intervalo de confianza, no el valor 0.6 que nos sugería la función.</p> 
+								                                              </div> 
+								                                              </div> 
+								                                              <!-- /feature --> 
+								                                       <!-- feature --> 
+								                                              <div class="feature"> 
+								                                              <i class="feature-icon fa fa-circle"></i> 
+                                                              <div class="feature-content"> 
+                                                              <h4>Transformaciones para estabilizar la media</h4> 
+                                                              <p>La no estacionalidad de los datos se debe a que es un proceso integrado, ya que la FAS decrece lentamente en los 
+                                                              retardos estacionales de período 7. Por ello, se hace una diferencia estacional.</p> 
+								                                              </div> 
+								                                              </div> 
+								                                              <!-- /feature -->
+								                                              <!-- feature --> 
+								                                              <div class="feature"> 
+								                                              <i class="feature-icon fa fa-circle"></i> 
+                                                              <div class="feature-content"> 
+                                                              <h4>Contraste de estacionariedad</h4> 
+                                                              <p>Según el p-valor del test de Dickey-Fuller no existen evidencias significativas para asumir que el polinomio autoregresivo
+                                                              tiene alguna raíz unitaria, la serie es estacionaria.</p> 
+								                                              </div> 
+								                                              </div> 
+								                                              <!-- /feature -->')),
+								                                  column(1)
+								                         ),
+								                         tabPanel("Resultados",
+								                                 
+								                                 column(5,
+								                                        tabBox(width = 100,
+								                                          tabPanel("FAS",img(src='img/FAS_dif.png', style="width: 100%;margin-top: 25px;" )),
+								                                          tabPanel("FAP",img(src='img/FAP_dif.png', style="width: 100%;margin-top: 25px;" )),
+								                                          tabPanel("Resultados",img(src='img/ResModelos.png', style="width: 100%;margin-top: 25px;" ))
+								                                        )
+								                                        
+								                                        ),
+								                                 column(6,
+								                                        HTML('<!-- feature --> 
+								                                              <div class="feature"> 
+								                                              <i class="feature-icon fa fa-circle"></i> 
+                                                              <div class="feature-content"> 
+                                                              <h4>Modelo sugerido: ARIMA(0,1,1)_12</h4> 
+                                                              <p>Trás estimar los parámetros, concluímos que el modelo no es adecuado, ya que los resíduos no pasan la diagnosis y además
+                                                              según el test de Ljun-Box, no existen evidencias significativas para aceptar la incorrelación de los resíduos: p-valor = 0.002524 < 0.05 = alpha. Los resíduos no se comportan como un proceso de ruido blanco.</p> 
+								                                              </div> 
+								                                              </div> 
+								                                              <!-- /feature --> 
+								                                       <!-- feature --> 
+								                                              <div class="feature"> 
+								                                              <i class="feature-icon fa fa-circle"></i> 
+                                                              <div class="feature-content"> 
+                                                              <h4>No podemos encontrar un modelo que se ajuste a los datos</h4> 
+                                                              <p>Ningino de los cuatro modelos ajustados pasaba la diagnosis, los resíduos no estaban incorrelados entre sí, y esa autocorrelación podría conducir a una exactitud del modelo predictivo y por tanto, a interpretaciones erróneas del volumen de ventas.</p> 
+								                                              </div> 
+								                                              </div> 
+								                                              <!-- /feature -->
+								                                           ')
+								                                         ),
+								                                 column(1)
+								                         )
+								                         
+								                       )
+								                   
 								                       ))),
 								          fluidRow(
 								            column(12,h2("Aprendizaje automático")),br(),
 								            tabBox(
-								              title = "Modelos",width = 100,
+								              title = "Resultados en el entrenamiento",width = 100,
 								              # The id lets us use input$tabset1 on the server to find the current tab
 								              id = "AprendizajeAutomatico", 
 								              
@@ -806,12 +1226,159 @@ ui <- fluidPage(
 								                       <!-- /feature -->	
 								                     </div>')
 								                         ),
+								                     tabPanel(
+								                       "Total",
+								                       HTML('<div class="section-header"><h3>Resultados del entrenamiento</h3>
+								                       <p>A continuación se muestran los resultados del entrenamiento del modelo en los datos de entrenamiento.</p>
+								                       </div>
+								                           <div class="row">
+								                           <div class="column"> 
+								                           <!-- feature -->
+								                       <div class="feature">
+								                       <i class="feature-icon fa fa-circle"></i>
+								                       <div class="feature-content">
+								                       <h4>Métricas del mejor modelo</h4>
+								                        <img src="img/ModeloSVM_Total.png" style="width: 95%;">
+								                       </div>
+								                       </div>
+								                       <!-- /feature -->
+								                        
+								                       <!-- feature -->
+								                       <div class="feature">
+								                       <i class="feature-icon fa fa-circle"></i>
+								                       <div class="feature-content">
+								                       <h4>Coeficiente de correlación, R^2</h4>
+								                       <p>El modelo consigue explicar un 60.06% de la variabilidad total del volumen de ventas para los datos de entrenamiento.</p>
+								                       </div>
+								                       </div>
+								                       <!-- /feature -->
+								                           </div>
+								                           <div class="column"> 
+								                            <!-- feature -->
+								                       <div class="feature">
+								                       <i class="feature-icon fa fa-circle"></i>
+								                       <div class="feature-content">
+								                       <h4>Remuestreo en la validación cruzada</h4>
+								                        <p>Las métricas no presentan gran variabilidad, ya que en la mayoría de ocasiones el modelo consigue explicar más del
+								                        70% de la variabilidad del volumen de ventas. Por este motivo, el modelo es robusto y las predicciones serán fiables.</p>
+								                       </div>
+								                       </div>
+								                       <!-- /feature -->
+								                       
+								                        <!-- feature -->
+								                       <div class="feature">
+								                       <i class="feature-icon fa fa-circle"></i>
+								                       <div class="feature-content">
+								                       <h4>Error cuadrático medio alto</h4>
+								                       <p>La raíz del error cuadrático medio es de 661 unidades, que es un valor alto para el volumen de ventas que se predice.</p>
+								                       </div>
+								                       </div>
+								                       <!-- /feature -->
+								                           </div>
+								                     </div>')
+								                       
+								                     ),
 								                         tabPanel(
-								                           "Sin calcio"
+								                           "Con calcio",
+								                           HTML('<div class="section-header"><h3>Resultados del entrenamiento</h3>
+								                       <p>A continuación se muestran los resultados del entrenamiento del modelo en los datos de entrenamiento.</p>
+								                       </div>
+								                           <div class="row">
+								                           <div class="column"> 
+								                           <!-- feature -->
+								                       <div class="feature">
+								                       <i class="feature-icon fa fa-circle"></i>
+								                       <div class="feature-content">
+								                       <h4>Métricas del mejor modelo</h4>
+								                        <img src="img/ModeloSVM_Calcio.png" style="width: 95%;">
+								                       </div>
+								                       </div>
+								                       <!-- /feature -->
+								                        
+								                       <!-- feature -->
+								                       <div class="feature">
+								                       <i class="feature-icon fa fa-circle"></i>
+								                       <div class="feature-content">
+								                       <h4>Coeficiente de correlación, R^2</h4>
+								                       <p>El modelo consigue explicar un 50.84% de la variabilidad total del volumen de ventas del producto con calcio  para los datos de entrenamiento.</p>
+								                       </div>
+								                       </div>
+								                       <!-- /feature -->
+								                           </div>
+								                           <div class="column"> 
+								                            <!-- feature -->
+								                       <div class="feature">
+								                       <i class="feature-icon fa fa-circle"></i>
+								                       <div class="feature-content">
+								                       <h4>Remuestreo en la validación cruzada</h4>
+								                        <p>Las métricas no presentan gran variabilidad, ya que en la mayoría de ocasiones el modelo explica alrededor del
+								                        77% de la variabilidad del volumen de ventas. Por este motivo, el modelo es robusto y las predicciones serán fiables.</p>
+								                       </div>
+								                       </div>
+								                       <!-- /feature -->
+								                       
+								                        <!-- feature -->
+								                       <div class="feature">
+								                       <i class="feature-icon fa fa-circle"></i>
+								                       <div class="feature-content">
+								                       <h4>Error cuadrático medio alto</h4>
+								                       <p>La raíz del error cuadrático medio es de 410 unidades, que es un valor alto para el volumen de ventas que se predice.</p>
+								                       </div>
+								                       </div>
+								                       <!-- /feature -->
+								                           </div>
+								                     </div>')
 								                           
 								                         ),
 								                         tabPanel(
-								                           "Con calcio"
+								                           "Sin calcio",
+								                           HTML('<div class="section-header"><h3>Resultados del entrenamiento</h3>
+								                       <p>A continuación se muestran los resultados del entrenamiento del modelo en los datos de entrenamiento.</p>
+								                       </div>
+								                           <div class="row">
+								                           <div class="column"> 
+								                           <!-- feature -->
+								                       <div class="feature">
+								                       <i class="feature-icon fa fa-circle"></i>
+								                       <div class="feature-content">
+								                       <h4>Métricas del mejor modelo</h4>
+								                        <img src="img/ModeloSVM_SinCalcio.png" style="width: 95%;">
+								                       </div>
+								                       </div>
+								                       <!-- /feature -->
+								                        
+								                       <!-- feature -->
+								                       <div class="feature">
+								                       <i class="feature-icon fa fa-circle"></i>
+								                       <div class="feature-content">
+								                       <h4>Coeficiente de correlación, R^2</h4>
+								                       <p>El modelo consigue explicar un 57.16% de la variabilidad total del volumen de ventas del producto sin calcio  para los datos de entrenamiento.</p>
+								                       </div>
+								                       </div>
+								                       <!-- /feature -->
+								                           </div>
+								                           <div class="column"> 
+								                            <!-- feature -->
+								                       <div class="feature">
+								                       <i class="feature-icon fa fa-circle"></i>
+								                       <div class="feature-content">
+								                       <h4>Remuestreo en la validación cruzada</h4>
+								                        <p>La variabilidad no es tan evidente como para otros modelos.</p>
+								                       </div>
+								                       </div>
+								                       <!-- /feature -->
+								                       
+								                        <!-- feature -->
+								                       <div class="feature">
+								                       <i class="feature-icon fa fa-circle"></i>
+								                       <div class="feature-content">
+								                       <h4>Error cuadrático medio alto</h4>
+								                       <p>La raíz del error cuadrático medio es de 309 unidades.</p>
+								                       </div>
+								                       </div>
+								                       <!-- /feature -->
+								                           </div>
+								                     </div>')
 								                           
 								                         )
 								                       )
@@ -833,12 +1400,156 @@ ui <- fluidPage(
 								                       <!-- /feature -->	
 								                     </div>')
 								                              ),
+								                     tabPanel(
+								                       "Total",
+								                       HTML('<div class="section-header"><h3>Resultados del entrenamiento</h3>
+								                       <p>A continuación se muestran los resultados del entrenamiento del modelo en los datos de entrenamiento.</p>
+								                       </div>
+								                           <div class="row">
+								                           <div class="column"> 
+								                           <!-- feature -->
+								                       <div class="feature">
+								                       <i class="feature-icon fa fa-circle"></i>
+								                       <div class="feature-content">
+								                       <h4>Métricas del mejor modelo</h4>
+								                        <img src="img/ModeloKNN_Total.png" style="width: 95%;">
+								                       </div>
+								                       </div>
+								                       <!-- /feature -->
+								                        
+								                       <!-- feature -->
+								                       <div class="feature">
+								                       <i class="feature-icon fa fa-circle"></i>
+								                       <div class="feature-content">
+								                       <h4>Coeficiente de correlación, R^2</h4>
+								                       <p>El modelo consigue explicar un 56.69% de la variabilidad total del volumen de ventas para los datos de entrenamiento.</p>
+								                       </div>
+								                       </div>
+								                       <!-- /feature -->
+								                           </div>
+								                           <div class="column"> 
+								                            <!-- feature -->
+								                       <div class="feature">
+								                       <i class="feature-icon fa fa-circle"></i>
+								                       <div class="feature-content">
+								                       <h4>Remuestreo en la validación cruzada</h4>
+								                        <p>Las métricas presentan gran variabilidad, ya que el coeficiente de correlación oscila entre un valor de 0.86 y 0.35. Por este motivo, el modelo no es muy robusto y las predicciones no serán del todo fiables.</p>
+								                       </div>
+								                       </div>
+								                       <!-- /feature -->
+								                       
+								                        <!-- feature -->
+								                       <div class="feature">
+								                       <i class="feature-icon fa fa-circle"></i>
+								                       <div class="feature-content">
+								                       <h4>Error cuadrático medio alto</h4>
+								                       <p>La raíz del error cuadrático medio es de 693 unidades, que es un valor alto para el volumen de ventas que se predice.</p>
+								                       </div>
+								                       </div>
+								                       <!-- /feature -->
+								                           </div>
+								                     </div>')
+								                       
+								                     ),
 								                         tabPanel(
-								                           "Sin calcio"
-								                           
-								                         ),
+								                           "Con calcio",
+								                           HTML('<div class="section-header"><h3>Resultados del entrenamiento</h3>
+								                       <p>A continuación se muestran los resultados del entrenamiento del modelo en los datos de entrenamiento.</p>
+								                       </div>
+								                           <div class="row">
+								                           <div class="column"> 
+								                           <!-- feature -->
+								                       <div class="feature">
+								                       <i class="feature-icon fa fa-circle"></i>
+								                       <div class="feature-content">
+								                       <h4>Métricas del mejor modelo</h4>
+								                        <img src="img/ModeloKNN_Calcio.png" style="width: 95%;">
+								                       </div>
+								                       </div>
+								                       <!-- /feature -->
+								                        
+								                       <!-- feature -->
+								                       <div class="feature">
+								                       <i class="feature-icon fa fa-circle"></i>
+								                       <div class="feature-content">
+								                       <h4>Coeficiente de correlación, R^2</h4>
+								                       <p>El modelo consigue explicar un 47.7% de la variabilidad total del volumen de ventas del producto con calcio para los datos de entrenamiento.</p>
+								                       </div>
+								                       </div>
+								                       <!-- /feature -->
+								                           </div>
+								                           <div class="column"> 
+								                            <!-- feature -->
+								                       <div class="feature">
+								                       <i class="feature-icon fa fa-circle"></i>
+								                       <div class="feature-content">
+								                       <h4>Remuestreo en la validación cruzada</h4>
+								                        <p>Las métricas presentan variabilidad, explicando en varias ocasiones un 70% de la variabilidad del volumen de ventas y en otras la variabilidad no lelga al 20%.</p>
+								                       </div>
+								                       </div>
+								                       <!-- /feature -->
+								                       
+								                        <!-- feature -->
+								                       <div class="feature">
+								                       <i class="feature-icon fa fa-circle"></i>
+								                       <div class="feature-content">
+								                       <h4>Error cuadrático medio alto</h4>
+								                       <p>La raíz del error cuadrático medio es de 428 unidades, que es un valor alto para el volumen de ventas que se predice.</p>
+								                       </div>
+								                       </div>
+								                       <!-- /feature -->
+								                           </div>
+								                     </div>')
+								                           ),
 								                         tabPanel(
-								                           "Con calcio"
+								                           "Sin calcio",
+								                           HTML('<div class="section-header"><h3>Resultados del entrenamiento</h3>
+								                       <p>A continuación se muestran los resultados del entrenamiento del modelo en los datos de entrenamiento.</p>
+								                       </div>
+								                           <div class="row">
+								                           <div class="column"> 
+								                           <!-- feature -->
+								                       <div class="feature">
+								                       <i class="feature-icon fa fa-circle"></i>
+								                       <div class="feature-content">
+								                       <h4>Métricas del mejor modelo</h4>
+								                        <img src="img/ModeloKNN_SinCalcio.png" style="width: 95%;">
+								                       </div>
+								                       </div>
+								                       <!-- /feature -->
+								                        
+								                       <!-- feature -->
+								                       <div class="feature">
+								                       <i class="feature-icon fa fa-circle"></i>
+								                       <div class="feature-content">
+								                       <h4>Coeficiente de correlación, R^2</h4>
+								                       <p>El modelo consigue explicar un 50.56% de la variabilidad total del volumen de ventas del producto sin calcio para los datos de entrenamiento.</p>
+								                       </div>
+								                       </div>
+								                       <!-- /feature -->
+								                           </div>
+								                           <div class="column"> 
+								                            <!-- feature -->
+								                       <div class="feature">
+								                       <i class="feature-icon fa fa-circle"></i>
+								                       <div class="feature-content">
+								                       <h4>Remuestreo en la validación cruzada</h4>
+								                        <p>Las métricas no presentan mucha variabilidad. En la mayoría de ocasiones, el modelo explica más del 50% de la variabilidad del volumen de ventas.</p>
+								                       </div>
+								                       </div>
+								                       <!-- /feature -->
+								                       
+								                        <!-- feature -->
+								                       <div class="feature">
+								                       <i class="feature-icon fa fa-circle"></i>
+								                       <div class="feature-content">
+								                       <h4>Error cuadrático medio alto</h4>
+								                       <p>La raíz del error cuadrático medio es de 340 unidades, que es un valor alto para el volumen de ventas que se predice.</p>
+								                       </div>
+								                       </div>
+								                       <!-- /feature -->
+								                           </div>
+								                     </div>')
 								                           
 								                         )
 								                       )
@@ -860,20 +1571,419 @@ ui <- fluidPage(
 								                       <!-- /feature -->	
 								                     </div>')
 								                         ),
+								                     tabPanel(
+								                       "Total",
+								                       HTML('<div class="section-header"><h3>Resultados del entrenamiento</h3>
+								                       <p>A continuación se muestran los resultados del entrenamiento del modelo en los datos de entrenamiento.</p>
+								                       </div>
+								                           <div class="row">
+								                           <div class="column"> 
+								                           <!-- feature -->
+								                       <div class="feature">
+								                       <i class="feature-icon fa fa-circle"></i>
+								                       <div class="feature-content">
+								                       <h4>Métricas del mejor modelo</h4>
+								                        <img src="img/ModeloXGBoost_Total.png" style="width: 95%;">
+								                       </div>
+								                       </div>
+								                       <!-- /feature -->
+								                        
+								                       <!-- feature -->
+								                       <div class="feature">
+								                       <i class="feature-icon fa fa-circle"></i>
+								                       <div class="feature-content">
+								                       <h4>Coeficiente de correlación, R^2</h4>
+								                       <p>El modelo consigue explicar un 52.73% de la variabilidad total del volumen de ventas para los datos de entrenamiento.</p>
+								                       </div>
+								                       </div>
+								                       <!-- /feature -->
+								                           </div>
+								                           <div class="column"> 
+								                            <!-- feature -->
+								                       <div class="feature">
+								                       <i class="feature-icon fa fa-circle"></i>
+								                       <div class="feature-content">
+								                       <h4>Remuestreo en la validación cruzada</h4>
+								                        <p>De nuevo, las métricas presentan gran variabilidad, en ocasiones el modelo explica más del 85% del volumen de ventas y en otras no llega a explicar ni un 12%. Por este motivo, las prediciones no serán del todo fiables.</p>
+								                       </div>
+								                       </div>
+								                       <!-- /feature -->
+								                       
+								                        <!-- feature -->
+								                       <div class="feature">
+								                       <i class="feature-icon fa fa-circle"></i>
+								                       <div class="feature-content">
+								                       <h4>Error cuadrático medio alto</h4>
+								                       <p>La raíz del error cuadrático medio es de 742 unidades, que es un valor alto para el volumen de ventas que se predice.</p>
+								                       </div>
+								                       </div>
+								                       <!-- /feature -->
+								                           </div>
+								                     </div>')
+								                       
+								                     ),
 								                         
 								                         tabPanel(
-								                           "Sin calcio"
+								                           "Con calcio",
+								                           HTML('<div class="section-header"><h3>Resultados del entrenamiento</h3>
+								                       <p>A continuación se muestran los resultados del entrenamiento del modelo en los datos de entrenamiento.</p>
+								                       </div>
+								                           <div class="row">
+								                           <div class="column"> 
+								                           <!-- feature -->
+								                       <div class="feature">
+								                       <i class="feature-icon fa fa-circle"></i>
+								                       <div class="feature-content">
+								                       <h4>Métricas del mejor modelo</h4>
+								                        <img src="img/ModeloXGBoost_Calcio.png" style="width: 95%;">
+								                       </div>
+								                       </div>
+								                       <!-- /feature -->
+								                        
+								                       <!-- feature -->
+								                       <div class="feature">
+								                       <i class="feature-icon fa fa-circle"></i>
+								                       <div class="feature-content">
+								                       <h4>Coeficiente de correlación, R^2</h4>
+								                       <p>El modelo consigue explicar un 49.94% de la variabilidad total del volumen de ventas para los datos de entrenamiento.</p>
+								                       </div>
+								                       </div>
+								                       <!-- /feature -->
+								                           </div>
+								                           <div class="column"> 
+								                            <!-- feature -->
+								                       <div class="feature">
+								                       <i class="feature-icon fa fa-circle"></i>
+								                       <div class="feature-content">
+								                       <h4>Remuestreo en la validación cruzada</h4>
+								                        <p>En este modelo, el valor del coeficiente de correlación se mantiene por encima de un 0.65 en la mayoría de ocasiones, por lo que el modelo es robusto y las predicciones serán fiables.</p>
+								                       </div>
+								                       </div>
+								                       <!-- /feature -->
+								                       
+								                        <!-- feature -->
+								                       <div class="feature">
+								                       <i class="feature-icon fa fa-circle"></i>
+								                       <div class="feature-content">
+								                       <h4>Error cuadrático medio alto</h4>
+								                       <p>La raíz del error cuadrático medio es de 417 unidades, que es un valor alto para el volumen de ventas que se predice.</p>
+								                       </div>
+								                       </div>
+								                       <!-- /feature -->
+								                           </div>
+								                     </div>')
 								                         ),
 								                         tabPanel(
-								                           "Con calcio"
+								                           "Sin calcio",
+								                           HTML('<div class="section-header"><h3>Resultados del entrenamiento</h3>
+								                       <p>A continuación se muestran los resultados del entrenamiento del modelo en los datos de entrenamiento.</p>
+								                       </div>
+								                           <div class="row">
+								                           <div class="column"> 
+								                           <!-- feature -->
+								                       <div class="feature">
+								                       <i class="feature-icon fa fa-circle"></i>
+								                       <div class="feature-content">
+								                       <h4>Métricas del mejor modelo</h4>
+								                        <img src="img/ModeloXGBoost_SinCalcio.png" style="width: 95%;">
+								                       </div>
+								                       </div>
+								                       <!-- /feature -->
+								                        
+								                       <!-- feature -->
+								                       <div class="feature">
+								                       <i class="feature-icon fa fa-circle"></i>
+								                       <div class="feature-content">
+								                       <h4>Coeficiente de correlación, R^2</h4>
+								                       <p>El modelo consigue explicar un 53.42% de la variabilidad total del volumen de ventas para los datos de entrenamiento.</p>
+								                       </div>
+								                       </div>
+								                       <!-- /feature -->
+								                           </div>
+								                           <div class="column"> 
+								                            <!-- feature -->
+								                       <div class="feature">
+								                       <i class="feature-icon fa fa-circle"></i>
+								                       <div class="feature-content">
+								                       <h4>Remuestreo en la validación cruzada</h4>
+								                        <p>Respecto al remuestreo en la validación cruzada, se trata de un modelo robusto, ya que las métricas no oscilan 
+								                        tanto como en otros de modelos. El coeficiente de determinación varía entre un valor de 0.2808295 y 0.8770442, 
+								                        pero en la mayoría de ocasiones se mantiene por encima de 0.5.
+								                        Por este motivo, las predicciones serán algo más fiables, a pesar de no tener un valor de R2 especialmente elevado.</p>
+								                       </div>
+								                       </div>
+								                       <!-- /feature -->
+								                       
+								                        <!-- feature -->
+								                       <div class="feature">
+								                       <i class="feature-icon fa fa-circle"></i>
+								                       <div class="feature-content">
+								                       <h4>Error cuadrático medio alto</h4>
+								                       <p>La raíz del error cuadrático medio es de 333 unidades, que es un valor alto para el volumen de ventas que se predice.</p>
+								                       </div>
+								                       </div>
+								                       <!-- /feature -->
+								                           </div>
+								                     </div>')
 								                             )
 								                       )
 								              )
 								            )
 								            
 								          ),
-                        
-                          
+								          
+								          fluidRow( 
+								            column(12,h3("Configuración de los mejores hiperparámetros y predicción del volumen de ventas")),
+								            column(12,  p("para cada una de las tres variables respuesta se han configurado los tres modelos 
+								                                  con los correspondientes hiperparámetros que ofrecían mejores métricas para posteriormente
+								                                  aplicarlos a los datos de entrenamiento. De esta forma, se ha elegido un modelo final 
+								                                  de cada varaible y se ha aplicado en los datos de testeo para predecir el volumen
+								                                  de ventas diario."))
+								           
+								            ),
+								          fluidRow(column(12)),
+								          fluidRow(
+								            tabBox(width = 100,title = "Testeo",
+								              tabPanel("Total", 
+								                       tabBox(width = 100,
+								                tabPanel( "Selección del modelo",
+								                          div(width = 100,
+								                            column(2),
+								                            column(4,
+								                                   HTML("<table>  
+								                                          <tr>    <th>MODELO</th>     <th>RMSE</th>    <th>R2  </th>  </tr>
+								                                          <tr>    <td>SVM</td>        <td>661</td>    <td>0.6</td>  </tr>
+								                                          <tr>    <td>KNN</td>        <td>692</td>    <td>0.567</td>  </tr>
+								                                          <tr>    <td>XGBoost</td>    <td>439</td>    <td>0.522</td>  </tr> 
+								                                       </table>") )  ,
+								                            column(4,
+								                                   HTML('
+								                                              <!-- feature -->
+								                                              <div class="feature">
+								                                              <i class="feature-icon fa fa-circle"></i>
+								                                              <div class="feature-content">
+								                                              <h4>Modelo final para predecir el volumen de ventas total</h4>
+								                                              <p>Máquina de vector soporte. Mejor coeficiente de correlación y modelo más robusto.</p>
+								                                              </div>
+								                                              </div>
+								                                              <!-- /feature -->
+								                                             ')),
+								                            column(2)
+								                          )
+								                          ),
+								                tabPanel("Testeo",
+								                         h3("Predicción del volumen total de ventas. Máquina de vector soporte, SVM"),
+								                         div(width = 100,
+								                             column(1),
+								                             column(5,
+								                                   plotlyOutput("Total") )  ,
+								                             column(5,
+								                                    HTML('<!-- feature -->
+								                                              <div class="feature">
+								                                              <i class="feature-icon fa fa-circle"></i>
+								                                              <div class="feature-content">
+								                                             <h4>Coeficiente de correlación</h4> 
+								                                             <p>El modelo máquina de vector soporte explica un 58.6% de la variabilidad total del volumen de ventas en los datos de testeo. Este valor ha mejorado con respecto al entrenamiento, ha sabido generalizar con nuevos datos.</p>
+								                                              </div>
+								                                              </div>
+								                                              <!-- /feature -->
+								                                               <!-- feature -->
+								                                              <div class="feature">
+								                                              <i class="feature-icon fa fa-circle"></i>
+								                                              <div class="feature-content">
+								                                              <h4>Raíz del error cuadrático medio</h4>
+								                                              <p>624 ventas, un valor alto para el volumen de ventas diario.</p>
+								                                              </div>
+								                                              </div>
+								                                              <!-- /feature -->')),
+								                             column(1)
+								                         )
+								                       
+								                         )
+								              )
+								                       ),
+								              
+								              tabPanel("Con calcio",
+								                       tabBox(width = 100,
+								                         tabPanel( "Selección del modelo",
+								                                   div(width = 100,
+								                                       column(2),
+								                                       column(4,
+								                                              HTML("<table> 
+								                                                   <tr> <th>MODELO</th> <th>RMSE</th> <th>R2 </th> 
+								                                                   </tr> <tr> <td>SVM</td> <td>410</td> <td>0.51</td> </tr> 
+								                                                   <tr> <td>KNN</td> <td>428</td> <td>0.477</td> </tr> <tr> 
+								                                                   <td>XGBoost</td> <td>256</td> <td>0.487</td> </tr> 
+								                                                   </table>") )  ,
+								                                       column(4,
+								                                              HTML('<!-- feature --> 
+								                                              <div class="feature"> 
+								                                              <i class="feature-icon fa fa-circle"></i> 
+                                                              <div class="feature-content"> 
+                                                              <h4>Modelo final para predecir el volumen de ventas del 
+                                                              producto con calcio.</h4> 
+                                                              <p>XGBoost: Mejor valor de RMSE y es un modelo que presentaba 
+                                                              robustez.</p> 
+								                                              </div> 
+								                                              </div> 
+								                                              <!-- /feature --> ')
+								                                              ),
+								                                       column(2)
+								                                   )
+								                                   ),
+								                         tabPanel("Testeo",
+								                                  h3("Predicción del volumen de ventas del producto con calcio. Gradient extreme boosting, XGBoost"),
+								                                  div(width = 100,
+								                                      column(1),
+								                                      column(5,
+								                                             plotlyOutput("Calcio") )  ,
+								                                      column(5,
+								                                             HTML('<!-- feature -->
+								                                              <div class="feature">
+								                                              <i class="feature-icon fa fa-circle"></i>
+								                                              <div class="feature-content">
+								                                            
+								                                             <h4>Coeficiente de correlación</h4> 
+                                                             <p>El modelo XGBoost explica un 46.07% de la variabilidad total del volumen de ventas en los
+                                                             datos de testeo. Este valor es ligeramente inferior respecto al entrenamiento, pero es
+                                                             prácticamente idéntico.</p> 
+								                                              </div>
+								                                              </div>
+								                                              <!-- /feature -->
+								                                               <!-- feature -->
+								                                              <div class="feature">
+								                                              <i class="feature-icon fa fa-circle"></i>
+								                                              <div class="feature-content">
+								                                              <h4>Raíz del error cuadrático medio</h4>
+                                                              <p>397 ventas, un valor alto para el volumen de ventas diario.</p>
+								                                              </div>
+								                                              </div>
+								                                              <!-- /feature -->')),
+								                                      column(1)
+								                                  )    
+								                         )
+								                       )
+								                       ),
+								              
+								              tabPanel("Sin calcio",
+								                       tabBox(width = 100,
+								                              tabPanel( "Selección del modelo",
+								                                        div(width = 100,
+								                                            column(2),
+								                                            column(4,
+								                                                   HTML("<table> <tr> <th>MODELO</th> <th>RMSE</th> <th>R2 </th> </tr> <tr> <td>SVM</td> 
+                                                                          <td>309</td> <td>0.57</td> </tr> <tr> <td>KNN</td> <td>340</td> <td>0.51</td> </tr>
+								                                                        <tr> <td>XGBoost</td> <td>212</td> <td>0.52</td> </tr> </table>"))  ,
+								                                            column(4,
+								                                                   HTML('<!-- feature --> 
+								                                              <div class="feature"> 
+								                                              <i class="feature-icon fa fa-circle"></i> 
+                                                              <div class="feature-content"> 
+                                                              <h4>Modelo final para predecir el volumen de ventas del 
+                                                              producto con calcio</h4> 
+                                                              <p>Máquina de vector soporte: Mejor valor de coeficiente de correlación.
+								                                              </div> 
+								                                              </div> 
+								                                              <!-- /feature --> ')
+								                                            ),
+								                                            column(2)
+								                                        )
+								                              ),
+								                              tabPanel("Testeo",
+								                                       h3("Predicción del volumen de ventas del producto sin calcio. Máquina de vector soporte, SVM"),
+								                                       div(width = 100,
+								                                           column(1),
+								                                           column(5,
+								                                                  plotlyOutput("SinCalcio") )  ,
+								                                           column(5,
+								                                                  HTML('<!-- feature -->
+								                                              <div class="feature">
+								                                              <i class="feature-icon fa fa-circle"></i>
+								                                              <div class="feature-content">
+								                                              <h4>Coeficiente de correlación</h4> 
+                                                                <p>El modelo máquina de vector soporte explica un 60.08% de la variabilidad total del volumen de ventas en 
+                                                                los datos de testeo. Este resultado es el mejor de todo el modelado.
+                                                                El modelo ha sabido generalizar bastante bien con datos nuevos.
+                                                                </p> 
+								                                              </div>
+								                                              </div>
+								                                              <!-- /feature -->
+								                                               <!-- feature -->
+								                                              <div class="feature">
+								                                              <i class="feature-icon fa fa-circle"></i>
+								                                              <div class="feature-content">
+								                                            <h4>Raíz del error cuadrático medio</h4>
+                                                              <p>286 ventas, un valor alto para el volumen de ventas diario.</p>
+								                                              </div>
+								                                              </div>
+								                                              <!-- /feature -->')),
+								                                           column(1)
+								                                       )
+								                                       
+								                              )
+								                              
+								                       )
+								                       ),
+								              tabPanel("Comparación",
+								                       tabBox(width = 100,
+								                              tabPanel( "Resultados",
+								                                        column(2),
+								                                        column(8,
+								                                               h3("Comparación de resultados del modelado"),
+								                                               p("En la tabla mostrada a continuación se observan las métricas obtenidas trás entrenar los modelos en los correspondientes datos de testeo:"),
+								                                               img(src='img/ResTesteo.png', style="margin-left: 25%;"), 
+								                                               ),
+								                                        column(2)
+								                                        
+								                                        ),
+								                              tabPanel("Gráfico",
+								                                       column(12,h3("Comparación de la suma de predicciones con la predicción de la suma"),
+								                                              p("Mostramos un gráfico para comparar la predicción de ventas de la suma de
+								                                         productos con la suma de las predicciones de cada uno de los productos
+								                                         por separado.")),
+								                                       column(7,plotlyOutput("CompModelado",height = 700)),
+								                                       column(5, 
+								                                              HTML('<!-- feature -->
+								                                              <div class="feature">
+								                                              <i class="feature-icon fa fa-circle"></i>
+								                                              <div class="feature-content">
+								                                              <h4>Suma de predicciones</h4> 
+                                                                <p>Este modelo tiene un comportamiento más acorde a la realidad.</p> 
+								                                              </div>
+								                                              </div>
+								                                              <!-- /feature -->
+								                                               <!-- feature -->
+								                                              <div class="feature">
+								                                              <i class="feature-icon fa fa-circle"></i>
+								                                              <div class="feature-content">
+								                                            <h4>Valores extremos de ventas</h4>
+                                                              <p>Los modelos no han sabido captar cuando el volumen de ventas era muy elevado, ya que las predicciones han sido
+                                                              generalmente inferiores al valor real de ventas. Tampoco ha generalizado bien el día 6 de Enero, ya que hubo un 
+                                                              volumen de ventas muy inferior al que los modelos predicen, se trata de un día festivo.</p>
+								                                              </div>
+								                                              </div>
+								                                              <!-- /feature -->
+								                                              <!-- feature -->
+								                                              <div class="feature">
+								                                              <i class="feature-icon fa fa-circle"></i>
+								                                              <div class="feature-content">
+								                                            <h4>Buenas predicciones los Domingos</h4>
+                                                              <p>Los modelos si han sabido generalizar bien las ventas de los días que eran Domingo, ya que éstas 
+                                                              han sido siempre considerablemente inferiores al resto de días de la semana.</p>
+								                                              </div>
+								                                              </div>
+								                                              <!-- /feature -->')
+								                                              )
+								                                       
+								                                       )
+								                              
+,								                              ),
+								                
+								              )
+								            )
+								            
+								          ),
+								          
                         br(),hr(),br(),
                         fluidRow(column(12)),
                         fluidRow( includeHTML("footer.Rhtml"))
@@ -886,13 +1996,84 @@ ui <- fluidPage(
       tabPanel("Conclusiones", br(),
                fluidRow( 
                  column(12,
-                        h1("Conclusiones"),br()) ),
+                        h1("Conclusiones") )),
+                fluidRow(
+                  column(12, h2("Análisis de cesta de la compra")),
+                  HTML('		<div class="row">
+						<!-- feature -->
+						<div class="feature">
+							<i class="feature-icon fa fa-circle"></i>
+							<div class="feature-content">
+								<h4>Reglas que muestran un patrón de venta</h4>
+								<p>La mayoría de transacciones constan de uno o dos productos.</p>
+							</div>
+						</div>
+						<!-- /feature -->
+						
+								<!-- feature -->
+						<div class="feature">
+							<i class="feature-icon fa fa-circle"></i>
+							<div class="feature-content">
+								<h4>Resultados</h4>
+								<p>Los altos valores del parámetro lift indican que las reglas no se deben a la aleatoriedad,
+                            sino que es un patrón del comportamiento real de ventas.</p>
+							</div>
+						</div>
+						<!-- /feature -->
+								<!-- feature -->
+						<div class="feature">
+							<i class="feature-icon fa fa-circle"></i>
+							<div class="feature-content">
+								<h4>Patrón de venta frecuente</h4>
+								<p>Venta conjunta de los productos 1033 y 1096.</p>
+							</div>
+						</div>
+						<!-- /feature -->	</div>')
+                ),
+                fluidRow(
+                  column(12, h2("Modelado")),
+                  HTML('		<div class="row">
+						<!-- feature -->
+						<div class="feature">
+							<i class="feature-icon fa fa-circle"></i>
+							<div class="feature-content">
+								<h4>Resultado general del modelado</h4>
+								<p>En general, los modelos obtenidos no consiguen predecir el volumen de ventas con una precisión que podamos
+								considerar aceptable, ya que en el remuestreo observamos que los modelos presentaban cierta variabilidad. 
+								Al trabajar con datos reales, esto es algo que se podía esperar, ya que modelar 
+								el comportamiento humano (ventas de productos) no siempre es fácil, debido a que se ve afectado por muchos factores, 
+								no únicamente precio, día o época del año.</p>
+							</div>
+						</div>
+						<!-- /feature -->
+						
+								<!-- feature -->
+						<div class="feature">
+							<i class="feature-icon fa fa-circle"></i>
+							<div class="feature-content">
+								<h4>Limitación en los datos</h4>
+								<p>La principal limitación ha sido que únicamente contábamos con datos de 181 días. Por este motivo, 
+								no se ha podido generar un conjunto de datos para la validación de los modelos.</p>
+							</div>
+						</div>
+						<!-- /feature -->
+								<!-- feature -->
+						<div class="feature">
+							<i class="feature-icon fa fa-circle"></i>
+							<div class="feature-content">
+								<h4>Posibilidad de mejora y continuación del estudio</h4>
+								<p>Se plantea la realización del estudio dentro de unos meses, ya que así habría más datos para entrenar y
+								validad los modelos.</p>
+								<p>Otra opción es recoger otro tipo de variables de entradas, como la hora de la venta, condiciones meteorológicas o lugar donde se realiza la transacción,
+								en caso de tener datos de diferentes establecimientos. De este modo podríamos comprender mejor el comportamiento de ventas.</p>
+							</div>
+						</div>
+						<!-- /feature -->	</div>')
+                ),
                
                br(),hr(),br(),
                includeHTML("footer.Rhtml")
                )
   )
 )
-
-
 
