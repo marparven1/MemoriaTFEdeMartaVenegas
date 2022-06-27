@@ -30,14 +30,14 @@ ui <- fluidPage(
               tabPanel("Análisis de cesta de la compra",
                     
                        fluidRow(
-                         h1("Análisis de cesta de la compra con datos de tickets de un supermercado"),
-                                 br(),
+                         column(12,h1("Análisis de cesta de la compra con datos de tickets de un supermercado")),
                          column(12,
                                 p("Se ha aplicado un análisis de cesta de la compra a unos datos que proceden de una muestra de tickets 
                                   correspondiente a transacciones de una cadena de supermercados. La muestra contiene un total de 
                                   7801 tickets que incluyen 4631 artículos distintos.")
-                                ),br(),
-                         h2("Muestra de transacciones")),
+                                ),
+                         column(12, h2("Muestra de transacciones"))
+                         ),
                        fluidRow(
                          box(
                            title = "Tickets", width = 6, solidHeader = TRUE, 
@@ -92,7 +92,9 @@ ui <- fluidPage(
                          div(h1("2. Aplicación del algoritmo a priori"), 
                              br(),
                              p("Este algoritmo permite generar una serie de reglas de 
-                              asociación y descubrir conjuntos de items frecuentes."))
+                              asociación y descubrir conjuntos de items frecuentes. Para ello  hace una búsqueda
+                              por niveles de complejidad de menor a mayor tamaño de itemsets, es decir, si un itemset es 
+                              considerado infrecuente, ningún superset podrá ser considerado frecuente."))
                        ),
                        br(),
                       fluidRow(
@@ -143,7 +145,9 @@ ui <- fluidPage(
                        fluidRow(h2("Resultado de las reglas de asociación"), br(),
                                 tabBox(title="Gráficas",
                                        height = "350px",
-                                  tabPanel("Grafo", br(),
+                                  tabPanel("Grafo",
+                                           
+                                           h3("Resultado de las reglas de asociación"),
                                            img(class="imgIcon",src='img/grafoReglas.png',width="100%"),
                                                 p("Venta frecuente de los productos 1096 y 1033.")
                                            ),
@@ -153,8 +157,8 @@ ui <- fluidPage(
                                            ),
                                   
                                   tabPanel("Soporte", br(),
-                                           "Soporte: frecuencia con que los objetos son comprados juntos.",br(),
-                                           br(),img(class="imgIcon",src='img/CestaSoporte.png',width="100%")
+                                           "Soporte: frecuencia con que los objetos son comprados juntos.",
+                                           img(class="imgIcon",src='img/CestaSoporte.png',width="100%")
                                            )
                                   ),
                                 tabBox(title="Evaluación de las reglas",
@@ -163,30 +167,29 @@ ui <- fluidPage(
                                                 "La transacción más repetida:", br(), img(class="imgIcon",src='img/BasketMasRepetida.png',width="100%"),
                                                 br(),
                                                 "Lift",br(),
-                                                "Valores de este parámetro bastante altos. Reglas robustas, es decir, no se 
+                                                "Valores de este parámetro bastante altos, indicando que las reglas son robustas, es decir, no se 
                                                   deben a la aleatoriedad, sino a un patrón de comportamiento existente.",
                                                 br(),
                                                 "Regla más robusta:" , br(),img(class="imgIcon",src='img/BasketMasRobusta.png',width="100%")
                                        ),
                                        tabPanel("Test exacto fisher", 
-                                                br(),"Test exacto de Fisher: muestra un comportamiento real de ventas.",br(),
+                                                br(),"Test exacto de Fisher: las reglas muestran un comportamiento real de ventas.",br(),
                                                 img(class="imgIcon",src='img/MarketTestFisher.png',width="90%"), 
                                                 img(class="imgIcon",src='img/MarketResTestFisher.png',width="65%")
                                        )
                                 )
-                                ),br(),br(),br(),hr(),br(),br(),br(),
-                      fluidRow(h1("3. Conclusiones"), br()),
+                                ),
+                      
+                      fluidRow(h1("3. Conclusiones"),
                        fluidRow(
                          class="container",
-                     
-                         box(
-                           title = "Productos más vendidos", width = 3,  class="BoxCesta",
-                           "La venta conjunta de los productos 1033 y 1096 se ha producido en un 1.23% de las transacciones, unas 170 veces."
-                         ),
-                         
                          box( title = "Patrón de ventas", class="BoxCesta",
                               width = 3, 
                               "Uno o dos productos diferentes por transacción."
+                         ),
+                         box(
+                           title = "Productos más vendidos", width = 3,  class="BoxCesta",
+                           "La venta conjunta de los productos 1033 y 1096 se ha producido en un 1.23% de las transacciones, unas 170 veces."
                          ),
                          box(
                            title = "Reglas robustas",width = 3, class="BoxCesta",
@@ -195,12 +198,12 @@ ui <- fluidPage(
                        ),
                        br(),hr(),br(),
                        includeHTML("footer.Rhtml")
-                       ),
+                       )),
   #### Data science process #### 
     navbarMenu("Proceso de ciencia de datos",
-               tabPanel("Preprocesado", br(),
+               tabPanel("Preprocesado", 
                         fluidRow( 
-                                 h1("Adquisición de los datos y preparación"),br(),
+                                 h1("Adquisición de los datos y preparación"),
                                  h2("Muestra de transacciones")
                                  ) ,
                         
@@ -231,7 +234,7 @@ ui <- fluidPage(
                            
                          )
                           ),
-                        br(),hr(),br(),
+                      hr(),
         #### Listado vbles ####
 				fluidRow(
 				  HTML('<div class="section-header"><h2>Variables de la muestra de tickets</h2></div>
@@ -341,7 +344,7 @@ ui <- fluidPage(
 				
 				#### / Listado vbles ####
 				
-				br(),hr(),br(),
+				hr(),
 				fluidRow(h2("TRANSFORMACIÓN DE LOS DATOS")),
 				fluidRow(class="ColorFondo",
 				  HTML('
@@ -355,6 +358,7 @@ ui <- fluidPage(
 				  <p style="text-align: center;">Datos faltantes para los días de Navidad y Año nuevo.</p>
 				  </div>
 				  </div>')),
+				hr(),
 				fluidRow( 
 				HTML('<div class="section-header"><h3>Creación de variables</h3></div>
 					<div class="row">
@@ -395,14 +399,11 @@ ui <- fluidPage(
 				
 #### EDA ####				
                         ),
-               tabPanel("Análisis exploratorio", br(),
+               tabPanel("Análisis exploratorio",
                         fluidRow( 
                           column(12,
-                                 h1("Análisis exploratorio de datos para dos productos lácteos"),br()) ),
-                        fluidRow(
-                          shiny::HTML("<br><br><center> <h1>Objetivos</h1> </center>
-                                            <br>")
-                        ),
+                                 h1("Análisis exploratorio de datos para dos productos lácteos"),
+                                 h2("Objetivos")) ),
                         fluidRow(
                           column(3),
                           column(2,
@@ -454,13 +455,13 @@ ui <- fluidPage(
                        hr(),
                           
                           fluidRow(
-                            h2("Resumen de los datos"),br(),
+                            h2("Resumen de los datos")
                             ),
                        
                         fluidRow(id = "resumen", 
                           box(style="text-align: justify",
                             width = 4, title ="Transacciones",
-                           p("97143",style= "48pt") ,  "1978 unidades vendidas en una media de 537 transacciones diarias."
+                           p("97143",style= "text-size: 48pt; text-align: center;") ,  "1978 unidades vendidas en una media de 537 transacciones diarias."
                           ),
                         
                           box(style="text-align: justify",
@@ -501,10 +502,10 @@ ui <- fluidPage(
                            
                            tabPanel("Comparación de ventas",br(),
                                     sidebarLayout(
-                                      mainPanel(width = 8,h2("Comparación del volumen total de ventas"),
+                                      mainPanel(width =7,h2("Comparación del volumen total de ventas"),
                                                 plotOutput("VentasTotalComp")
                                       ),
-                                      sidebarPanel(width = 4,
+                                      sidebarPanel(width = 5,
                                         "El volumen de ventas del producto con calcio ha sido ligeramente 
                                         superior, con un volumen total de ventas de 188867 unidades frente a 
                                         las 169196 unidades vendidas del producto que no lleva calcio.", br(),br(),
@@ -543,14 +544,11 @@ ui <- fluidPage(
                                     )
                          )
                        ),
-                       
-                       
-                       
-                       br(),hr(),br(),
+                       hr(),
                        includeHTML("footer.Rhtml")
                         ),
                         
-               tabPanel("Modelado", br(),
+               tabPanel("Modelado", 
                         fluidRow( 
                           column(12,
                                  h1("Construcción y evaluación de modelos predictivos") ),
@@ -617,7 +615,7 @@ ui <- fluidPage(
 								                           )))
 								            ),
 								            column(2,
-								                   div(class="panel panel-default", 
+								                   div(class="panel panel-default", style="height: 193px;",
 								                       div(class="panel-body",  width = "600px",
 								                           align = "center",
 								                           div(
@@ -639,7 +637,7 @@ ui <- fluidPage(
 								                     al 30 de Enero."))
 								          ),
 								          fluidRow(
-								            column(12,h2("Modelado clásico")),br(),
+								            column(12,h2("Modelado clásico")),
 								            tabBox(
 								              title = "Modelos",width = 100,
 								              # The id lets us use input$tabset1 on the server to find the current tab
@@ -833,7 +831,7 @@ ui <- fluidPage(
 								                                  div(
 								                                    column(4,img(src="img/SobreDisp1.png",style="width:80% , margin-bottom:10px")),
 								                                    column(4,img(src="img/SobreDisp2.png",style="width:80% , margin-bottom:10px")),
-								                                    column(4,img(src="img/SobreDisp3.png",style="width:80% , margin-bottom:10px")),
+								                                    column(4,img(src="img/SobreDisp3.png",style="width:80% , margin-bottom:10px"))
 								                                  )
 								                                 
 								                                  )
@@ -995,7 +993,7 @@ ui <- fluidPage(
 								                                                   column(8,
 								                                                          h3("Comparación de resultados del modelado"),
 								                                                          p("En la tabla mostrada a continuación se observan las métricas obtenidas para los tres modelos:"),
-								                                                          img(src='img/ResBN.png', style="margin-left: 25%;"), 
+								                                                          img(src='img/ResBN.png', style="margin-left: 25%;")
 								                                                   ),
 								                                                   column(2)
 								                                                   
@@ -1741,22 +1739,22 @@ ui <- fluidPage(
 								                                  de ventas diario."))
 								           
 								            ),
-								          fluidRow(column(12)),
+								         
 								          fluidRow(
 								            tabBox(width = 100,title = "Testeo",
 								              tabPanel("Total", 
 								                       tabBox(width = 100,
 								                tabPanel( "Selección del modelo",
 								                          div(width = 100,
-								                            column(2),
-								                            column(4,
+								                            
+								                            column(6,
 								                                   HTML("<table>  
 								                                          <tr>    <th>MODELO</th>     <th>RMSE</th>    <th>R2  </th>  </tr>
 								                                          <tr>    <td>SVM</td>        <td>661</td>    <td>0.6</td>  </tr>
 								                                          <tr>    <td>KNN</td>        <td>692</td>    <td>0.567</td>  </tr>
 								                                          <tr>    <td>XGBoost</td>    <td>439</td>    <td>0.522</td>  </tr> 
 								                                       </table>") )  ,
-								                            column(4,
+								                            column(6,
 								                                   HTML('
 								                                              <!-- feature -->
 								                                              <div class="feature">
@@ -1767,17 +1765,17 @@ ui <- fluidPage(
 								                                              </div>
 								                                              </div>
 								                                              <!-- /feature -->
-								                                             ')),
-								                            column(2)
+								                                             '))
+								                           
 								                          )
 								                          ),
 								                tabPanel("Testeo",
 								                         h3("Predicción del volumen total de ventas. Máquina de vector soporte, SVM"),
 								                         div(width = 100,
-								                             column(1),
-								                             column(5,
+								                            
+								                             column(6,
 								                                   plotlyOutput("Total") )  ,
-								                             column(5,
+								                             column(6,
 								                                    HTML('<!-- feature -->
 								                                              <div class="feature">
 								                                              <i class="feature-icon fa fa-circle"></i>
@@ -1795,8 +1793,8 @@ ui <- fluidPage(
 								                                              <p>624 ventas, un valor alto para el volumen de ventas diario.</p>
 								                                              </div>
 								                                              </div>
-								                                              <!-- /feature -->')),
-								                             column(1)
+								                                              <!-- /feature -->'))
+								                            
 								                         )
 								                       
 								                         )
@@ -1807,15 +1805,15 @@ ui <- fluidPage(
 								                       tabBox(width = 100,
 								                         tabPanel( "Selección del modelo",
 								                                   div(width = 100,
-								                                       column(2),
-								                                       column(4,
+								                                       
+								                                       column(6,
 								                                              HTML("<table> 
 								                                                   <tr> <th>MODELO</th> <th>RMSE</th> <th>R2 </th> 
 								                                                   </tr> <tr> <td>SVM</td> <td>410</td> <td>0.51</td> </tr> 
 								                                                   <tr> <td>KNN</td> <td>428</td> <td>0.477</td> </tr> <tr> 
 								                                                   <td>XGBoost</td> <td>256</td> <td>0.487</td> </tr> 
 								                                                   </table>") )  ,
-								                                       column(4,
+								                                       column(6,
 								                                              HTML('<!-- feature --> 
 								                                              <div class="feature"> 
 								                                              <i class="feature-icon fa fa-circle"></i> 
@@ -1827,17 +1825,17 @@ ui <- fluidPage(
 								                                              </div> 
 								                                              </div> 
 								                                              <!-- /feature --> ')
-								                                              ),
-								                                       column(2)
+								                                              )
+								                                      
 								                                   )
 								                                   ),
 								                         tabPanel("Testeo",
 								                                  h3("Predicción del volumen de ventas del producto con calcio. Gradient extreme boosting, XGBoost"),
 								                                  div(width = 100,
-								                                      column(1),
-								                                      column(5,
+								                                     
+								                                      column(6,
 								                                             plotlyOutput("Calcio") )  ,
-								                                      column(5,
+								                                      column(6,
 								                                             HTML('<!-- feature -->
 								                                              <div class="feature">
 								                                              <i class="feature-icon fa fa-circle"></i>
@@ -1858,8 +1856,8 @@ ui <- fluidPage(
                                                               <p>397 ventas, un valor alto para el volumen de ventas diario.</p>
 								                                              </div>
 								                                              </div>
-								                                              <!-- /feature -->')),
-								                                      column(1)
+								                                              <!-- /feature -->'))
+								                                     
 								                                  )    
 								                         )
 								                       )
@@ -1869,12 +1867,12 @@ ui <- fluidPage(
 								                       tabBox(width = 100,
 								                              tabPanel( "Selección del modelo",
 								                                        div(width = 100,
-								                                            column(2),
-								                                            column(4,
+								                                           
+								                                            column(6,
 								                                                   HTML("<table> <tr> <th>MODELO</th> <th>RMSE</th> <th>R2 </th> </tr> <tr> <td>SVM</td> 
                                                                           <td>309</td> <td>0.57</td> </tr> <tr> <td>KNN</td> <td>340</td> <td>0.51</td> </tr>
 								                                                        <tr> <td>XGBoost</td> <td>212</td> <td>0.52</td> </tr> </table>"))  ,
-								                                            column(4,
+								                                            column(6,
 								                                                   HTML('<!-- feature --> 
 								                                              <div class="feature"> 
 								                                              <i class="feature-icon fa fa-circle"></i> 
@@ -1885,17 +1883,17 @@ ui <- fluidPage(
 								                                              </div> 
 								                                              </div> 
 								                                              <!-- /feature --> ')
-								                                            ),
-								                                            column(2)
+								                                            )
+								                                            
 								                                        )
 								                              ),
 								                              tabPanel("Testeo",
 								                                       h3("Predicción del volumen de ventas del producto sin calcio. Máquina de vector soporte, SVM"),
 								                                       div(width = 100,
-								                                           column(1),
-								                                           column(5,
+								                                           
+								                                           column(6,
 								                                                  plotlyOutput("SinCalcio") )  ,
-								                                           column(5,
+								                                           column(6,
 								                                                  HTML('<!-- feature -->
 								                                              <div class="feature">
 								                                              <i class="feature-icon fa fa-circle"></i>
@@ -1916,8 +1914,8 @@ ui <- fluidPage(
                                                               <p>286 ventas, un valor alto para el volumen de ventas diario.</p>
 								                                              </div>
 								                                              </div>
-								                                              <!-- /feature -->')),
-								                                           column(1)
+								                                              <!-- /feature -->'))
+								                                           
 								                                       )
 								                                       
 								                              )
@@ -1931,7 +1929,7 @@ ui <- fluidPage(
 								                                        column(8,
 								                                               h3("Comparación de resultados del modelado"),
 								                                               p("En la tabla mostrada a continuación se observan las métricas obtenidas trás entrenar los modelos en los correspondientes datos de testeo:"),
-								                                               img(src='img/ResTesteo.png', style="margin-left: 25%;"), 
+								                                               img(src='img/ResTesteo.png', style="margin:0 auto;")
 								                                               ),
 								                                        column(2)
 								                                        
@@ -1941,8 +1939,8 @@ ui <- fluidPage(
 								                                              p("Mostramos un gráfico para comparar la predicción de ventas de la suma de
 								                                         productos con la suma de las predicciones de cada uno de los productos
 								                                         por separado.")),
-								                                       column(7,plotlyOutput("CompModelado",height = 700)),
-								                                       column(5, 
+								                                       column(6,plotlyOutput("CompModelado",height = 700)),
+								                                       column(6, 
 								                                              HTML('<!-- feature -->
 								                                              <div class="feature">
 								                                              <i class="feature-icon fa fa-circle"></i>
@@ -1974,26 +1972,18 @@ ui <- fluidPage(
 								                                              </div>
 								                                              <!-- /feature -->')
 								                                              )
-								                                       
 								                                       )
-								                              
-,								                              ),
-								                
+								                              )
 								              )
 								            )
-								            
 								          ),
-								          
-                        br(),hr(),br(),
-                        fluidRow(column(12)),
+                        hr(),
                         fluidRow( includeHTML("footer.Rhtml"))
-                       
-               )
-                    
+                       )   
                ),
                    
   #### Conclusiones ####
-      tabPanel("Conclusiones", br(),
+      tabPanel("Conclusiones", 
                fluidRow( 
                  column(12,
                         h1("Conclusiones") )),
@@ -2069,11 +2059,8 @@ ui <- fluidPage(
 							</div>
 						</div>
 						<!-- /feature -->	</div>')
-                ),
-               
-               br(),hr(),br(),
+                ),hr(),
                includeHTML("footer.Rhtml")
                )
   )
 )
-
