@@ -179,10 +179,14 @@ ui <- fluidPage(
                                        )
                                 )
                                 ),
-                      
-                      fluidRow(h1("3. Conclusiones"),
+                      fluidRow(
+                        column(12)
+                        
+                      ),
+                      fluidRow(h1("3. Conclusiones", style="margin-top: 5.5em;")),
                        fluidRow(
                          class="container",
+                        
                          box( title = "Patrón de ventas", class="BoxCesta",
                               width = 3, 
                               "Uno o dos productos diferentes por transacción."
@@ -198,7 +202,7 @@ ui <- fluidPage(
                        ),
                        br(),hr(),br(),
                        includeHTML("footer.Rhtml")
-                       )),
+                       ),
   #### Data science process #### 
     navbarMenu("Proceso de ciencia de datos",
                tabPanel("Preprocesado", 
