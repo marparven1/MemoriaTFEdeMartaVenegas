@@ -4,6 +4,7 @@ library(plotly)
 library(shinyjs)
 library(shinyBS)
 library(shinydashboard)
+library( shinythemes)
 
 
 
@@ -213,7 +214,7 @@ ui <- fluidPage(
                         
                         fluidRow(class="ColorFondo",
                          box(
-                            title = tagList(shiny::icon("money"), "Ventas de dos productos lácteos"), width = 6,  
+                            title = tagList(shiny::icon("money"), "Ventas de dos productos"), width = 6,  
                             column(width = 6,img(class="imgIcon",src='img/prod1.png',width="20%"), br(),h4("Con calcio",class="Tipo")  ),
                             column(width = 6,img(class="imgIcon",src='img/prod2.png',width="20%"),br(),h4("Sin calcio",class="Tipo")  )
                             
@@ -308,7 +309,7 @@ ui <- fluidPage(
 						<div class="feature">
 							<i class="feature-icon fa fa-euro-sign"></i>
 							<div class="feature-content">
-								<h4>Precio con impuestos:</h4>
+								<h4>Precio con impuestos</h4>
 								<p>Precio de venta del artículo, en euros.</p>
 							</div>
 						</div>
@@ -406,7 +407,7 @@ ui <- fluidPage(
                tabPanel("Análisis exploratorio",
                         fluidRow( 
                           column(12,
-                                 h1("Análisis exploratorio de datos para dos productos lácteos"),
+                                 h1("Análisis exploratorio de datos para dos productos"),
                                  h2("Objetivos")) ),
                         fluidRow(
                           column(3),
@@ -419,7 +420,7 @@ ui <- fluidPage(
                                          ),
                                          div(
                                            h5(
-                                             "Encotrar un patrón de ventas de productos."
+                                             "Encontrar un patrón en la venta de productos"
                                            )
                                          )
                                      )
@@ -433,7 +434,7 @@ ui <- fluidPage(
                                            tags$img(src = "img/dos.png",     height = "50px")),
                                          div(
                                            h5(
-                                             "Estudiar que variables influyen en el volumen de ventas de productos lácteos"
+                                             "Estudiar que variables influyen en el volumen de ventas de productos"
                                            )
                                          )
                                      )
@@ -465,7 +466,7 @@ ui <- fluidPage(
                         fluidRow(id = "resumen", 
                           box(style="text-align: justify",
                             width = 4, title ="Transacciones",
-                           p("97143",style= "text-size: 48pt; text-align: center;") ,  "1978 unidades vendidas en una media de 537 transacciones diarias."
+                           p("97143",style= "text-size: 48pt; text-align: center;") ,  "1978 unidades vendidas de media al día en una media de 537 transacciones diarias."
                           ),
                         
                           box(style="text-align: justify",
@@ -619,7 +620,7 @@ ui <- fluidPage(
 								                           )))
 								            ),
 								            column(2,
-								                   div(class="panel panel-default", style="height: 193px;",
+								                   div(class="panel panel-default", #style="height: 193px;",
 								                       div(class="panel-body",  width = "600px",
 								                           align = "center",
 								                           div(
@@ -829,13 +830,13 @@ ui <- fluidPage(
 								                                  p("Estos modelos se han desarrollando asumiendo que la distribución de las ventas diarias sigue una Poisson, 
 								                                    caracterizándose esta distribución porque su esperanza y su varianza coinciden; pero esto no ocurre con 
 								                                    nuestros datos."),
-								                                  p("Por este motivo, podemos afirmar que el modelo de regresión de poisson no es adecuaado para modelar 
+								                                  p("Por este motivo, podemos afirmar que el modelo de regresión de poisson no es adecuado para modelar 
 								                                    el volumen de ventas diario."),
 								                                  p("A continuación podemos ver el constraste de sobresipersión en los modelos:"),
 								                                  div(
-								                                    column(4,img(src="img/SobreDisp1.png",style="width:80% , margin-bottom:10px")),
-								                                    column(4,img(src="img/SobreDisp2.png",style="width:80% , margin-bottom:10px")),
-								                                    column(4,img(src="img/SobreDisp3.png",style="width:80% , margin-bottom:10px"))
+								                                    column(4,img(src="img/SobreDisp1.png",style="width:90% ; margin-bottom:10px")),
+								                                    column(4,img(src="img/SobreDisp2.png",style="width:90% ; margin-bottom:10px")),
+								                                    column(4,img(src="img/SobreDisp3.png",style="width:90% ; margin-bottom:10px"))
 								                                  )
 								                                 
 								                                  )
@@ -1072,9 +1073,9 @@ ui <- fluidPage(
 								                           
 								                         ),
 								                         tabPanel("Transformaciones",
-								                                  column(1),
-								                                  column(4,   img(src='img/FAS.png', style="width: 100%;margin-top: 25px;" )),
-								                                  column(6, HTML('<!-- feature --> 
+								                                  
+								                                  column(6,  
+								                                         HTML('<!-- feature --> 
 								                                              <div class="feature"> 
 								                                              <i class="feature-icon fa fa-circle"></i> 
                                                               <div class="feature-content"> 
@@ -1083,6 +1084,19 @@ ui <- fluidPage(
 								                                              </div> 
 								                                              </div> 
 								                                              <!-- /feature --> 
+								                                         <!-- feature --> 
+								                                              <div class="feature"> 
+								                                              <i class="feature-icon fa fa-circle"></i> 
+                                                              <div class="feature-content"> 
+                                                              <h4>Contraste de estacionariedad</h4> 
+                                                              <p>Según el p-valor del test de Dickey-Fuller no existen evidencias significativas para asumir que el polinomio autoregresivo
+                                                              tiene alguna raíz unitaria, la serie es estacionaria.</p> 
+								                                              </div> 
+								                                              </div> 
+								                                              <!-- /feature -->')
+								                                         ),
+								                                  column(6,  img(src='img/FAS.png', style="width: 100%;margin-top: 25px;" ),
+								                                  HTML('
 								                                       <!-- feature --> 
 								                                              <div class="feature"> 
 								                                              <i class="feature-icon fa fa-circle"></i> 
@@ -1092,18 +1106,8 @@ ui <- fluidPage(
                                                               retardos estacionales de período 7. Por ello, se hace una diferencia estacional.</p> 
 								                                              </div> 
 								                                              </div> 
-								                                              <!-- /feature -->
-								                                              <!-- feature --> 
-								                                              <div class="feature"> 
-								                                              <i class="feature-icon fa fa-circle"></i> 
-                                                              <div class="feature-content"> 
-                                                              <h4>Contraste de estacionariedad</h4> 
-                                                              <p>Según el p-valor del test de Dickey-Fuller no existen evidencias significativas para asumir que el polinomio autoregresivo
-                                                              tiene alguna raíz unitaria, la serie es estacionaria.</p> 
-								                                              </div> 
-								                                              </div> 
-								                                              <!-- /feature -->')),
-								                                  column(1)
+								                                              <!-- /feature -->  '))
+								                                
 								                         ),
 								                         tabPanel("Resultados",
 								                                 
@@ -1120,7 +1124,7 @@ ui <- fluidPage(
 								                                              <div class="feature"> 
 								                                              <i class="feature-icon fa fa-circle"></i> 
                                                               <div class="feature-content"> 
-                                                              <h4>Modelo sugerido: ARIMA(0,1,1)_12</h4> 
+                                                              <h4>Modelo sugerido: ARIMA(0,1,1)_7</h4> 
                                                               <p>Trás estimar los parámetros, concluímos que el modelo no es adecuado, ya que los resíduos no pasan la diagnosis y además
                                                               según el test de Ljun-Box, no existen evidencias significativas para aceptar la incorrelación de los resíduos: p-valor = 0.002524 < 0.05 = alpha. Los resíduos no se comportan como un proceso de ruido blanco.</p> 
 								                                              </div> 
@@ -2019,7 +2023,8 @@ ui <- fluidPage(
 							<i class="feature-icon fa fa-circle"></i>
 							<div class="feature-content">
 								<h4>Patrón de venta frecuente</h4>
-								<p>Venta conjunta de los productos 1033 y 1096.</p>
+								<p>Venta conjunta de los productos 1033 y 1096. El sistema recomendador sugeriría la promoción
+								de venta de los siguientes productos: 1086, 1079, 1046 o 13426.</p>
 							</div>
 						</div>
 						<!-- /feature -->	</div>')
@@ -2032,11 +2037,11 @@ ui <- fluidPage(
 							<i class="feature-icon fa fa-circle"></i>
 							<div class="feature-content">
 								<h4>Resultado general del modelado</h4>
-								<p>En general, los modelos obtenidos no consiguen predecir el volumen de ventas con una precisión que podamos
-								considerar aceptable, ya que en el remuestreo observamos que los modelos presentaban cierta variabilidad. 
-								Al trabajar con datos reales, esto es algo que se podía esperar, ya que modelar 
-								el comportamiento humano (ventas de productos) no siempre es fácil, debido a que se ve afectado por muchos factores, 
-								no únicamente precio, día o época del año.</p>
+								<p>En general, los modelos obtenidos consiguen predecir el volumen de ventas con buenos resultados, ya que el objetivo
+								de la predicción es la <b>gestión de inventarios. </b></br>
+								Al trabajar con datos reales, se podía esperar que las métricas no arrojaran unos valores excelentes, pero el resultado
+								es bueno, ya que cumple el objetivo: <b>creación de un sistema de recomendación para el stock</b> en función
+								de diferentes factores como el día de la semana o el mes del año.</p>
 							</div>
 						</div>
 						<!-- /feature -->

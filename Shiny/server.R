@@ -189,7 +189,9 @@ output$EvolVentas<- renderPlotly({
                  colors = c(`Con calcio` = '#BB8FCE', `Sin calcio` = '#45B39D', `TOTAL` = '#A9CCE3')) 
   fig <- fig %>% add_lines()
   fig <- fig %>% layout(yaxis = list(title = "Ventas diarias"),
-                        xaxis = list(title = "Día",rangeslider = list(visible = T)) )
+                        xaxis = list(title = "Día",rangeslider = list(visible = T)) ,
+                        legend = list(orientation = 'h')
+                        )
   
   fig
 })
@@ -238,7 +240,8 @@ output$VentasMensuales<- renderPlotly(
                           yaxis = list(title = "Volumen de ventas"),
                           xaxis =  list(title = "Mes",
                                         categoryorder = "array",
-                                        categoryarray = c("Agosto","Septiembre","Octubre","Noviembre","Diciembre","Enero"))
+                                        categoryarray = c("Agosto","Septiembre","Octubre","Noviembre","Diciembre","Enero")),
+                          legend = list(orientation = 'h')
                           )
     fig
     
@@ -265,7 +268,9 @@ output$VentasSemanales <- renderPlotly(
                           yaxis = list(title = "Volumen de ventas"),
                           xaxis = list(title = "Día de la semana",
                                        categoryorder = "array",
-                                       categoryarray = c("Lunes","Martes","Miércoles","Jueves","Viernes","Sábado","Domingo"))  )
+                                       categoryarray = c("Lunes","Martes","Miércoles","Jueves","Viernes","Sábado","Domingo")),
+                          legend = list(orientation = 'h')
+                          )
     fig
     
     
@@ -383,8 +388,11 @@ output$CompModelado <- renderPlotly(
 fig <- plot_ly(comparacionPreds, x = ~FECHA, y = ~Pred, color = ~Tipo,
                colors = c(`Suma de la predicción` = '#BB8FCE', `Predicción de la suma` = '#45B39D', `Ventas reales` = '#A9CCE3')) 
 fig <- fig %>% add_lines()
-fig <- fig %>% layout(yaxis = list(title = "Volumen de ventas"),
-                      xaxis = list(title = "Día",rangeslider = list(visible = T)) )
+fig <- fig %>% layout( title="Comparación de predicciones",
+                       yaxis = list(title = "Volumen de ventas"),
+                       xaxis = list(title = "Día",rangeslider = list(visible = T)) ,
+                      legend = list(orientation = 'h')
+                      )
 
 fig
 
